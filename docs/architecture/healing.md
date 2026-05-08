@@ -63,3 +63,26 @@ so repeat symptoms are essentially free. The response is shaped as a
   critical (severity ≥ 3) and confidence < 0.7.
 - Every action is reversible-where-possible: rollbacks restore module
   state via `tenant_modules.pinned_version` so we never delete data.
+
+## Manager-facing surface
+
+The Manager Shell exposes a curated view at `/manager/support`. Raw
+symptoms + policies are translated into plain language so a plant
+manager doesn't need to call IT to understand what just happened:
+
+- **auto-fixed** cards summarize a self-healing event in one paragraph
+  (e.g. "Sync queue caught up by itself" with a description of how
+  long the network was offline and that no data was lost).
+- **watching** cards surface intermittent issues that don't yet need
+  intervention but might if they recur ("PRESS-01 OPC-UA reconnect
+  storm — paused for 2 minutes; check the cabinet cable if it
+  repeats").
+- **needs-you** cards request a one-click confirmation for destructive
+  policies. The default-deny posture for `is_destructive()` actions
+  ensures destructive remediation never happens without an explicit
+  human "approve" — but each card is written in plain language so
+  approving doesn't require a ticket to support.
+
+The Tauri command `healing_manager_summary` returns these cards as
+`Vec<ManagerHealingCard>`; the Manager Shell renders them in
+`apps/desktop/src/shells/manager/SupportPage.tsx`.

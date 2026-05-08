@@ -24,6 +24,9 @@ pillars introduced in the top-level README are each documented here.
 | Smart Interlock Safety | [interlock.md](./interlock.md) | `crates/aether-safety/src/interlock.rs`, `supabase/migrations/0004_interlock.sql` |
 | Global Supply Chain Hedging | [hedging.md](./hedging.md) | `crates/aether-hedging/`, `supabase/functions/commodity-feed/` |
 | Multi-Lingual & Multi-Currency | [i18n.md](./i18n.md) | `crates/aether-money/`, `packages/i18n/` |
+| Universal Module (industry logic injection) | [industry.md](./industry.md) | `crates/aether-industry/`, `supabase/migrations/0007_industry.sql` |
+| Instant Compliance Attestation | [compliance.md](./compliance.md) | `crates/aether-compliance/`, `supabase/functions/compliance-attest/`, `supabase/migrations/0008_compliance.sql` |
+| Self-Healing for Managers | [healing.md](./healing.md#manager-facing-surface) | `apps/desktop/src/shells/manager/SupportPage.tsx`, `commands::healing::healing_manager_summary` |
 
 ## Reading order
 
