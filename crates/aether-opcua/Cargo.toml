@@ -1,0 +1,20 @@
+[package]
+name = "aether-opcua"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+aether-core = { path = "../aether-core" }
+aether-protocols = { path = "../aether-protocols" }
+async-trait = { workspace = true }
+tokio = { workspace = true }
+tokio-stream = { workspace = true }
+tracing = { workspace = true }
+thiserror = { workspace = true }
+serde = { workspace = true }
+chrono = { workspace = true }
+# Real OPC-UA wiring lands in PR #3. We list the crate here so the
+# dependency surface is committed but disable the feature flag until then.
+# opcua = { workspace = true }
