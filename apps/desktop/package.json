@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@aether/glove-kit": "workspace:*",
+    "@aether/i18n": "workspace:*",
     "@aether/module-sdk": "workspace:*",
     "@aether/rpc-contracts": "workspace:*",
     "@aether/shell-runtime": "workspace:*",

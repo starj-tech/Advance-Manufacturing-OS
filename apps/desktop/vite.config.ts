@@ -45,6 +45,7 @@ export default defineConfig({
           if (id.includes('/packages/ui-kit/')) return 'ui-kit';
           if (id.includes('/packages/glove-kit/')) return 'glove-kit';
           if (id.includes('/packages/module-sdk/')) return 'module-sdk';
+          if (id.includes('/packages/i18n/')) return 'i18n';
           if (id.includes('node_modules/three') || id.includes('@react-three')) return 'three';
           if (id.includes('node_modules/@supabase')) return 'supabase';
           return undefined;

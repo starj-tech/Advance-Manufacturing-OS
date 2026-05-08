@@ -5,13 +5,17 @@ import { MachinesPage } from './MachinesPage';
 import { MaintenancePage } from './MaintenancePage';
 import { InventoryPage } from './InventoryPage';
 import { RosterPage } from './RosterPage';
+import { CertificationsPage } from './CertificationsPage';
+import { SupplyChainPage } from './SupplyChainPage';
 
 const NAV = [
   { to: 'work-orders', label: 'Work orders' },
   { to: 'machines', label: 'Machines' },
   { to: 'maintenance', label: 'Maintenance' },
   { to: 'inventory', label: 'Inventory' },
+  { to: 'supply-chain', label: 'Supply chain' },
   { to: 'roster', label: 'Roster' },
+  { to: 'certifications', label: 'Certifications' },
 ];
 
 export default function ManagerShell() {
@@ -45,7 +49,9 @@ export default function ManagerShell() {
         <Route path="machines" element={<MachinesPage />} />
         <Route path="maintenance" element={<MaintenancePage />} />
         <Route path="inventory" element={<InventoryPage />} />
+        <Route path="supply-chain" element={<SupplyChainPage />} />
         <Route path="roster" element={<RosterPage />} />
+        <Route path="certifications" element={<CertificationsPage />} />
       </Routes>
     </ShellLayout>
   );

@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from 'react-router-dom';
+import { LocaleProvider } from '@aether/i18n';
 import { router } from './core/router';
 import { SessionProvider } from './core/session-provider';
 import { useState } from 'react';
@@ -21,9 +22,11 @@ export function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SessionProvider>
-        <RouterProvider router={router} />
-      </SessionProvider>
+      <LocaleProvider>
+        <SessionProvider>
+          <RouterProvider router={router} />
+        </SessionProvider>
+      </LocaleProvider>
     </QueryClientProvider>
   );
 }

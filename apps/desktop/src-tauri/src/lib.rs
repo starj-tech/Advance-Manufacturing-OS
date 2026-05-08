@@ -47,6 +47,19 @@ pub fn run() {
             commands::modules::uninstall_module,
             commands::safety::trigger_sos,
             commands::safety::geofence_evaluate,
+            commands::discovery::discovery_scan,
+            commands::discovery::discovery_save_device,
+            commands::healing::healing_diagnose,
+            commands::healing::healing_apply,
+            commands::healing::healing_recent_events,
+            commands::interlock::interlock_request_unlock,
+            commands::interlock::interlock_user_certifications,
+            commands::interlock::interlock_machine_required_certs,
+            commands::hedging::hedging_recommendations,
+            commands::hedging::hedging_commodity_prices,
+            commands::i18n::i18n_locales,
+            commands::i18n::i18n_set_locale,
+            commands::i18n::i18n_format_money,
         ])
         .run(tauri::generate_context!())
         .expect("error while running AETHER-OS");

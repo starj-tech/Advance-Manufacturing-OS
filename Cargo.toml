@@ -12,6 +12,10 @@ members = [
     "crates/aether-modules",
     "crates/aether-safety",
     "crates/aether-telemetry",
+    "crates/aether-discovery",
+    "crates/aether-healing",
+    "crates/aether-hedging",
+    "crates/aether-money",
     "tools/opcua-mock-server",
     "tools/module-signer-cli",
 ]

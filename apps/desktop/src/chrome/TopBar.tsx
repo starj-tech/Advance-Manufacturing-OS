@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { SHELLS, useShellStore } from '@aether/shell-runtime';
 import { StatusPill } from '@aether/ui-kit';
+import { useLocale } from '@aether/i18n';
 import { useSession } from '../core/session-provider';
 import { useShellSwitcher } from '../core/shell-switcher';
 
@@ -10,6 +11,7 @@ export function TopBar() {
   const notifications = useShellStore((s) => s.notifications);
   const navigate = useNavigate();
   const { switchShell } = useShellSwitcher();
+  const { locale, setLocale, available } = useLocale();
 
   if (!session) return null;
 
@@ -68,6 +70,25 @@ export function TopBar() {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <StatusPill kind="warning">offline · sync paused</StatusPill>
+        <select
+          value={locale.tag}
+          onChange={(e) => setLocale(e.target.value)}
+          aria-label="Language and currency"
+          style={{
+            background: 'var(--aether-bg)',
+            color: 'var(--aether-fg)',
+            border: '1px solid var(--aether-border)',
+            borderRadius: 6,
+            padding: '5px 8px',
+            fontSize: 13,
+          }}
+        >
+          {available.map((l) => (
+            <option key={l.tag} value={l.tag}>
+              {l.nativeName} · {l.defaultCurrency}
+            </option>
+          ))}
+        </select>
         <button
           onClick={() => navigate('/_notifications')}
           aria-label={`${notifications} notifications`}

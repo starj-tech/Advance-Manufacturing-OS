@@ -39,6 +39,10 @@ aether-mqtt = { path = "../../../crates/aether-mqtt" }
 aether-modules = { path = "../../../crates/aether-modules" }
 aether-safety = { path = "../../../crates/aether-safety" }
 aether-telemetry = { path = "../../../crates/aether-telemetry" }
+aether-discovery = { path = "../../../crates/aether-discovery" }
+aether-healing = { path = "../../../crates/aether-healing" }
+aether-hedging = { path = "../../../crates/aether-hedging" }
+aether-money = { path = "../../../crates/aether-money" }
 
 [features]
 default = ["custom-protocol"]

@@ -72,7 +72,11 @@ dependencies = [
  "aether-core",
  "aether-crypto",
  "aether-db",
+ "aether-discovery",
+ "aether-healing",
+ "aether-hedging",
  "aether-modules",
+ "aether-money",
  "aether-mqtt",
  "aether-opcua",
  "aether-protocols",
@@ -96,6 +100,50 @@ dependencies = [
 ]
 
 [[package]]
+name = "aether-discovery"
+version = "0.1.0"
+dependencies = [
+ "aether-core",
+ "aether-protocols",
+ "async-trait",
+ "chrono",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "aether-healing"
+version = "0.1.0"
+dependencies = [
+ "aether-core",
+ "async-trait",
+ "chrono",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tokio",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "aether-hedging"
+version = "0.1.0"
+dependencies = [
+ "aether-core",
+ "async-trait",
+ "chrono",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
 name = "aether-modules"
 version = "0.1.0"
 dependencies = [
@@ -106,6 +154,17 @@ dependencies = [
  "thiserror 1.0.69",
  "toml 0.8.2",
  "tracing",
+]
+
+[[package]]
+name = "aether-money"
+version = "0.1.0"
+dependencies = [
+ "aether-core",
+ "chrono",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
 ]
 
 [[package]]

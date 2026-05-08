@@ -6,7 +6,12 @@
 //! - Glove-friendly UI guidelines documented in `safety.md`.
 
 pub mod geofence;
+pub mod interlock;
 pub mod sos;
 
-pub use geofence::{Evidence, GeofenceEvaluator, Verdict};
+pub use geofence::{Evidence, GeofenceEvaluator, Verdict as GeofenceVerdict};
+pub use interlock::{
+    evaluate as evaluate_interlock, Certification, InterlockController, InterlockError,
+    UnlockRequest, Verdict as InterlockVerdict,
+};
 pub use sos::{SosBroadcaster, SosError, SosEvent, SosTier};
