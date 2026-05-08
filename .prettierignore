@@ -1,0 +1,13 @@
+node_modules
+dist
+build
+.turbo
+target
+.next
+coverage
+playwright-report
+supabase/.temp
+supabase/.branches
+*.lock
+pnpm-lock.yaml
+Cargo.lock

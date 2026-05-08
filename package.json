@@ -1,0 +1,30 @@
+{
+  "name": "aether-os",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AETHER-OS — Industrial Operating System for advanced manufacturing",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@9.12.0",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "clean": "turbo run clean && rm -rf node_modules .turbo",
+    "tauri:dev": "pnpm -F @aether/desktop tauri:dev",
+    "tauri:build": "pnpm -F @aether/desktop tauri:build"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "prettier": "^3.3.3",
+    "turbo": "^2.1.3",
+    "typescript": "^5.5.4"
+  }
+}
