@@ -1,0 +1,30 @@
+{
+  "name": "@aether/shell-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint src --max-warnings 0",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@aether/rpc-contracts": "workspace:*",
+    "zustand": "^4.5.5"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@aether/eslint-config": "workspace:*",
+    "@types/react": "^18.3.5",
+    "happy-dom": "^15.7.0",
+    "typescript": "^5.5.4",
+    "vitest": "^2.1.0"
+  }
+}
