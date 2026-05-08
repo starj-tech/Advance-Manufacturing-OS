@@ -1,0 +1,162 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "claude/**"]
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-D warnings"
+
+jobs:
+  js-lint-typecheck:
+    name: JS · lint + typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      # `--frozen-lockfile` is enabled once the generated pnpm-lock.yaml
+      # is committed in PR #2; the initial skeleton ships without one.
+      - run: pnpm install
+      - run: pnpm typecheck
+      - run: pnpm lint
+
+  js-test:
+    name: JS · vitest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm test
+
+  rust-fmt-clippy:
+    name: Rust · fmt + clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Install Tauri system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libsoup-3.0-dev \
+            libssl-dev \
+            pkg-config
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --workspace --all-targets
+
+  rust-test:
+    name: Rust · cargo test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install Tauri system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libsoup-3.0-dev \
+            libssl-dev \
+            pkg-config
+      - run: cargo test --workspace --no-fail-fast
+
+  desktop-build:
+    name: Desktop · build (${{ matrix.os }})
+    needs: [js-lint-typecheck, rust-fmt-clippy]
+    if: github.event_name == 'pull_request'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install Tauri system deps (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libsoup-3.0-dev \
+            libssl-dev \
+            pkg-config
+      - run: pnpm install
+      - name: Build frontend (no Tauri bundle)
+        run: pnpm -F @aether/desktop build
+
+  bundle-budget:
+    name: Bundle · size budget
+    needs: js-lint-typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm -F @aether/desktop build
+      - name: Enforce initial chunk budget (350KB gz)
+        shell: bash
+        run: |
+          DIST=apps/desktop/dist/assets
+          if [ ! -d "$DIST" ]; then
+            echo "no dist/assets directory; skipping budget check"
+            exit 0
+          fi
+          # Initial chunk = main entry. Approximate by gzipping each js bundle
+          # not prefixed with `shell-` and summing.
+          total=0
+          while IFS= read -r f; do
+            size=$(gzip -c "$f" | wc -c)
+            total=$((total + size))
+            echo "  $(basename "$f")  $size bytes gz"
+          done < <(find "$DIST" -name '*.js' ! -name 'shell-*' -type f)
+          echo "initial-chunk gzipped total: $total bytes"
+          budget=358400  # 350 KB
+          if [ "$total" -gt "$budget" ]; then
+            echo "::error::initial chunk $total bytes exceeds budget $budget bytes (350KB)"
+            exit 1
+          fi
