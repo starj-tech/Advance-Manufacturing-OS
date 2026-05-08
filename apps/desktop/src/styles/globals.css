@@ -1,0 +1,72 @@
+:root {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Inter',
+    'Segoe UI', Roboto, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --aether-bg: #0a0a0a;
+  --aether-bg-elevated: #141414;
+  --aether-fg: #f5f5f5;
+  --aether-fg-muted: #a0a0a0;
+  --aether-border: #262626;
+  --aether-accent: #3b82f6;
+  --aether-success: #10b981;
+  --aether-warning: #f59e0b;
+  --aether-danger: #ef4444;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--aether-bg);
+  color: var(--aether-fg);
+  overflow: hidden;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+a {
+  color: var(--aether-accent);
+  text-decoration: none;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--aether-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--aether-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #404040;
+}

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "AETHER-OS",
+  "version": "0.1.0",
+  "identifier": "tech.starj.aether",
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "pnpm build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "AETHER-OS",
+        "width": 1440,
+        "height": 900,
+        "minWidth": 1024,
+        "minHeight": 640,
+        "resizable": true,
+        "fullscreen": false,
+        "decorations": true,
+        "transparent": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.supabase.co wss://*.supabase.co ipc: http://ipc.localhost; img-src 'self' data: blob:; font-src 'self' data:",
+      "capabilities": ["default"]
+    }
+  },
+  "bundle": {
+    "active": false,
+    "targets": "all",
+    "icon": [],
+    "category": "Productivity",
+    "shortDescription": "Industrial Operating System",
+    "longDescription": "AETHER-OS — desktop-native Industrial OS with local-first sync, zero-knowledge encryption, and dynamic shell. Skeleton bundle disabled — re-enable in PR #2 once branding icons are committed."
+  }
+}
