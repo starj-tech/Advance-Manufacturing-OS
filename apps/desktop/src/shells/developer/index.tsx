@@ -4,11 +4,13 @@ import { ModuleRegistryPage } from './ModuleRegistryPage';
 import { AuditLogPage } from './AuditLogPage';
 import { SystemHealthPage } from './SystemHealthPage';
 import { DiscoveryPage } from './DiscoveryPage';
+import { IndustryProfilePage } from './IndustryProfilePage';
 import { ShellLayout } from '../_shared/ShellLayout';
 
 const NAV = [
   { to: 'infrastructure', label: 'Infrastructure' },
   { to: 'discovery', label: 'IoT discovery' },
+  { to: 'industry', label: 'Industry profile' },
   { to: 'modules', label: 'Module registry' },
   { to: 'audit', label: 'Audit log' },
   { to: 'health', label: 'System health' },
@@ -43,6 +45,7 @@ export default function DeveloperShell() {
         <Route index element={<Navigate to="infrastructure" replace />} />
         <Route path="infrastructure" element={<InfrastructurePage />} />
         <Route path="discovery" element={<DiscoveryPage />} />
+        <Route path="industry" element={<IndustryProfilePage />} />
         <Route path="modules" element={<ModuleRegistryPage />} />
         <Route path="audit" element={<AuditLogPage />} />
         <Route path="health" element={<SystemHealthPage />} />

@@ -16,6 +16,8 @@ members = [
     "crates/aether-healing",
     "crates/aether-hedging",
     "crates/aether-money",
+    "crates/aether-industry",
+    "crates/aether-compliance",
     "tools/opcua-mock-server",
     "tools/module-signer-cli",
 ]

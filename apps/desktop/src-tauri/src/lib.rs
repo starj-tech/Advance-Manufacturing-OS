@@ -60,6 +60,13 @@ pub fn run() {
             commands::i18n::i18n_locales,
             commands::i18n::i18n_set_locale,
             commands::i18n::i18n_format_money,
+            commands::industry::industry_list,
+            commands::industry::industry_profile,
+            commands::industry::industry_set,
+            commands::compliance::compliance_standards,
+            commands::compliance::compliance_run,
+            commands::compliance::compliance_latest_report,
+            commands::healing::healing_manager_summary,
         ])
         .run(tauri::generate_context!())
         .expect("error while running AETHER-OS");

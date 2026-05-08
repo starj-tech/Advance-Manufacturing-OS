@@ -19,6 +19,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "aether-compliance"
+version = "0.1.0"
+dependencies = [
+ "aether-core",
+ "async-trait",
+ "chrono",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tokio",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
 name = "aether-core"
 version = "0.1.0"
 dependencies = [
@@ -69,12 +84,14 @@ dependencies = [
 name = "aether-desktop"
 version = "0.1.0"
 dependencies = [
+ "aether-compliance",
  "aether-core",
  "aether-crypto",
  "aether-db",
  "aether-discovery",
  "aether-healing",
  "aether-hedging",
+ "aether-industry",
  "aether-modules",
  "aether-money",
  "aether-mqtt",
@@ -140,6 +157,17 @@ dependencies = [
  "serde_json",
  "thiserror 1.0.69",
  "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "aether-industry"
+version = "0.1.0"
+dependencies = [
+ "aether-core",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
  "tracing",
 ]
 

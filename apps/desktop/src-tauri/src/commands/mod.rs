@@ -5,10 +5,12 @@
 //! modules, safety) so the boundary between frontend and Rust stays explicit.
 
 pub mod auth;
+pub mod compliance;
 pub mod discovery;
 pub mod healing;
 pub mod hedging;
 pub mod i18n;
+pub mod industry;
 pub mod interlock;
 pub mod modules;
 pub mod protocols;

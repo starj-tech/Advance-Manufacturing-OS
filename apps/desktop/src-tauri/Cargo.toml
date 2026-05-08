@@ -43,6 +43,8 @@ aether-discovery = { path = "../../../crates/aether-discovery" }
 aether-healing = { path = "../../../crates/aether-healing" }
 aether-hedging = { path = "../../../crates/aether-hedging" }
 aether-money = { path = "../../../crates/aether-money" }
+aether-industry = { path = "../../../crates/aether-industry" }
+aether-compliance = { path = "../../../crates/aether-compliance" }
 
 [features]
 default = ["custom-protocol"]
