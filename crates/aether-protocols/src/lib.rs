@@ -11,6 +11,6 @@ pub mod bridge;
 pub mod registry;
 pub mod sample;
 
-pub use bridge::{Bridge, BridgeError, BridgeId, BridgeKind, BridgeStatus};
+pub use bridge::{Bridge, BridgeError, BridgeId, BridgeKind, BridgeStatus, SampleStream};
 pub use registry::{Binding, TagRegistry, TagRegistryError};
 pub use sample::{Quality, TagSample};

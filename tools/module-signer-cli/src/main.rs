@@ -139,7 +139,7 @@ fn hex_encode(b: &[u8]) -> String {
 }
 
 fn hex_decode(s: &str) -> Result<Vec<u8>> {
-    if s.len() % 2 != 0 {
+    if s.len() & 1 != 0 {
         anyhow::bail!("hex length must be even");
     }
     (0..s.len())

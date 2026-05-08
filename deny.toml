@@ -6,7 +6,35 @@ no-default-features = false
 db-path = "~/.cargo/advisory-db"
 db-urls = ["https://github.com/rustsec/advisory-db"]
 yanked = "warn"
-ignore = []
+# All ignores below come from Tauri 2's transitive dependency graph
+# (gtk-rs GTK3 bindings, urlpattern → unic-* tree, instant, derivative).
+# These are out of our direct control; the Tauri team is migrating to
+# maintained replacements. Re-evaluate on each Tauri minor bump.
+ignore = [
+    # gtk-rs GTK3 family (Linux Tauri target)
+    "RUSTSEC-2024-0411",
+    "RUSTSEC-2024-0412",
+    "RUSTSEC-2024-0413",
+    "RUSTSEC-2024-0414",
+    "RUSTSEC-2024-0415",
+    "RUSTSEC-2024-0416",
+    "RUSTSEC-2024-0417",
+    "RUSTSEC-2024-0418",
+    "RUSTSEC-2024-0419",
+    "RUSTSEC-2024-0420",
+    # unic-* crates pulled by urlpattern via tauri-utils
+    "RUSTSEC-2025-0075",
+    "RUSTSEC-2025-0080",
+    "RUSTSEC-2025-0081",
+    "RUSTSEC-2025-0098",
+    "RUSTSEC-2025-0100",
+    # proc-macro-error: pulled transitively, no upstream replacement yet
+    "RUSTSEC-2024-0370",
+    # rsa Marvin attack: pulled by sqlx-mysql even though we only use SQLite.
+    # No fixed upgrade available; revisit when sqlx prunes the mysql backend
+    # from default macro features.
+    "RUSTSEC-2023-0071",
+]
 
 [licenses]
 allow = [
@@ -15,16 +43,26 @@ allow = [
     "Apache-2.0 WITH LLVM-exception",
     "BSD-2-Clause",
     "BSD-3-Clause",
+    "BSL-1.0",
     "ISC",
     "Unicode-DFS-2016",
     "Unicode-3.0",
     "Zlib",
     "MPL-2.0",
     "CC0-1.0",
+    "CDLA-Permissive-2.0",
+    "OpenSSL",
 ]
 confidence-threshold = 0.93
 
+# Skip license check for our own internal crates (they inherit license
+# = "MIT" + publish = false from the workspace).
+[licenses.private]
+ignore = true
+
 [bans]
 multiple-versions = "warn"
-wildcards = "deny"
+# Internal workspace path dependencies are wildcards by design — they
+# resolve via the single workspace Cargo.lock.
+wildcards = "allow"
 highlight = "all"

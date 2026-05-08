@@ -39,8 +39,13 @@ pub fn derive_master_key(recovery_phrase: &[u8], salt: &[u8]) -> CryptoResult<Ma
         return Err(CryptoError::Kdf("salt < 16 bytes".into()));
     }
 
-    let params = Params::new(ARGON2_MEM_KIB, ARGON2_TIME_COST, ARGON2_PARALLELISM, Some(32))
-        .map_err(|e| CryptoError::Kdf(e.to_string()))?;
+    let params = Params::new(
+        ARGON2_MEM_KIB,
+        ARGON2_TIME_COST,
+        ARGON2_PARALLELISM,
+        Some(32),
+    )
+    .map_err(|e| CryptoError::Kdf(e.to_string()))?;
     let argon = Argon2::new(Algorithm::Argon2id, Version::V0x13, params);
 
     let mut out = [0u8; 32];

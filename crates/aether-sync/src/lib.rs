@@ -24,5 +24,5 @@ pub mod outbox;
 pub mod reconcile;
 
 pub use hlc::HlcGenerator;
-pub use outbox::{Outbox, OutboxEntry, OutboxError, Op};
+pub use outbox::{Op, Outbox, OutboxEntry, OutboxError};
 pub use reconcile::{Conflict, ConflictPolicy, Reconciler, ReconcilerError};

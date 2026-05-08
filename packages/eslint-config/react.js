@@ -15,7 +15,9 @@ export default [
       ...reactHooks.configs.recommended.rules,
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
-      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      // Co-locating a context provider with its hook (SessionProvider +
+      // useSession) is idiomatic React; this rule fires false-positives.
+      'react-refresh/only-export-components': 'off',
     },
   },
 ];

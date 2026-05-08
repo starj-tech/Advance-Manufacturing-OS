@@ -63,7 +63,9 @@ impl Manifest {
             )));
         }
         if m.module.shells.is_empty() {
-            return Err(ManifestError::Invalid("module.shells must be non-empty".into()));
+            return Err(ManifestError::Invalid(
+                "module.shells must be non-empty".into(),
+            ));
         }
         Ok(m)
     }

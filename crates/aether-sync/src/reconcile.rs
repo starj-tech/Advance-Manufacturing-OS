@@ -34,8 +34,10 @@ pub struct Conflict {
 pub enum ReconcilerError {
     #[error("network: {0}")]
     Network(String),
+    /// Boxed because `Conflict` is large (~400 bytes) and would otherwise
+    /// inflate every `Result<_, ReconcilerError>` on hot push/pull paths.
     #[error("conflict requires user action")]
-    UserActionRequired(Conflict),
+    UserActionRequired(Box<Conflict>),
     #[error("internal: {0}")]
     Internal(String),
 }
@@ -83,6 +85,9 @@ mod tests {
 
     #[test]
     fn unknown_falls_back_to_lww() {
-        assert_eq!(policy_for("unknown_entity"), ConflictPolicy::LastWriterWinsHlc);
+        assert_eq!(
+            policy_for("unknown_entity"),
+            ConflictPolicy::LastWriterWinsHlc
+        );
     }
 }

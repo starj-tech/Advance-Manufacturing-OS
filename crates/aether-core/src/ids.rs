@@ -42,7 +42,10 @@ macro_rules! id_newtype {
     };
 }
 
-id_newtype!(TenantId, "Identifier for a tenant (factory / customer org).");
+id_newtype!(
+    TenantId,
+    "Identifier for a tenant (factory / customer org)."
+);
 id_newtype!(UserId, "Identifier for a user account.");
 id_newtype!(MachineId, "Identifier for a manufacturing machine.");
 id_newtype!(WorkOrderId, "Identifier for a work order.");

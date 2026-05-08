@@ -87,7 +87,10 @@ unit = "bar"
     fn parses_two_bindings() {
         let reg = TagRegistry::from_toml(SAMPLE).unwrap();
         assert_eq!(reg.len(), 2);
-        assert_eq!(reg.lookup("press_01.temp").unwrap().unit.as_deref(), Some("celsius"));
+        assert_eq!(
+            reg.lookup("press_01.temp").unwrap().unit.as_deref(),
+            Some("celsius")
+        );
         assert!(reg.lookup("missing").is_none());
     }
 

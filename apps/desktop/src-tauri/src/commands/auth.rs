@@ -40,7 +40,9 @@ pub async fn passkey_register_start(_email: String) -> CommandResult<PasskeyChal
 pub async fn passkey_register_finish(
     _attestation: PasskeyAttestation,
 ) -> CommandResult<SessionToken> {
-    Err(CommandError::NotImplemented("passkey_register_finish".into()))
+    Err(CommandError::NotImplemented(
+        "passkey_register_finish".into(),
+    ))
 }
 
 #[tauri::command]

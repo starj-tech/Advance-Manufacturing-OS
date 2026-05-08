@@ -6,18 +6,25 @@ use serde::{Deserialize, Serialize};
 /// Default weights: GPS 0.5, Wi-Fi 0.3, BLE 0.2. Threshold 0.6.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum Evidence {
-    Gps { inside: bool, accuracy_m: u32 },
+    Gps {
+        inside: bool,
+        accuracy_m: u32,
+    },
     /// fraction = matched_bssids / fence.allowed_bssids.len()
-    WifiBssid { fraction: f32 },
+    WifiBssid {
+        fraction: f32,
+    },
     /// fraction = matched_beacons / fence.allowed_beacons.len()
-    Bluetooth { fraction: f32 },
+    Bluetooth {
+        fraction: f32,
+    },
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Verdict {
     pub inside: bool,
     pub confidence: f32,
-    pub evidence_used: Vec<&'static str>,
+    pub evidence_used: Vec<String>,
 }
 
 pub struct GeofenceEvaluator {
@@ -42,14 +49,14 @@ impl GeofenceEvaluator {
     pub fn evaluate(&self, evidence: &[Evidence]) -> Verdict {
         let mut score = 0.0;
         let mut total_weight = 0.0;
-        let mut used: Vec<&'static str> = vec![];
+        let mut used: Vec<String> = vec![];
 
         for e in evidence {
             match e {
                 Evidence::Gps { inside, accuracy_m } if *accuracy_m < 30 => {
                     score += self.weight_gps * if *inside { 1.0 } else { 0.0 };
                     total_weight += self.weight_gps;
-                    used.push("gps");
+                    used.push("gps".into());
                 }
                 Evidence::Gps { .. } => {
                     // Low-accuracy GPS is dropped, not penalized.
@@ -58,13 +65,13 @@ impl GeofenceEvaluator {
                     let f = fraction.clamp(0.0, 1.0);
                     score += self.weight_wifi * f;
                     total_weight += self.weight_wifi;
-                    used.push("wifi");
+                    used.push("wifi".into());
                 }
                 Evidence::Bluetooth { fraction } => {
                     let f = fraction.clamp(0.0, 1.0);
                     score += self.weight_ble * f;
                     total_weight += self.weight_ble;
-                    used.push("ble");
+                    used.push("ble".into());
                 }
             }
         }
