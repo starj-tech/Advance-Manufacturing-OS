@@ -15,6 +15,16 @@ pillars introduced in the top-level README are each documented here.
 | Industrial Protocols | [protocols.md](./protocols.md) | `crates/aether-protocols/`, `crates/aether-opcua/`, `crates/aether-mqtt/` |
 | Safety (Employee shell) | [safety.md](./safety.md) | `crates/aether-safety/`, `packages/glove-kit/` |
 
+## Advanced Moats
+
+| Moat | Document | Implementation entry point |
+|---|---|---|
+| Zero-Config IoT Discovery | [discovery.md](./discovery.md) | `crates/aether-discovery/` |
+| Neural Auto-Healing | [healing.md](./healing.md) | `crates/aether-healing/`, `supabase/functions/healing-suggest/` |
+| Smart Interlock Safety | [interlock.md](./interlock.md) | `crates/aether-safety/src/interlock.rs`, `supabase/migrations/0004_interlock.sql` |
+| Global Supply Chain Hedging | [hedging.md](./hedging.md) | `crates/aether-hedging/`, `supabase/functions/commodity-feed/` |
+| Multi-Lingual & Multi-Currency | [i18n.md](./i18n.md) | `crates/aether-money/`, `packages/i18n/` |
+
 ## Reading order
 
 If you are new to the codebase:
