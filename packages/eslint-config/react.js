@@ -18,6 +18,9 @@ export default [
       // Co-locating a context provider with its hook (SessionProvider +
       // useSession) is idiomatic React; this rule fires false-positives.
       'react-refresh/only-export-components': 'off',
+      // Apostrophes/quotes in JSX text render correctly; mandating
+      // entity escapes hurts readability without adding safety.
+      'react/no-unescaped-entities': 'off',
     },
   },
 ];

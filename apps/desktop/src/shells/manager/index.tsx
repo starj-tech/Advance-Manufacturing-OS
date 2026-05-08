@@ -7,6 +7,7 @@ import { InventoryPage } from './InventoryPage';
 import { RosterPage } from './RosterPage';
 import { CertificationsPage } from './CertificationsPage';
 import { SupplyChainPage } from './SupplyChainPage';
+import { SupportPage } from './SupportPage';
 
 const NAV = [
   { to: 'work-orders', label: 'Work orders' },
@@ -16,6 +17,7 @@ const NAV = [
   { to: 'supply-chain', label: 'Supply chain' },
   { to: 'roster', label: 'Roster' },
   { to: 'certifications', label: 'Certifications' },
+  { to: 'support', label: 'AI support' },
 ];
 
 export default function ManagerShell() {
@@ -52,6 +54,7 @@ export default function ManagerShell() {
         <Route path="supply-chain" element={<SupplyChainPage />} />
         <Route path="roster" element={<RosterPage />} />
         <Route path="certifications" element={<CertificationsPage />} />
+        <Route path="support" element={<SupportPage />} />
       </Routes>
     </ShellLayout>
   );
