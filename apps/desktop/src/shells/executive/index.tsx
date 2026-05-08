@@ -3,11 +3,13 @@ import { ShellLayout } from '../_shared/ShellLayout';
 import { OverviewPage } from './OverviewPage';
 import { DigitalTwinPage } from './DigitalTwinPage';
 import { ProjectionsPage } from './ProjectionsPage';
+import { CompliancePage } from './CompliancePage';
 
 const NAV = [
   { to: 'overview', label: 'Overview' },
   { to: 'digital-twin', label: 'Digital twin' },
   { to: 'projections', label: 'AI projections' },
+  { to: 'compliance', label: 'Compliance' },
 ];
 
 export default function ExecutiveShell() {
@@ -40,6 +42,7 @@ export default function ExecutiveShell() {
         <Route path="overview" element={<OverviewPage />} />
         <Route path="digital-twin" element={<DigitalTwinPage />} />
         <Route path="projections" element={<ProjectionsPage />} />
+        <Route path="compliance" element={<CompliancePage />} />
       </Routes>
     </ShellLayout>
   );
