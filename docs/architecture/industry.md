@@ -49,6 +49,41 @@ capabilities  auto_modules    default_standards
 shell-runtime exposes `useCapability("expired-date-tracking")`
 ```
 
+## React surface
+
+The `aether-industry` profile is bridged to React components via
+`packages/shell-runtime/src/capability.tsx`:
+
+```tsx
+import { CapabilityProvider, useCapability, useIndustry, IndustryGate } from '@aether/shell-runtime';
+
+// App.tsx wraps the router; initial profile is resolved via the
+// `industry_profile` Tauri command (PR #6) or the dev-industry helper
+// during the skeleton phase.
+<CapabilityProvider initialIndustrySlug="food-and-beverage" initialGranted={[...]}>
+  <RouterProvider router={router} />
+</CapabilityProvider>
+
+// In any component:
+const showExpiry = useCapability('expired-date-tracking');
+const industry = useIndustry();   // 'food-and-beverage' | 'automotive' | ...
+
+// Or as a wrapper:
+<IndustryGate capability="parts-serial-tracking" fallback={<ExpiryColumn />}>
+  <SerialColumn />
+</IndustryGate>
+```
+
+Override semantics — every capability resolves with this precedence:
+
+1. Explicit `tenant_capability_overrides` (force-on or force-off)
+2. `IndustryProfile.capabilities` membership (default)
+3. Otherwise: not granted
+
+The `Manager → Inventory` page in the desktop app uses this directly:
+columns appear or disappear based on `useCapability` calls, with no
+per-tenant fork in component code.
+
 ## Schema (`0007_industry.sql`)
 
 - `tenant_industry` — single row per tenant; the assigned vertical.

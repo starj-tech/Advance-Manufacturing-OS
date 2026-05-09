@@ -42,6 +42,12 @@ pub fn profile_for(industry: Industry) -> IndustryProfile {
                     "Lot/batch expiry, FEFO picking, recall tracing"
                 ),
                 cap!(
+                    "temperature-sensor-integration",
+                    Process,
+                    "Temperature sensor integration",
+                    "Auto-bind OPC-UA / Modbus temperature tags to material lots"
+                ),
+                cap!(
                     "cold-chain-monitor",
                     Tracking,
                     "Cold chain monitoring",
@@ -561,6 +567,15 @@ mod tests {
             .capabilities
             .iter()
             .any(|c| c.id == "expired-date-tracking"));
+    }
+
+    #[test]
+    fn food_industry_has_temperature_sensor_integration() {
+        let p = profile_for(Industry::FoodAndBeverage);
+        assert!(p
+            .capabilities
+            .iter()
+            .any(|c| c.id == "temperature-sensor-integration"));
     }
 
     #[test]

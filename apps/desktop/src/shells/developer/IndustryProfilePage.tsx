@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardBody, CardHeader, Stack, StatusPill, Button } from '@aether/ui-kit';
+import { useIndustry, useSetIndustry } from '@aether/shell-runtime';
 
 interface Capability {
   id: string;
@@ -24,6 +25,7 @@ const PROFILES: Record<string, IndustryEntry> = {
     display: 'Food & Beverage',
     capabilities: [
       { id: 'expired-date-tracking', kind: 'tracking', display: 'Expiry date tracking', description: 'Lot/batch expiry, FEFO picking, recall tracing' },
+      { id: 'temperature-sensor-integration', kind: 'process', display: 'Temperature sensor integration', description: 'Auto-bind OPC-UA / Modbus temperature tags to material lots' },
       { id: 'cold-chain-monitor', kind: 'tracking', display: 'Cold chain monitoring', description: 'Continuous temperature & humidity logging with alarms' },
       { id: 'haccp-checks', kind: 'quality', display: 'HACCP control points', description: 'Critical control point checklists with corrective actions' },
       { id: 'recall-readiness', kind: 'compliance', display: 'Recall readiness', description: 'Trace any unit forwards/backwards in <2 minutes' },
@@ -67,8 +69,20 @@ const KIND_PILL: Record<Capability['kind'], 'info' | 'success' | 'warning' | 'da
 };
 
 export function IndustryProfilePage() {
-  const [active, setActive] = useState<string>('food-and-beverage');
+  const liveIndustry = useIndustry();
+  const setIndustry = useSetIndustry();
+  const [active, setActive] = useState<string>(liveIndustry ?? 'food-and-beverage');
   const profile = PROFILES[active]!;
+
+  // When the picker changes, push the new profile into the live
+  // CapabilityProvider so the rest of the app reshapes itself.
+  useEffect(() => {
+    if (!profile) return;
+    setIndustry(
+      profile.slug,
+      profile.capabilities.map((c) => c.id),
+    );
+  }, [profile, setIndustry]);
 
   return (
     <Stack gap={16}>
@@ -77,6 +91,8 @@ export function IndustryProfilePage() {
         <p style={{ margin: '4px 0 0', color: 'var(--aether-fg-muted)', fontSize: 13 }}>
           Pick the tenant's industry. AETHER-OS auto-activates capabilities, default
           modules, and compliance standards — no per-customer fork. 21 verticals supported.
+          The picker below drives the live <code>CapabilityProvider</code>; switch to Manager →
+          Inventory to see the columns reshape.
         </p>
       </header>
 

@@ -1,9 +1,16 @@
 import { useNavigate } from 'react-router-dom';
-import { SHELLS, useShellStore } from '@aether/shell-runtime';
+import { SHELLS, useIndustry, useShellStore } from '@aether/shell-runtime';
 import { StatusPill } from '@aether/ui-kit';
 import { useLocale } from '@aether/i18n';
 import { useSession } from '../core/session-provider';
 import { useShellSwitcher } from '../core/shell-switcher';
+
+function formatIndustry(slug: string): string {
+  return slug
+    .split('-')
+    .map((s) => (s.length ? s[0]!.toUpperCase() + s.slice(1) : s))
+    .join(' ');
+}
 
 export function TopBar() {
   const { session, signOut } = useSession();
@@ -12,6 +19,7 @@ export function TopBar() {
   const navigate = useNavigate();
   const { switchShell } = useShellSwitcher();
   const { locale, setLocale, available } = useLocale();
+  const industry = useIndustry();
 
   if (!session) return null;
 
@@ -69,6 +77,9 @@ export function TopBar() {
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        {industry ? (
+          <StatusPill kind="info">industry · {formatIndustry(industry)}</StatusPill>
+        ) : null}
         <StatusPill kind="warning">offline · sync paused</StatusPill>
         <select
           value={locale.tag}
