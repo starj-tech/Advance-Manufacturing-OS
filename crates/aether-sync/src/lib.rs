@@ -22,7 +22,9 @@
 pub mod hlc;
 pub mod outbox;
 pub mod reconcile;
+pub mod sqlite_outbox;
 
 pub use hlc::HlcGenerator;
 pub use outbox::{Op, Outbox, OutboxEntry, OutboxError};
 pub use reconcile::{Conflict, ConflictPolicy, Reconciler, ReconcilerError};
+pub use sqlite_outbox::SqliteOutbox;
