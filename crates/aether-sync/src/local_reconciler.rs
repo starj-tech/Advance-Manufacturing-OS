@@ -18,8 +18,9 @@
 
 use crate::outbox::OutboxEntry;
 use crate::reconcile::{
-    policy_for, Conflict, ConflictPolicy, PushResult, Reconciler, ReconcilerError,
+    policy_for, Conflict, ConflictPolicy, PullResult, PushResult, Reconciler, ReconcilerError,
 };
+#[cfg(test)]
 use aether_core::Hlc;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
@@ -31,13 +32,28 @@ pub struct LocalServerRow {
     pub entry: OutboxEntry,
 }
 
+/// Log entry with the server-assigned sequence number. The cursor for
+/// `pull_since` is this `seq`, NOT the entry's HLC: HLCs are local to
+/// each node so `max(hlc)` across nodes is not monotonic, which would
+/// cause a slow-clock node's later writes to be skipped by a pull
+/// cursor advanced by a fast-clock node's earlier writes. Using a
+/// server-assigned monotonic counter matches what Supabase production
+/// would use (the `sync_changes.id BIGSERIAL`).
+#[derive(Clone, Debug)]
+struct LoggedEntry {
+    seq: u64,
+    entry: OutboxEntry,
+}
+
 #[derive(Default)]
 struct ServerState {
     /// Authoritative per-row state. Key: `(entity, entity_id)`.
     current: HashMap<(String, String), OutboxEntry>,
-    /// Append-only log of every accepted entry, sorted by acceptance
-    /// order (== HLC order because we apply LWW strictly).
-    log: Vec<OutboxEntry>,
+    /// Append-only log of every accepted entry, in acceptance order
+    /// (== server sequence number order).
+    log: Vec<LoggedEntry>,
+    /// Next sequence number to assign on push. Monotonic across all clients.
+    next_seq: u64,
 }
 
 /// Test/integration server. Cheaply clonable: every clone shares the
@@ -79,6 +95,14 @@ impl LocalReconciler {
             .log
             .len()
     }
+
+    /// Test helper: current value of the server's monotonic sequence counter.
+    pub fn next_seq(&self) -> u64 {
+        self.state
+            .lock()
+            .expect("LocalReconciler mutex poisoned")
+            .next_seq
+    }
 }
 
 #[async_trait::async_trait]
@@ -89,6 +113,17 @@ impl Reconciler for LocalReconciler {
 
         let mut state = self.state.lock().expect("LocalReconciler mutex poisoned");
 
+        // Helper: append to the log with the next server seq. Hoisted
+        // so every accept path increments the seq the same way.
+        fn append(state: &mut ServerState, entry: &OutboxEntry) {
+            let seq = state.next_seq;
+            state.next_seq += 1;
+            state.log.push(LoggedEntry {
+                seq,
+                entry: entry.clone(),
+            });
+        }
+
         for entry in entries {
             let key = (entry.entity.clone(), entry.entity_id.clone());
             let policy = policy_for(&entry.entity);
@@ -98,7 +133,9 @@ impl Reconciler for LocalReconciler {
                     // LWW: compare HLC; the higher one wins. Loser is
                     // still "accepted" by the server in the sense that
                     // the client can drop it from its outbox — the
-                    // server simply decided not to apply it.
+                    // server simply decided not to apply it. Losers
+                    // are NOT appended to the log: pulls only return
+                    // winners.
                     let should_apply = state
                         .current
                         .get(&key)
@@ -106,15 +143,14 @@ impl Reconciler for LocalReconciler {
                         .unwrap_or(true);
                     if should_apply {
                         state.current.insert(key, entry.clone());
-                        state.log.push(entry.clone());
+                        append(&mut state, entry);
                     }
                     accepted.push(entry.op_id.clone());
                 }
                 ConflictPolicy::RejectAndSurface => {
                     // Inventory / financial: ANY update conflicts because
                     // the absolute value must flow through a server RPC
-                    // (inventory_adjust). Inserts are still OK (initial
-                    // row creation).
+                    // (inventory_adjust). Inserts are still OK.
                     if let Some(cur) = state.current.get(&key).cloned() {
                         conflicts.push(Conflict {
                             entity: entry.entity.clone(),
@@ -125,17 +161,15 @@ impl Reconciler for LocalReconciler {
                         });
                     } else {
                         state.current.insert(key, entry.clone());
-                        state.log.push(entry.clone());
+                        append(&mut state, entry);
                         accepted.push(entry.op_id.clone());
                     }
                 }
                 ConflictPolicy::AutomergeMerge | ConflictPolicy::ServerTransition => {
                     // Both require domain logic that lives outside this
                     // in-memory test reconciler — wired in PR #2
-                    // production slice (Automerge crate + RPC functions).
-                    // For test ergonomics we fall back to LWW so the
-                    // surface is exercised; conformance test in the
-                    // production reconciler will replace this path.
+                    // production slice. Fall back to LWW so the surface
+                    // is exercised.
                     let should_apply = state
                         .current
                         .get(&key)
@@ -143,7 +177,7 @@ impl Reconciler for LocalReconciler {
                         .unwrap_or(true);
                     if should_apply {
                         state.current.insert(key, entry.clone());
-                        state.log.push(entry.clone());
+                        append(&mut state, entry);
                     }
                     accepted.push(entry.op_id.clone());
                 }
@@ -156,26 +190,39 @@ impl Reconciler for LocalReconciler {
         })
     }
 
-    async fn pull_since(&self, hlc: Option<&str>) -> Result<Vec<OutboxEntry>, ReconcilerError> {
-        let cursor: Option<Hlc> = match hlc {
-            Some(s) => Some(Hlc::parse(s).ok_or_else(|| {
+    async fn pull_since(&self, cursor: Option<&str>) -> Result<PullResult, ReconcilerError> {
+        // Cursor is the server-assigned seq number (u64 as string).
+        // We don't use the entry's HLC for the cursor because HLC is
+        // local-monotonic per node, not global-monotonic. A slow-clock
+        // node's writes have lower wall_ms than a fast-clock node's
+        // earlier writes, so cursoring on max(HLC) would skip the
+        // slow-clock node's writes after the fast-clock node's pull
+        // advanced the cursor. Server-assigned seq has no such hazard.
+        // Production (Supabase) uses `sync_changes.id BIGSERIAL` the
+        // same way.
+        let parsed: Option<u64> = match cursor {
+            Some(s) => Some(s.parse::<u64>().map_err(|_| {
                 ReconcilerError::Internal(format!("malformed pull cursor `{}`", s))
             })?),
             None => None,
         };
 
         let state = self.state.lock().expect("LocalReconciler mutex poisoned");
-        let mut out: Vec<OutboxEntry> = state
+        let filtered: Vec<&LoggedEntry> = state
             .log
             .iter()
-            .filter(|e| match &cursor {
-                Some(c) => e.hlc_ts > *c,
+            .filter(|e| match parsed {
+                Some(c) => e.seq > c,
                 None => true,
             })
-            .cloned()
             .collect();
-        out.sort_by(|a, b| a.hlc_ts.cmp(&b.hlc_ts));
-        Ok(out)
+
+        let next_cursor = filtered.last().map(|e| e.seq.to_string());
+        let entries: Vec<OutboxEntry> = filtered.into_iter().map(|e| e.entry.clone()).collect();
+        Ok(PullResult {
+            entries,
+            next_cursor,
+        })
     }
 }
 
@@ -279,30 +326,39 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn pull_since_returns_log_above_cursor_sorted() {
+    async fn pull_since_returns_log_above_cursor_in_seq_order() {
+        // Server assigns seq 0, 1, 2 to the three winning entries (each
+        // is a fresh row so LWW lets all three through).
         let r = LocalReconciler::new();
-        let h1 = Hlc::new(10, 0, "node-a");
-        let h2 = Hlc::new(20, 0, "node-a");
-        let h3 = Hlc::new(30, 0, "node-a");
-        for (op, h) in [("op-1", &h1), ("op-2", &h2), ("op-3", &h3)] {
-            r.push(&[entry(op, "work_orders", "wo-1", h.clone())])
-                .await
-                .unwrap();
+        for i in 1..=3 {
+            r.push(&[entry(
+                &format!("op-{}", i),
+                "work_orders",
+                &format!("wo-{}", i),
+                Hlc::new(i * 10, 0, "node-a"),
+            )])
+            .await
+            .unwrap();
         }
 
         let all = r.pull_since(None).await.unwrap();
-        let cursor_above_first = r.pull_since(Some(&h1.to_string())).await.unwrap();
-        let cursor_above_last = r.pull_since(Some(&h3.to_string())).await.unwrap();
+        assert_eq!(all.entries.len(), 3);
+        assert_eq!(all.next_cursor.as_deref(), Some("2"));
 
-        assert_eq!(all.len(), 3);
+        let from_zero = r.pull_since(Some("0")).await.unwrap();
         assert_eq!(
-            cursor_above_first
+            from_zero
+                .entries
                 .iter()
                 .map(|e| e.op_id.as_str())
                 .collect::<Vec<_>>(),
             vec!["op-2", "op-3"]
         );
-        assert!(cursor_above_last.is_empty());
+        assert_eq!(from_zero.next_cursor.as_deref(), Some("2"));
+
+        let from_last = r.pull_since(Some("2")).await.unwrap();
+        assert!(from_last.entries.is_empty());
+        assert!(from_last.next_cursor.is_none());
     }
 
     #[tokio::test]

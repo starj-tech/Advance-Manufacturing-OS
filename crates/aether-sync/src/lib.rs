@@ -33,6 +33,6 @@ pub use hlc::{HlcError, HlcGenerator, SystemClock, WallClock};
 pub use local_reconciler::LocalReconciler;
 pub use outbox::{Op, Outbox, OutboxEntry, OutboxError};
 pub use reconcile::{
-    policy_for, Conflict, ConflictPolicy, PushResult, Reconciler, ReconcilerError,
+    policy_for, Conflict, ConflictPolicy, PullResult, PushResult, Reconciler, ReconcilerError,
 };
 pub use sqlite_outbox::SqliteOutbox;

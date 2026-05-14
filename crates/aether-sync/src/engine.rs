@@ -23,7 +23,6 @@
 use crate::applier::{Applier, ApplierError, ApplyOutcome};
 use crate::outbox::{Outbox, OutboxError};
 use crate::reconcile::{Reconciler, ReconcilerError};
-use aether_core::Hlc;
 use aether_db::Pool;
 use std::sync::Arc;
 use thiserror::Error;
@@ -103,8 +102,12 @@ impl SyncEngine {
     }
 
     /// Read the persisted pull watermark, or `None` if the client has
-    /// never pulled before. Wire format: HLC `wall.logical.node`.
-    pub async fn load_pull_cursor(&self) -> Result<Option<Hlc>, EngineError> {
+    /// never pulled before. The cursor is opaque — its format is
+    /// defined by the Reconciler implementation (a u64 sequence
+    /// number for `LocalReconciler`, a `sync_changes.id` for the
+    /// future Supabase impl). Storing it as text keeps the engine
+    /// independent of the reconciler's chosen cursor type.
+    pub async fn load_pull_cursor(&self) -> Result<Option<String>, EngineError> {
         let row: Option<(Option<String>,)> =
             sqlx::query_as("SELECT last_pulled_hlc FROM sync_metadata WHERE entity = ?1")
                 .bind(PULL_CURSOR_KEY)
@@ -112,24 +115,18 @@ impl SyncEngine {
                 .await
                 .map_err(|e| EngineError::Storage(e.to_string()))?;
 
-        let raw = match row.and_then(|(s,)| s) {
-            Some(s) => s,
-            None => return Ok(None),
-        };
-        Hlc::parse(&raw)
-            .map(Some)
-            .ok_or_else(|| EngineError::Storage(format!("malformed cursor `{}`", raw)))
+        Ok(row.and_then(|(s,)| s))
     }
 
     /// UPSERT the pull watermark for the next pull_once call.
-    async fn save_pull_cursor(&self, cursor: &Hlc) -> Result<(), EngineError> {
+    async fn save_pull_cursor(&self, cursor: &str) -> Result<(), EngineError> {
         sqlx::query(
             "INSERT INTO sync_metadata (entity, last_pulled_hlc, last_pushed_hlc) \
              VALUES (?1, ?2, NULL) \
              ON CONFLICT(entity) DO UPDATE SET last_pulled_hlc = excluded.last_pulled_hlc",
         )
         .bind(PULL_CURSOR_KEY)
-        .bind(cursor.to_string())
+        .bind(cursor)
         .execute(self.pool.handle())
         .await
         .map_err(|e| EngineError::Storage(e.to_string()))?;
@@ -224,45 +221,45 @@ impl SyncEngine {
         applier: &A,
     ) -> Result<PullStats, EngineError> {
         let cursor = self.load_pull_cursor().await?;
-        let cursor_str = cursor.as_ref().map(|h| h.to_string());
-        let entries = self
+        let pull = self
             .reconciler
-            .pull_since(cursor_str.as_deref())
+            .pull_since(cursor.as_deref())
             .await
             .map_err(EngineError::from)?;
 
-        if entries.is_empty() {
+        if pull.entries.is_empty() {
             return Ok(PullStats::default());
         }
 
         let mut applied = 0usize;
         let mut skipped = 0usize;
-        let mut max_seen: Option<Hlc> = cursor;
 
-        for entry in &entries {
+        for entry in &pull.entries {
             match applier.apply(entry).await? {
                 ApplyOutcome::Applied => applied += 1,
                 ApplyOutcome::Skipped => skipped += 1,
             }
-            max_seen = Some(match max_seen {
-                Some(m) if m > entry.hlc_ts => m,
-                _ => entry.hlc_ts.clone(),
-            });
         }
 
-        if let Some(new_cursor) = max_seen {
+        // Advance the cursor only AFTER the apply loop succeeds — the
+        // reconciler's `next_cursor` represents the high-water mark
+        // for what we've successfully processed. If the apply loop
+        // errored mid-batch the cursor stays put and the next pull
+        // replays from where we were (relying on the Applier's
+        // idempotence to make replay safe).
+        if let Some(new_cursor) = pull.next_cursor {
             self.save_pull_cursor(&new_cursor).await?;
         }
 
         tracing::debug!(
-            fetched = entries.len(),
+            fetched = pull.entries.len(),
             applied,
             skipped,
             "sync engine pull_once complete"
         );
 
         Ok(PullStats {
-            fetched: entries.len(),
+            fetched: pull.entries.len(),
             applied,
             skipped,
         })
@@ -519,12 +516,13 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn pull_once_advances_cursor_past_max_hlc() {
+    async fn pull_once_advances_cursor_to_server_seq() {
+        // Push 5 fresh rows → server assigns seq 0..=4. After a pull,
+        // the persisted cursor must be the last server seq (4 as text).
         let server = LocalReconciler::new();
         let (outbox, hlc, engine, _pool) = client("node-a", 1000, server.clone()).await;
         let applier = MemoryApplier::new();
 
-        let mut highest = None;
         for i in 0..5 {
             let h = hlc.next();
             outbox
@@ -533,20 +531,16 @@ mod tests {
                     "work_orders",
                     &format!("wo-{}", i),
                     Op::Insert,
-                    h.clone(),
+                    h,
                 ))
                 .await
                 .unwrap();
-            highest = Some(h);
         }
         engine.drain(100, 5).await.unwrap();
         engine.pull_once(&applier).await.unwrap();
 
         let cursor = engine.load_pull_cursor().await.unwrap();
-        assert_eq!(
-            cursor, highest,
-            "cursor must equal the max HLC observed in the pulled batch"
-        );
+        assert_eq!(cursor.as_deref(), Some("4"));
     }
 
     #[tokio::test]
@@ -714,6 +708,133 @@ mod tests {
                         entity_id,
                         cur.hlc_ts,
                         expected_hlc
+                    );
+                }
+                Ok(())
+            })?;
+        }
+
+        // Property: bidirectional convergence under arbitrary interleavings.
+        // Two clients each push their own random writes AND periodically
+        // pull. After both clients drain their outboxes and pull until
+        // empty, the THREE views — server, applier_a (node-a's local
+        // state), applier_b (node-b's local state) — MUST all agree
+        // with the max-HLC ground truth for every entity_id touched.
+        //
+        // This is the actual user-visible guarantee of local-first sync:
+        // every device that participates in the round-trip converges to
+        // the same authoritative view, regardless of how the round-trip
+        // was interleaved (network jitter, retries, partial pulls).
+        #[test]
+        fn two_clients_round_trip_converges(
+            ops in proptest::collection::vec(
+                (proptest::bool::ANY, 0u8..4, 1u64..40, proptest::bool::ANY),
+                1..30,
+            ),
+        ) {
+            tokio::runtime::Runtime::new().unwrap().block_on(async move {
+                let server = LocalReconciler::new();
+
+                let pool_a = Pool::open_in_memory().await.unwrap();
+                let pool_b = Pool::open_in_memory().await.unwrap();
+                let outbox_a: Arc<dyn Outbox> = Arc::new(SqliteOutbox::new(pool_a.clone()));
+                let outbox_b: Arc<dyn Outbox> = Arc::new(SqliteOutbox::new(pool_b.clone()));
+                let applier_a = MemoryApplier::new();
+                let applier_b = MemoryApplier::new();
+
+                let clock_a = std::sync::Arc::new(StubClock::new(1000));
+                let clock_b = std::sync::Arc::new(StubClock::new(5000));
+
+                struct ArcClock(std::sync::Arc<StubClock>);
+                impl WallClock for ArcClock {
+                    fn now_ms(&self) -> u64 { self.0.now_ms() }
+                }
+
+                let hlc_a = HlcGenerator::with_clock("node-a", ArcClock(std::sync::Arc::clone(&clock_a)));
+                let hlc_b = HlcGenerator::with_clock("node-b", ArcClock(std::sync::Arc::clone(&clock_b)));
+
+                let engine_a = SyncEngine::new(outbox_a.clone(), Arc::new(server.clone()), pool_a);
+                let engine_b = SyncEngine::new(outbox_b.clone(), Arc::new(server.clone()), pool_b);
+
+                // Ground truth: max HLC per entity_id across both clients.
+                let mut expected: std::collections::HashMap<String, Hlc> =
+                    std::collections::HashMap::new();
+
+                // Phase 1: random writes interleaved with random push/pull
+                // ticks. The fourth bool decides whether this client also
+                // pulls during this op — that's what stresses the
+                // bidirectional path (a write can race with a pull from
+                // the other client's earlier writes).
+                for (i, (use_b, ent, bump, do_pull)) in ops.iter().enumerate() {
+                    let entity_id = format!("wo-{}", ent);
+                    let (ob, hlc, clock, engine, applier) = if *use_b {
+                        (&outbox_b, &hlc_b, &clock_b, &engine_b, &applier_b)
+                    } else {
+                        (&outbox_a, &hlc_a, &clock_a, &engine_a, &applier_a)
+                    };
+                    clock.advance(*bump);
+                    let h = hlc.next();
+                    let op_id = format!("op-{:04}-{}", i, if *use_b { "b" } else { "a" });
+                    ob.enqueue(entry_for(
+                        &op_id,
+                        "work_orders",
+                        &entity_id,
+                        Op::Update,
+                        h.clone(),
+                    )).await.unwrap();
+                    expected
+                        .entry(entity_id)
+                        .and_modify(|cur| if h > *cur { *cur = h.clone(); })
+                        .or_insert(h);
+
+                    // Maybe push and pull right now to interleave.
+                    engine.push_once(2).await.unwrap();
+                    if *do_pull {
+                        engine.pull_once(applier).await.unwrap();
+                    }
+                }
+
+                // Phase 2: drain outboxes and pull to convergence.
+                engine_a.drain(100, 50).await.unwrap();
+                engine_b.drain(100, 50).await.unwrap();
+                for _ in 0..10 {
+                    let a = engine_a.pull_once(&applier_a).await.unwrap();
+                    let b = engine_b.pull_once(&applier_b).await.unwrap();
+                    if a.fetched == 0 && b.fetched == 0 {
+                        break;
+                    }
+                }
+
+                // Final assertion: server, applier_a, applier_b all agree
+                // with the max-HLC ground truth.
+                for (entity_id, expected_hlc) in &expected {
+                    let on_server = server
+                        .current("work_orders", entity_id)
+                        .map(|e| e.hlc_ts);
+                    let on_a = applier_a
+                        .current("work_orders", entity_id)
+                        .map(|e| e.hlc_ts);
+                    let on_b = applier_b
+                        .current("work_orders", entity_id)
+                        .map(|e| e.hlc_ts);
+
+                    proptest::prop_assert_eq!(
+                        on_server.as_ref(),
+                        Some(expected_hlc),
+                        "server disagrees on {}: got {:?} expected {:?}",
+                        entity_id, on_server, expected_hlc
+                    );
+                    proptest::prop_assert_eq!(
+                        on_a.as_ref(),
+                        Some(expected_hlc),
+                        "applier_a disagrees on {}: got {:?} expected {:?}",
+                        entity_id, on_a, expected_hlc
+                    );
+                    proptest::prop_assert_eq!(
+                        on_b.as_ref(),
+                        Some(expected_hlc),
+                        "applier_b disagrees on {}: got {:?} expected {:?}",
+                        entity_id, on_b, expected_hlc
                     );
                 }
                 Ok(())

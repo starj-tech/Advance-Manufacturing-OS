@@ -42,12 +42,28 @@ pub enum ReconcilerError {
     Internal(String),
 }
 
+/// Outcome of a `pull_since` call.
+///
+/// `next_cursor` is the server-defined high-water mark the client
+/// should pass to its next `pull_since(Some(cursor))`. Using a
+/// server-defined cursor — rather than deriving one client-side from
+/// the entries — keeps the engine agnostic to the reconciler's
+/// internal ordering (a server-assigned seq number for
+/// `LocalReconciler`, `sync_changes.id BIGSERIAL` for the future
+/// Supabase impl). The HLC inside each entry is still used for LWW
+/// conflict resolution but is no longer the pull cursor.
+#[derive(Debug, Clone, Default)]
+pub struct PullResult {
+    pub entries: Vec<OutboxEntry>,
+    pub next_cursor: Option<String>,
+}
+
 /// Reconciler abstracts the push/pull pipeline against the server.
 /// Implementations are backed by Supabase RPC + Realtime in production.
 #[async_trait::async_trait]
 pub trait Reconciler: Send + Sync {
     async fn push(&self, entries: &[OutboxEntry]) -> Result<PushResult, ReconcilerError>;
-    async fn pull_since(&self, hlc: Option<&str>) -> Result<Vec<OutboxEntry>, ReconcilerError>;
+    async fn pull_since(&self, cursor: Option<&str>) -> Result<PullResult, ReconcilerError>;
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
