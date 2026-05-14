@@ -19,12 +19,14 @@
 //! This PR ships the public API surface and types. The reconciliation
 //! algorithm, conflict handlers, and Automerge integration land in PR #2.
 
+pub mod engine;
 pub mod hlc;
 pub mod local_reconciler;
 pub mod outbox;
 pub mod reconcile;
 pub mod sqlite_outbox;
 
+pub use engine::{EngineError, PushStats, SyncEngine};
 pub use hlc::{HlcError, HlcGenerator, SystemClock, WallClock};
 pub use local_reconciler::LocalReconciler;
 pub use outbox::{Op, Outbox, OutboxEntry, OutboxError};
