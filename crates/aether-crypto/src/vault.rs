@@ -23,10 +23,17 @@ use crate::aead::{decrypt, encrypt, Ciphertext, AEAD_KEY_LEN};
 use crate::kdf::MasterKey;
 use crate::keystore::{KeyHandle, Keystore};
 use crate::{CryptoError, CryptoResult};
+use hkdf::Hkdf;
 use rand_core::{OsRng, RngCore};
 use serde::{Deserialize, Serialize};
+use sha2::Sha256;
 use uuid::Uuid;
 use zeroize::{Zeroize, ZeroizeOnDrop, Zeroizing};
+
+/// HKDF salt for `DeviceKey::derive_hkdf`. Constant + version-tagged so
+/// derivation is stable across runs but lets us migrate the scheme by
+/// bumping the version segment.
+const DEVICE_HKDF_SALT: &[u8] = b"aether-os/hkdf/device/v1";
 
 /// Device-bound 32-byte key used to wrap the tenant MasterKey before
 /// persisting. In production it comes from a passkey-gated OS keychain
@@ -44,11 +51,50 @@ impl DeviceKey {
 
     /// Generate a fresh 32-byte device key from the OS RNG. Tests use
     /// this; in production the device key is derived from a Passkey
-    /// assertion via HKDF (PR #2 auth slice).
+    /// assertion via [`DeviceKey::derive_hkdf`].
     pub fn generate() -> Self {
         let mut out = [0u8; AEAD_KEY_LEN];
         OsRng.fill_bytes(&mut out);
         Self(out)
+    }
+
+    /// Derive a `DeviceKey` from high-entropy input material (e.g. a
+    /// WebAuthn `largeBlob`/`prf` extension output, a Tauri plugin's
+    /// passkey assertion, or a hardware-attested random blob from
+    /// Stronghold).
+    ///
+    /// `secret` is the IKM. It MUST come from a source whose
+    /// confidentiality is OS-auth-gated (Touch ID, Windows Hello,
+    /// libsecret prompt). HKDF does not add entropy — if the IKM has
+    /// 80 bits of effective security, the resulting DeviceKey has 80
+    /// bits regardless of the 32-byte output length.
+    ///
+    /// `tenant_id` is mixed into the `info` parameter so the same
+    /// passkey on a multi-tenant shared kiosk produces a different
+    /// DeviceKey per tenant. Without this, a malicious tenant admin
+    /// could swap their `SessionVault` blob for another tenant's and
+    /// fool the wrapper into unwrapping it.
+    ///
+    /// The `context` argument is a human-readable purpose tag
+    /// ("passkey", "stronghold", "hsm-attestation") for further
+    /// domain separation across credential sources.
+    pub fn derive_hkdf(secret: &[u8], tenant_id: Uuid, context: &str) -> CryptoResult<Self> {
+        if secret.is_empty() {
+            return Err(CryptoError::Kdf("derive_hkdf: empty secret".into()));
+        }
+        // Bind context + tenant into the info argument. Using `\0` as a
+        // separator means no malicious context string can collide with
+        // a different tenant_id by spoofing the byte boundary.
+        let mut info: Vec<u8> = Vec::with_capacity(context.len() + 1 + 16);
+        info.extend_from_slice(context.as_bytes());
+        info.push(0);
+        info.extend_from_slice(tenant_id.as_bytes());
+
+        let hk = Hkdf::<Sha256>::new(Some(DEVICE_HKDF_SALT), secret);
+        let mut out = [0u8; AEAD_KEY_LEN];
+        hk.expand(&info, &mut out)
+            .map_err(|e| CryptoError::Kdf(format!("hkdf expand: {e}")))?;
+        Ok(Self(out))
     }
 
     pub fn as_bytes(&self) -> &[u8; AEAD_KEY_LEN] {
@@ -329,5 +375,90 @@ mod tests {
         let dbg = format!("{d:?}");
         assert!(dbg.contains("***"));
         assert!(!dbg.contains("42"));
+    }
+
+    // -------- DeviceKey::derive_hkdf --------
+
+    #[test]
+    fn derive_hkdf_is_deterministic() {
+        let secret = b"webauthn-prf-output-32-byte-seed";
+        let tenant = Uuid::new_v4();
+        let a = DeviceKey::derive_hkdf(secret, tenant, "passkey").unwrap();
+        let b = DeviceKey::derive_hkdf(secret, tenant, "passkey").unwrap();
+        assert_eq!(a.as_bytes(), b.as_bytes());
+    }
+
+    #[test]
+    fn derive_hkdf_separates_by_tenant() {
+        // Same passkey assertion on a shared kiosk MUST yield a
+        // different DeviceKey per tenant. Without this, a malicious
+        // tenant admin could swap SessionVault blobs.
+        let secret = b"webauthn-prf-output-32-byte-seed";
+        let tenant_a = Uuid::new_v4();
+        let tenant_b = Uuid::new_v4();
+        let key_a = DeviceKey::derive_hkdf(secret, tenant_a, "passkey").unwrap();
+        let key_b = DeviceKey::derive_hkdf(secret, tenant_b, "passkey").unwrap();
+        assert_ne!(key_a.as_bytes(), key_b.as_bytes());
+    }
+
+    #[test]
+    fn derive_hkdf_separates_by_context() {
+        // Same tenant + secret + different context = different key.
+        // Lets us reuse one passkey for multiple credential sources
+        // (e.g. "passkey" vs "stronghold-fallback") without collision.
+        let secret = b"webauthn-prf-output-32-byte-seed";
+        let tenant = Uuid::new_v4();
+        let passkey = DeviceKey::derive_hkdf(secret, tenant, "passkey").unwrap();
+        let stronghold = DeviceKey::derive_hkdf(secret, tenant, "stronghold").unwrap();
+        assert_ne!(passkey.as_bytes(), stronghold.as_bytes());
+    }
+
+    #[test]
+    fn derive_hkdf_separates_by_secret() {
+        let s1 = b"first-credential-output";
+        let s2 = b"second-credential-output";
+        let tenant = Uuid::new_v4();
+        let k1 = DeviceKey::derive_hkdf(s1, tenant, "passkey").unwrap();
+        let k2 = DeviceKey::derive_hkdf(s2, tenant, "passkey").unwrap();
+        assert_ne!(k1.as_bytes(), k2.as_bytes());
+    }
+
+    #[test]
+    fn derive_hkdf_rejects_empty_secret() {
+        let tenant = Uuid::new_v4();
+        let err = DeviceKey::derive_hkdf(b"", tenant, "passkey").unwrap_err();
+        assert!(matches!(err, CryptoError::Kdf(_)));
+    }
+
+    #[test]
+    fn derive_hkdf_round_trips_through_wrap_unwrap() {
+        // Production unlock flow: a Passkey re-assertion on the next
+        // boot produces the same PRF output → re-derived DeviceKey →
+        // unwraps the persisted SessionVault blob → MasterKey
+        // recovered. We don't need two SessionVault instances to
+        // prove this: WrappedMasterKey::{wrap,unwrap} is the
+        // crypto-critical pair, SessionVault is just persistence.
+        let secret = b"simulated-webauthn-assertion-prf-output";
+        let tenant = Uuid::new_v4();
+
+        let device_first = DeviceKey::derive_hkdf(secret, tenant, "passkey").unwrap();
+        let original = master();
+        let blob = WrappedMasterKey::wrap(&original, &device_first, tenant).unwrap();
+
+        // Simulate a fresh process: the in-memory device key is gone,
+        // but the same passkey re-asserts to produce the same secret.
+        drop(device_first);
+        let device_second = DeviceKey::derive_hkdf(secret, tenant, "passkey").unwrap();
+        let recovered = blob.unwrap(&device_second, tenant).unwrap();
+        assert_eq!(
+            recovered.as_bytes(),
+            original.as_bytes(),
+            "Passkey re-assertion must unwrap the persisted MasterKey"
+        );
+
+        // Sanity: a DIFFERENT secret (e.g. an attacker's passkey on
+        // the same kiosk) must NOT unwrap.
+        let attacker = DeviceKey::derive_hkdf(b"different-prf", tenant, "passkey").unwrap();
+        assert!(blob.unwrap(&attacker, tenant).is_err());
     }
 }
