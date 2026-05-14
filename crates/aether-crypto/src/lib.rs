@@ -22,6 +22,7 @@ pub mod kdf;
 pub mod keystore;
 pub mod recovery;
 pub mod signer;
+pub mod vault;
 
 pub use aead::{decrypt, encrypt, Ciphertext, Nonce, AEAD_KEY_LEN};
 pub use blind_index::{BlindIndex, BlindIndexKey};
@@ -29,6 +30,7 @@ pub use kdf::{derive_master_key, MasterKey, ARGON2_MEM_KIB, ARGON2_PARALLELISM, 
 pub use keystore::{KeyHandle, Keystore, MemoryKeystore};
 pub use recovery::{derive_master_key_for_tenant, RecoveryPhrase, PHRASE_ENTROPY_BITS};
 pub use signer::{verify, Signer, SigningError, VerifyingKey};
+pub use vault::{vault_handle, DeviceKey, SessionVault, WrappedMasterKey};
 
 #[derive(thiserror::Error, Debug)]
 pub enum CryptoError {
