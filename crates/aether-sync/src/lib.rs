@@ -20,11 +20,15 @@
 //! algorithm, conflict handlers, and Automerge integration land in PR #2.
 
 pub mod hlc;
+pub mod local_reconciler;
 pub mod outbox;
 pub mod reconcile;
 pub mod sqlite_outbox;
 
 pub use hlc::{HlcError, HlcGenerator, SystemClock, WallClock};
+pub use local_reconciler::LocalReconciler;
 pub use outbox::{Op, Outbox, OutboxEntry, OutboxError};
-pub use reconcile::{Conflict, ConflictPolicy, Reconciler, ReconcilerError};
+pub use reconcile::{
+    policy_for, Conflict, ConflictPolicy, PushResult, Reconciler, ReconcilerError,
+};
 pub use sqlite_outbox::SqliteOutbox;
