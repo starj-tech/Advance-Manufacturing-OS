@@ -74,6 +74,7 @@ subtle = "2"
 rand_core = { version = "0.6", features = ["std"] }
 getrandom = "0.2"
 zeroize = { version = "1", features = ["derive"] }
+bip39 = { version = "2", default-features = false, features = ["std"] }
 
 # Identifiers + time
 uuid = { version = "1", features = ["v4", "v7", "serde"] }

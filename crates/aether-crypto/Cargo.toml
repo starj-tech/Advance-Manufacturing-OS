@@ -17,6 +17,8 @@ hmac = { workspace = true }
 subtle = { workspace = true }
 rand_core = { workspace = true }
 zeroize = { workspace = true }
+bip39 = { workspace = true }
+uuid = { workspace = true }
 thiserror = { workspace = true }
 serde = { workspace = true }
 tracing = { workspace = true }
