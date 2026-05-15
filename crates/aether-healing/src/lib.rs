@@ -16,9 +16,13 @@
 //! (sync rebuild, log compaction, version rollback) ship with PR #5.
 
 pub mod diagnosis;
+pub mod dispatcher;
 pub mod ledger;
 pub mod policy;
+pub mod sync_stuck;
 
 pub use diagnosis::{Diagnosis, Healer, HealerError, Symptom};
-pub use ledger::{HealingEvent, HealingLedger};
+pub use dispatcher::Dispatcher;
+pub use ledger::{HealingEvent, HealingLedger, HealingOutcome};
 pub use policy::HealingPolicy;
+pub use sync_stuck::SyncStuckHealer;
