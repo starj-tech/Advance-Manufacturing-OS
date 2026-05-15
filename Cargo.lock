@@ -263,6 +263,7 @@ name = "aether-sync"
 version = "0.1.0"
 dependencies = [
  "aether-core",
+ "aether-crypto",
  "aether-db",
  "async-trait",
  "chrono",
