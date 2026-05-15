@@ -20,6 +20,8 @@ chrono = { workspace = true }
 uuid = { workspace = true }
 uhlc = { workspace = true }
 automerge = { workspace = true }
+reqwest = { workspace = true }
 
 [dev-dependencies]
 proptest = { workspace = true }
+wiremock = { workspace = true }

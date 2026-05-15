@@ -52,7 +52,7 @@ pub enum ReconcilerError {
 /// `LocalReconciler`, `sync_changes.id BIGSERIAL` for the future
 /// Supabase impl). The HLC inside each entry is still used for LWW
 /// conflict resolution but is no longer the pull cursor.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct PullResult {
     pub entries: Vec<OutboxEntry>,
     pub next_cursor: Option<String>,
