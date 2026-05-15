@@ -165,11 +165,56 @@ impl Reconciler for LocalReconciler {
                         accepted.push(entry.op_id.clone());
                     }
                 }
-                ConflictPolicy::AutomergeMerge | ConflictPolicy::ServerTransition => {
-                    // Both require domain logic that lives outside this
-                    // in-memory test reconciler — wired in PR #2
-                    // production slice. Fall back to LWW so the surface
-                    // is exercised.
+                ConflictPolicy::AutomergeMerge => {
+                    // CRDT merge: the new payload is a saved Automerge
+                    // document. If a row already exists, merge the two
+                    // documents and store the converged result so
+                    // future readers see all edits. First write skips
+                    // the merge step.
+                    //
+                    // The HLC of the stored entry is the max of the two
+                    // sides so the LWW comparison stays monotonic when
+                    // an Automerge entity later gets misclassified or
+                    // a non-Automerge entity is layered on top.
+                    if let Some(cur) = state.current.get(&key).cloned() {
+                        match crate::automerge_merge::merge_documents(&cur.payload, &entry.payload)
+                        {
+                            Ok(merged_bytes) => {
+                                let mut merged = entry.clone();
+                                merged.payload = merged_bytes;
+                                if cur.hlc_ts > merged.hlc_ts {
+                                    merged.hlc_ts = cur.hlc_ts;
+                                }
+                                state.current.insert(key, merged.clone());
+                                append(&mut state, &merged);
+                                accepted.push(entry.op_id.clone());
+                            }
+                            Err(_) => {
+                                // Either side failed to decode as
+                                // Automerge. Surface as a conflict so
+                                // the UI can ask the user — silently
+                                // dropping a BOM edit would be worse
+                                // than visible failure.
+                                conflicts.push(Conflict {
+                                    entity: entry.entity.clone(),
+                                    entity_id: entry.entity_id.clone(),
+                                    local: entry.clone(),
+                                    remote: cur,
+                                    policy,
+                                });
+                            }
+                        }
+                    } else {
+                        state.current.insert(key, entry.clone());
+                        append(&mut state, entry);
+                        accepted.push(entry.op_id.clone());
+                    }
+                }
+                ConflictPolicy::ServerTransition => {
+                    // State-machine transitions need domain logic
+                    // (`current_state == from`?) that lives in the
+                    // production Supabase reconciler. Falls back to
+                    // LWW here so the test surface is still exercised.
                     let should_apply = state
                         .current
                         .get(&key)
@@ -381,5 +426,133 @@ mod tests {
         // r2 shares the same underlying state — both clients in tests
         // see the same server.
         assert_eq!(r2.row_count(), 1);
+    }
+
+    /// Build an initial BOM document — one part, default actor. The
+    /// returned bytes are the "base" each client edits independently.
+    fn initial_bom() -> Vec<u8> {
+        use automerge::transaction::Transactable;
+        use automerge::{AutoCommit, ObjType, ROOT};
+        let mut doc = AutoCommit::new();
+        let parts = doc.put_object(ROOT, "parts", ObjType::List).unwrap();
+        let part = doc.insert_object(&parts, 0, ObjType::Map).unwrap();
+        doc.put(&part, "sku", "PART-INITIAL").unwrap();
+        doc.put(&part, "qty", 1_i64).unwrap();
+        doc.save()
+    }
+
+    /// Load a BOM, set the actor, append a new part at the end, save.
+    /// Simulates one client's local edit on a shared base — exactly
+    /// what happens when Alice and Bob both pull and edit independently.
+    fn append_part(base: &[u8], actor: u8, sku: &str, qty: i64) -> Vec<u8> {
+        use automerge::transaction::Transactable;
+        use automerge::{AutoCommit, ObjType, ReadDoc, ROOT};
+        let mut doc = AutoCommit::load(base).unwrap();
+        doc.set_actor(automerge::ActorId::from(&[actor; 16][..]));
+        let parts: automerge::ObjId = match doc.get(ROOT, "parts").unwrap().unwrap() {
+            (automerge::Value::Object(_), id) => id,
+            _ => panic!("expected list at parts"),
+        };
+        let len = doc.length(&parts);
+        let part = doc.insert_object(&parts, len, ObjType::Map).unwrap();
+        doc.put(&part, "sku", sku).unwrap();
+        doc.put(&part, "qty", qty).unwrap();
+        doc.save()
+    }
+
+    #[tokio::test]
+    async fn automerge_bom_merges_concurrent_edits() {
+        // Headline CRDT property through the reconciler: two clients
+        // pull the same base BOM, each adds a different part locally
+        // without seeing the other, both push. The reconciler merges
+        // and the stored row carries all three parts (initial + both
+        // additions).
+        use automerge::{AutoCommit, ReadDoc, ROOT};
+
+        let r = LocalReconciler::new();
+
+        // Step 1: someone seeds the BOM with the initial part.
+        let base = initial_bom();
+        let mut seed = entry("op-seed", "boms", "bom-rev1", Hlc::new(1, 0, "node-seed"));
+        seed.payload = base.clone();
+        let res = r.push(&[seed]).await.unwrap();
+        assert_eq!(res.accepted, vec!["op-seed"]);
+
+        // Step 2: Alice and Bob each load the base and add their own
+        // part. Crucially neither sees the other's addition.
+        let alice_bytes = append_part(&base, 0xAA, "PART-ALICE", 5);
+        let bob_bytes = append_part(&base, 0xBB, "PART-BOB", 7);
+
+        let mut alice_entry = entry("op-alice", "boms", "bom-rev1", Hlc::new(10, 0, "node-a"));
+        alice_entry.payload = alice_bytes;
+        let mut bob_entry = entry("op-bob", "boms", "bom-rev1", Hlc::new(20, 0, "node-b"));
+        bob_entry.payload = bob_bytes;
+
+        let res_a = r.push(&[alice_entry]).await.unwrap();
+        assert_eq!(res_a.accepted, vec!["op-alice"]);
+        assert!(res_a.conflicts.is_empty());
+
+        let res_b = r.push(&[bob_entry]).await.unwrap();
+        assert_eq!(
+            res_b.accepted,
+            vec!["op-bob"],
+            "Bob's concurrent edit is accepted, not flagged as conflict"
+        );
+        assert!(
+            res_b.conflicts.is_empty(),
+            "BOM policy is AutomergeMerge, not RejectAndSurface"
+        );
+
+        // The stored row carries the merged document with all 3 parts.
+        let stored = r.current("boms", "bom-rev1").unwrap();
+        let doc = AutoCommit::load(&stored.payload).unwrap();
+        let parts_id: automerge::ObjId = match doc.get(ROOT, "parts").unwrap().unwrap() {
+            (automerge::Value::Object(_), id) => id,
+            _ => panic!("expected list at parts"),
+        };
+        let len = doc.length(&parts_id);
+        assert_eq!(len, 3, "merge preserved initial + both clients' additions");
+
+        let mut skus: Vec<String> = Vec::new();
+        for i in 0..len {
+            let item = match doc.get(&parts_id, i).unwrap().unwrap() {
+                (automerge::Value::Object(_), id) => id,
+                _ => panic!("expected map"),
+            };
+            let (sku, _) = doc.get(&item, "sku").unwrap().unwrap();
+            skus.push(sku.into_string().unwrap().to_string());
+        }
+        skus.sort();
+        assert_eq!(skus, vec!["PART-ALICE", "PART-BOB", "PART-INITIAL"]);
+
+        // All three pushes appended to the log so a third client can
+        // pull and catch up. Each accepted entry contributes a row.
+        assert_eq!(r.log_len(), 3);
+    }
+
+    #[tokio::test]
+    async fn automerge_corrupt_payload_surfaces_conflict() {
+        // If an incoming BOM payload isn't valid Automerge bytes (a
+        // version-skew bug, or someone dropped raw JSON in the wrong
+        // queue), the reconciler refuses to silently drop the existing
+        // doc. It surfaces the conflict so the UI can flag it for
+        // engineering review.
+        let r = LocalReconciler::new();
+
+        let valid = initial_bom();
+        let mut first = entry("op-1", "boms", "bom-x", Hlc::new(1, 0, "node-a"));
+        first.payload = valid;
+        r.push(&[first]).await.unwrap();
+
+        let mut bad = entry("op-2", "boms", "bom-x", Hlc::new(2, 0, "node-b"));
+        bad.payload = vec![0xFF; 16]; // garbage, not Automerge
+        let res = r.push(&[bad]).await.unwrap();
+
+        assert!(res.accepted.is_empty(), "corrupt push must not be accepted");
+        assert_eq!(res.conflicts.len(), 1);
+        assert_eq!(res.conflicts[0].policy, ConflictPolicy::AutomergeMerge);
+        // Stored row is still the valid one, untouched.
+        let cur = r.current("boms", "bom-x").unwrap();
+        assert_eq!(cur.op_id, "op-1");
     }
 }

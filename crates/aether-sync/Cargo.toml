@@ -19,6 +19,7 @@ tracing = { workspace = true }
 chrono = { workspace = true }
 uuid = { workspace = true }
 uhlc = { workspace = true }
+automerge = { workspace = true }
 
 [dev-dependencies]
 proptest = { workspace = true }

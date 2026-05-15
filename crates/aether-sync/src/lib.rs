@@ -20,6 +20,7 @@
 //! algorithm, conflict handlers, and Automerge integration land in PR #2.
 
 pub mod applier;
+pub mod automerge_merge;
 pub mod engine;
 pub mod hlc;
 pub mod local_reconciler;
@@ -29,6 +30,7 @@ pub mod reconcile;
 pub mod sqlite_outbox;
 
 pub use applier::{Applier, ApplierError, ApplyOutcome, MemoryApplier};
+pub use automerge_merge::{merge_documents, MergeError};
 pub use engine::{EngineError, PullStats, PushStats, SyncEngine};
 pub use hlc::{HlcError, HlcGenerator, SystemClock, WallClock};
 pub use local_reconciler::LocalReconciler;
