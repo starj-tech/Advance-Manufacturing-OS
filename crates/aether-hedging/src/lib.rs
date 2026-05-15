@@ -14,11 +14,13 @@
 pub mod feed;
 pub mod forecast;
 pub mod fx;
+pub mod http_feed;
 pub mod model;
 pub mod recommend;
 
 pub use feed::{CommodityFeed, FeedError, PriceObservation};
 pub use forecast::{Forecast, ForecastModel, SmaForecast};
 pub use fx::{FxError, FxRateProvider, StaticFxRates};
+pub use http_feed::HttpCommodityFeed;
 pub use model::{Commodity, MaterialExposure};
 pub use recommend::{recommend, recommend_with, HedgeAction, HedgeRecommendation, MovingAvgWindow};

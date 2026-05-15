@@ -27,6 +27,24 @@ impl Commodity {
         }
     }
 
+    /// Reverse of [`ticker`] — used by the HTTP feed when decoding
+    /// observations whose only commodity identifier is the ticker
+    /// string. Returns `None` for unrecognized tickers (the caller
+    /// usually skips that row rather than failing the whole batch).
+    pub fn from_ticker(s: &str) -> Option<Self> {
+        match s {
+            "HRC" => Some(Commodity::SteelHrc),
+            "ALI" => Some(Commodity::Aluminum),
+            "HG" => Some(Commodity::Copper),
+            "PP" => Some(Commodity::Polypropylene),
+            "BZ" => Some(Commodity::Brent),
+            "NG" => Some(Commodity::NaturalGas),
+            "LITH" => Some(Commodity::Lithium),
+            "CO" => Some(Commodity::Cobalt),
+            _ => None,
+        }
+    }
+
     pub fn unit(&self) -> &'static str {
         match self {
             Commodity::SteelHrc => "USD/MT",
@@ -55,22 +73,50 @@ pub struct MaterialExposure {
 mod tests {
     use super::*;
 
+    /// The complete catalog. Centralised so the test below and any
+    /// future enum-exhaustive test consult the same list.
+    const ALL_COMMODITIES: &[Commodity] = &[
+        Commodity::SteelHrc,
+        Commodity::Aluminum,
+        Commodity::Copper,
+        Commodity::Polypropylene,
+        Commodity::Brent,
+        Commodity::NaturalGas,
+        Commodity::Lithium,
+        Commodity::Cobalt,
+    ];
+
     #[test]
     fn tickers_are_distinct() {
-        let cs = [
-            Commodity::SteelHrc,
-            Commodity::Aluminum,
-            Commodity::Copper,
-            Commodity::Polypropylene,
-            Commodity::Brent,
-            Commodity::NaturalGas,
-            Commodity::Lithium,
-            Commodity::Cobalt,
-        ];
-        let mut tickers: Vec<&'static str> = cs.iter().map(|c| c.ticker()).collect();
+        let mut tickers: Vec<&'static str> = ALL_COMMODITIES.iter().map(|c| c.ticker()).collect();
         tickers.sort_unstable();
         let len_before = tickers.len();
         tickers.dedup();
         assert_eq!(len_before, tickers.len());
+    }
+
+    #[test]
+    fn ticker_round_trips_through_from_ticker_for_every_commodity() {
+        // Property: ticker() and from_ticker() are mutual inverses for
+        // every variant. If anyone adds a new Commodity, this test
+        // breaks until they wire both directions.
+        for c in ALL_COMMODITIES {
+            let t = c.ticker();
+            assert_eq!(
+                Commodity::from_ticker(t),
+                Some(*c),
+                "round-trip broken for {c:?} (ticker={t})"
+            );
+        }
+    }
+
+    #[test]
+    fn from_ticker_rejects_unknown_strings() {
+        // Unknown tickers must not silently map onto a default
+        // Commodity — that's how an "ALU" typo would land copper
+        // prices into the aluminum bucket.
+        assert_eq!(Commodity::from_ticker(""), None);
+        assert_eq!(Commodity::from_ticker("ALU"), None);
+        assert_eq!(Commodity::from_ticker("hrc"), None, "case-sensitive");
     }
 }

@@ -20,6 +20,17 @@ pub enum FeedError {
     Network(String),
     #[error("rate limited")]
     RateLimited,
+    /// Response was reachable but the body couldn't be parsed as the
+    /// expected wire shape. Distinct from `Network` so callers can
+    /// distinguish "the link is dead" from "the upstream API changed".
+    #[error("decode: {0}")]
+    Decode(String),
+    /// An observation was carried in a currency the FxRateProvider
+    /// doesn't know. Surfaces explicitly rather than silently
+    /// dropping the row — a missing FX rate is a data-quality alarm,
+    /// not a benign anomaly.
+    #[error("fx: {0}")]
+    Fx(String),
     #[error("not implemented: {0}")]
     NotImplemented(&'static str),
 }
