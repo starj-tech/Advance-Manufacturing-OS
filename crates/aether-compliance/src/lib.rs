@@ -16,12 +16,22 @@
 //! probe trait. Real probes (and the LLM-assisted "explain why this
 //! failed" surface) ship in PR #6.
 
+pub mod audit_immutable_probe;
 pub mod catalog;
 pub mod control;
+pub mod encryption_probe;
+pub mod evidence;
+pub mod incident_log_probe;
 pub mod report;
+pub mod runner;
 pub mod standard;
 
+pub use audit_immutable_probe::AuditTrailImmutableProbe;
 pub use catalog::CATALOG;
 pub use control::{ControlPoint, Probe, ProbeError, Verdict};
-pub use report::{ComplianceReport, OverallStatus};
+pub use encryption_probe::EncryptionAtRestProbe;
+pub use evidence::{EvidenceError, EvidenceSource, MockEvidenceSource, OpenIncident};
+pub use incident_log_probe::IncidentLogProbe;
+pub use report::{ChainError, ChainedVerdict, ComplianceReport, ControlVerdict, OverallStatus};
+pub use runner::ProbeRunner;
 pub use standard::{ComplianceStandard, StandardKind};
