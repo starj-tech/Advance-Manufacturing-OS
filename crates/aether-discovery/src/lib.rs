@@ -14,19 +14,24 @@
 //! local network — anything sent to Supabase is the user's explicit
 //! "save discovered device" action.
 //!
-//! ## Skeleton scope
-//! This PR ships the probe trait surface, the orchestrator, and the
-//! result types. Real network probing wires up in PR #3 alongside the
-//! OPC-UA / MQTT bridges.
+//! ## Implementation status
+//! Phase 1: TCP-knock per protocol (port-open evidence + protocol-kind
+//! tagging) + CIDR-iterating Scanner with concurrency limit + fingerprint
+//! dedup. Phase 2 (PR #3): vendor-fingerprint exchanges layered on top
+//! (OPC-UA `find_servers`, Modbus 0x2B/0x0E Read Device Identification,
+//! CIP List Identity).
 
+pub mod cidr;
 pub mod probe;
 pub mod result;
 pub mod scanner;
 pub mod suggestion;
 
+pub use cidr::{expand_cidr, CidrError, MAX_HOSTS};
 pub use probe::{
     DiscoveryProbe, EthernetIpProbe, ModbusProbe, MqttProbe, OpcUaProbe, ProbeError, ProbeKind,
+    DEFAULT_PROBE_TIMEOUT,
 };
 pub use result::{DiscoveredDevice, VendorMetadata};
-pub use scanner::{ScanRequest, Scanner};
+pub use scanner::{ScanError, ScanRequest, Scanner};
 pub use suggestion::{Confidence, SuggestedBinding};
