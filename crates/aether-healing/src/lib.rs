@@ -15,14 +15,20 @@
 //! Trait surface, types, and a `NoopHealer` test impl. Real healers
 //! (sync rebuild, log compaction, version rollback) ship with PR #5.
 
+pub mod bridge_reconnect;
 pub mod diagnosis;
 pub mod dispatcher;
 pub mod ledger;
 pub mod policy;
+pub mod sqlite_corruption;
 pub mod sync_stuck;
+pub mod telemetry_overflow;
 
+pub use bridge_reconnect::BridgeReconnectHealer;
 pub use diagnosis::{Diagnosis, Healer, HealerError, Symptom};
 pub use dispatcher::Dispatcher;
 pub use ledger::{HealingEvent, HealingLedger, HealingOutcome};
 pub use policy::HealingPolicy;
+pub use sqlite_corruption::SqliteCorruptionHealer;
 pub use sync_stuck::SyncStuckHealer;
+pub use telemetry_overflow::TelemetryOverflowHealer;
