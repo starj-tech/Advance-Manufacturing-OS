@@ -233,9 +233,28 @@ mod tests {
     fn debug_does_not_leak_phrase() {
         let p = RecoveryPhrase::generate().unwrap();
         let dbg = format!("{p:?}");
-        assert!(dbg.contains("***"));
-        for word in p.display().split_whitespace() {
-            assert!(!dbg.contains(word), "Debug leaked word `{word}`");
+        assert!(dbg.contains("***"), "phrase data must be redacted");
+
+        // The canonical 24-word string MUST NOT appear in the Debug
+        // output. We can't check word-by-word because BIP39 words like
+        // `very` and `word` legitimately occur as substrings of the
+        // Debug struct name and field labels ("RecoveryPhrase",
+        // "word_count"), producing a flaky false-positive ~1% of runs.
+        // The full phrase string is what an attacker could meaningfully
+        // exfiltrate from a Debug log.
+        let phrase = p.display();
+        assert!(
+            !dbg.contains(phrase.as_str()),
+            "Debug leaked the full phrase"
+        );
+
+        // Stronger: any two adjacent phrase words appearing together
+        // would still be a partial leak. Redaction must collapse the
+        // whole sequence, so no bigram survives.
+        let words: Vec<&str> = phrase.split_whitespace().collect();
+        for pair in words.windows(2) {
+            let bigram = format!("{} {}", pair[0], pair[1]);
+            assert!(!dbg.contains(&bigram), "Debug leaked bigram `{bigram}`");
         }
     }
 }

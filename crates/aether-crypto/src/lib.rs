@@ -19,6 +19,7 @@
 pub mod aead;
 pub mod blind_index;
 pub mod derive;
+pub mod envelope;
 pub mod kdf;
 pub mod keystore;
 pub mod recovery;
@@ -28,6 +29,7 @@ pub mod vault;
 pub use aead::{decrypt, encrypt, Ciphertext, Nonce, AEAD_KEY_LEN};
 pub use blind_index::{BlindIndex, BlindIndexKey};
 pub use derive::{SubKey, SUBKEY_LEN};
+pub use envelope::{open, seal};
 pub use kdf::{derive_master_key, MasterKey, ARGON2_MEM_KIB, ARGON2_PARALLELISM, ARGON2_TIME_COST};
 pub use keystore::{KeyHandle, Keystore, MemoryKeystore};
 pub use recovery::{derive_master_key_for_tenant, RecoveryPhrase, PHRASE_ENTROPY_BITS};
