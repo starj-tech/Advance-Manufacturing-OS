@@ -19,6 +19,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "aether-actuators"
+version = "0.1.0"
+dependencies = [
+ "aether-core",
+ "aether-safety",
+ "async-trait",
+ "chrono",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tokio",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
 name = "aether-compliance"
 version = "0.1.0"
 dependencies = [

@@ -51,6 +51,18 @@ id_newtype!(MachineId, "Identifier for a manufacturing machine.");
 id_newtype!(WorkOrderId, "Identifier for a work order.");
 id_newtype!(MaterialId, "Identifier for a material/SKU.");
 id_newtype!(ModuleId, "Identifier for an installed module.");
+id_newtype!(
+    CameraId,
+    "Identifier for a machine-vision camera (inspection station, line-side, mobile)."
+);
+id_newtype!(
+    RobotId,
+    "Identifier for a controllable robot (arm, AGV, AMR)."
+);
+id_newtype!(
+    ActuatorId,
+    "Identifier for any controllable hardware actuator — superset of camera/robot."
+);
 
 /// Generic ULID-style entity identifier serialized as a string.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize)]

@@ -9,5 +9,8 @@ pub mod ids;
 pub mod time;
 
 pub use error::{Error, Result};
-pub use ids::{EntityId, MachineId, MaterialId, ModuleId, TenantId, UserId, WorkOrderId};
+pub use ids::{
+    ActuatorId, CameraId, EntityId, MachineId, MaterialId, ModuleId, RobotId, TenantId, UserId,
+    WorkOrderId,
+};
 pub use time::Hlc;
