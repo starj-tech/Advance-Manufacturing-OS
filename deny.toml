@@ -30,10 +30,10 @@ ignore = [
     "RUSTSEC-2025-0100",
     # proc-macro-error: pulled transitively, no upstream replacement yet
     "RUSTSEC-2024-0370",
-    # rsa Marvin attack: pulled by sqlx-mysql even though we only use SQLite.
-    # No fixed upgrade available; revisit when sqlx prunes the mysql backend
-    # from default macro features.
-    "RUSTSEC-2023-0071",
+    # fxhash: unmaintained, pulled transitively via automerge. No safe
+    # upgrade available (automerge has not switched to rustc-hash yet).
+    # Revisit when automerge bumps.
+    "RUSTSEC-2025-0057",
 ]
 
 [licenses]
