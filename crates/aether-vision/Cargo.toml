@@ -9,6 +9,7 @@ authors.workspace = true
 [dependencies]
 aether-core = { path = "../aether-core" }
 aether-actuators = { path = "../aether-actuators" }
+aether-crypto = { path = "../aether-crypto" }
 async-trait = { workspace = true }
 tokio = { workspace = true }
 tracing = { workspace = true }
