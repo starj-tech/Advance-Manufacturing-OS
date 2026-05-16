@@ -20,6 +20,7 @@ members = [
     "crates/aether-compliance",
     "crates/aether-actuators",
     "crates/aether-vision",
+    "crates/aether-robotics",
     "tools/opcua-mock-server",
     "tools/module-signer-cli",
 ]
@@ -89,6 +90,9 @@ proptest = "1"
 
 # CRDT
 automerge = "0.5"
+
+# Robotics math (SE(3) transforms, kinematics)
+nalgebra = "0.33"
 
 # Industrial protocols
 opcua = { version = "0.13", default-features = false, features = ["client"] }
