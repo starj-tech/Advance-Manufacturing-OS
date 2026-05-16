@@ -33,6 +33,7 @@
 pub mod camera;
 pub mod frame;
 pub mod inference;
+pub mod pipeline;
 pub mod privacy;
 pub mod sealer;
 pub mod threshold_detector;
@@ -40,6 +41,9 @@ pub mod threshold_detector;
 pub use camera::{Camera, CameraCapabilities, MockCamera};
 pub use frame::{Frame, FrameId, PixelFormat};
 pub use inference::{BoundingBox, Defect, DefectDetector, DetectorError};
+pub use pipeline::{
+    InspectionEvent, InspectionLedger, InspectionPipeline, InspectionResult, PipelineError,
+};
 pub use privacy::PrivacyClass;
 pub use sealer::{CryptoSealer, FrameSealer, MockSealer, SealError, MOCK_SEAL_PREFIX};
 pub use threshold_detector::{
