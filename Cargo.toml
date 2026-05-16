@@ -19,6 +19,7 @@ members = [
     "crates/aether-industry",
     "crates/aether-compliance",
     "crates/aether-actuators",
+    "crates/aether-vision",
     "tools/opcua-mock-server",
     "tools/module-signer-cli",
 ]
