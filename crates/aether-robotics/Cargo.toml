@@ -21,3 +21,4 @@ nalgebra = { workspace = true }
 
 [dev-dependencies]
 aether-safety = { path = "../aether-safety" }
+proptest = { workspace = true }

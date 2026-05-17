@@ -38,10 +38,14 @@
 //! bugs that surface six months in when a customer's wrist crosses
 //! a gimbal lock. Use the library that knows.
 
+pub mod arm;
 pub mod joint;
 pub mod pose;
 pub mod robot;
 
+pub use arm::{
+    default_arm_limits, forward_kinematics, inverse_kinematics, MockArm, ARM_JOINT_COUNT,
+};
 pub use joint::{JointAngles, JointLimitError, JointLimits};
 pub use pose::Pose;
 pub use robot::RobotController;
