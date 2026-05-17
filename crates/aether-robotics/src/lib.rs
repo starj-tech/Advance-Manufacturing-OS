@@ -27,9 +27,13 @@
 //!     gating on `MoveJoint`/`MoveLinear`, `MockArm` for tests.
 //!   * V7 — `agv/` module with waypoint navigation + `Route` /
 //!     `RouteStatus`.
-//!   * V8 — `estop` module wiring `EstopSignal` (tokio watch
+//!   * V8 — `estop` module wires `EstopSignal` (tokio watch
 //!     channel) into the Actuator dispatch path for universal
-//!     preemption.
+//!     preemption. `dispatch_with_estop(actuator, cmd, permit,
+//!     signal)` is the production entrypoint — it refuses up-front
+//!     if already tripped, otherwise races the dispatch against the
+//!     trip future via `tokio::select! { biased; ... }` so the stop
+//!     wins ties. Manual clear only (ISO 13849 / IEC 62061).
 //!
 //! ## Why nalgebra and not a hand-rolled SE(3)
 //! Two minutes of `Isometry3::from_parts(translation, rotation)`
@@ -40,6 +44,7 @@
 
 pub mod agv;
 pub mod arm;
+pub mod estop;
 pub mod joint;
 pub mod pose;
 pub mod robot;
@@ -50,6 +55,7 @@ pub use agv::{
 pub use arm::{
     default_arm_limits, forward_kinematics, inverse_kinematics, MockArm, ARM_JOINT_COUNT,
 };
+pub use estop::{dispatch_with_estop, EstopReceiver, EstopSignal};
 pub use joint::{JointAngles, JointLimitError, JointLimits};
 pub use pose::Pose;
 pub use robot::RobotController;
