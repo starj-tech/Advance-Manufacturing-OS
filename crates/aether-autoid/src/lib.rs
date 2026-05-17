@@ -46,10 +46,14 @@
 //! consumes the UID as input. This crate is read-side only —
 //! authorization happens at the layer above.
 
+pub mod handler;
 pub mod mock;
+pub mod pipeline;
 pub mod scan;
 pub mod scanner;
 
+pub use handler::{HandlerAction, HandlerError, HandlerOutcome, ScanHandler};
 pub use mock::{MockScanner, ScanQueueError};
+pub use pipeline::{PipelineError, ScanEvent, ScanLedger, ScanPipeline, ScanResult};
 pub use scan::{ScanClass, ScannedPayload};
 pub use scanner::Scanner;
