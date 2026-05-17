@@ -75,6 +75,10 @@ id_newtype!(
     HmiId,
     "Identifier for an HMI surface (touchscreen / rugged tablet / smart glasses / pendant)."
 );
+id_newtype!(
+    GatewayId,
+    "Identifier for an IIoT gateway / edge server / protocol bridge."
+);
 
 /// Generic ULID-style entity identifier serialized as a string.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize)]
