@@ -63,6 +63,10 @@ id_newtype!(
     ActuatorId,
     "Identifier for any controllable hardware actuator — superset of camera/robot."
 );
+id_newtype!(
+    ScannerId,
+    "Identifier for an auto-id scanner (barcode / QR / RFID / NFC)."
+);
 
 /// Generic ULID-style entity identifier serialized as a string.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize)]

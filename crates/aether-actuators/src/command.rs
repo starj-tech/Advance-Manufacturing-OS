@@ -33,6 +33,13 @@ pub enum CommandKind {
     MoveLinear,
     DispatchJob,
     Halt,
+    /// V11: scan a barcode / QR / RFID / NFC token. The auto-id
+    /// hardware reports the decoded payload + class via
+    /// `ActuatorResult.data`. Distinct from `Capture` because the
+    /// return shape is a structured payload, not an image — and
+    /// because a camera-based QR scan and an RFID antenna read
+    /// have to share one command surface.
+    Scan,
 }
 
 impl CommandKind {
@@ -43,6 +50,7 @@ impl CommandKind {
             CommandKind::MoveLinear => "move-linear",
             CommandKind::DispatchJob => "dispatch-job",
             CommandKind::Halt => "halt",
+            CommandKind::Scan => "scan",
         }
     }
 }
@@ -84,6 +92,27 @@ pub enum ActuatorCommand {
     },
     /// Universal pre-emption — stop now. Every Actuator MUST honor.
     Halt,
+    /// V11: trigger a scan from auto-id hardware (barcode reader,
+    /// QR camera, RFID antenna, NFC pad). `trigger` distinguishes
+    /// operator-pulled (Manual), software-driven cycle (Auto), and
+    /// background continuous (Continuous) reads. Scanners not in
+    /// continuous mode reject `Continuous`; fixed-mode industrial
+    /// readers reject `Manual`.
+    Scan { trigger: ScanTrigger },
+}
+
+/// How the scan was initiated. Shapes the scanner's behavior:
+/// `Manual` triggers a single one-shot read on an interactive
+/// device (handheld scanner trigger pull); `Auto` is software-
+/// driven (a workflow step requests a confirmation scan); a
+/// `Continuous` mode reader (fixed industrial antenna) starts /
+/// remains in always-on mode.
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum ScanTrigger {
+    Manual,
+    Auto,
+    Continuous,
 }
 
 impl ActuatorCommand {
@@ -94,6 +123,7 @@ impl ActuatorCommand {
             ActuatorCommand::MoveLinear { .. } => CommandKind::MoveLinear,
             ActuatorCommand::DispatchJob { .. } => CommandKind::DispatchJob,
             ActuatorCommand::Halt => CommandKind::Halt,
+            ActuatorCommand::Scan { .. } => CommandKind::Scan,
         }
     }
 }
@@ -125,6 +155,7 @@ mod tests {
             CommandKind::MoveLinear,
             CommandKind::DispatchJob,
             CommandKind::Halt,
+            CommandKind::Scan,
         ];
         let mut slugs: Vec<&'static str> = kinds.iter().map(|k| k.slug()).collect();
         slugs.sort_unstable();
@@ -135,6 +166,34 @@ mod tests {
             assert!(!s.contains('_'), "kebab-case: {s}");
             assert_eq!(s.to_lowercase(), **s, "lowercase: {s}");
         }
+    }
+
+    #[test]
+    fn scan_variant_round_trips_through_serde() {
+        // V11: pin the wire format for the new Scan variant.
+        let cmd = ActuatorCommand::Scan {
+            trigger: ScanTrigger::Manual,
+        };
+        let s = serde_json::to_string(&cmd).unwrap();
+        assert!(s.contains("\"kind\":\"scan\""));
+        assert!(s.contains("\"trigger\":\"manual\""));
+        let back: ActuatorCommand = serde_json::from_str(&s).unwrap();
+        assert_eq!(back, cmd);
+        assert_eq!(cmd.kind(), CommandKind::Scan);
+        assert_eq!(cmd.kind().slug(), "scan");
+    }
+
+    #[test]
+    fn scan_trigger_serde_matches_kebab_case() {
+        // Wire format pinned — Edge Functions and frontend
+        // pattern-match on the kebab values, so renames here are
+        // cross-stack breakage.
+        let manual = serde_json::to_string(&ScanTrigger::Manual).unwrap();
+        let auto = serde_json::to_string(&ScanTrigger::Auto).unwrap();
+        let cont = serde_json::to_string(&ScanTrigger::Continuous).unwrap();
+        assert_eq!(manual, "\"manual\"");
+        assert_eq!(auto, "\"auto\"");
+        assert_eq!(cont, "\"continuous\"");
     }
 
     #[test]

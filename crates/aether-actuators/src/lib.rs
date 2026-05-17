@@ -46,6 +46,6 @@ pub mod gate;
 pub mod permit;
 
 pub use actuator::{Actuator, ActuatorError, ActuatorResult, MockActuator};
-pub use command::{ActuatorCommand, CommandKind};
+pub use command::{ActuatorCommand, CommandKind, ScanTrigger};
 pub use gate::{gate, GateError};
 pub use permit::{ActuatorPermit, PermitTtl, DEFAULT_PERMIT_TTL};
