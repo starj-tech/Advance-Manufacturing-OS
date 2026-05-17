@@ -50,6 +50,27 @@ pub enum ProbeKind {
     /// override via `RobotProbe::new().with_port(...)`: KUKA EKI
     /// (54600 typical), FANUC FOCAS (8193), ABB RWS (80/443).
     Robot,
+    /// V16: Auto-ID scanner (V11 category). Default port targets
+    /// LLRP (5084), the EPCglobal standard for UHF RFID readers
+    /// — distinctive enough to keep false-positive surface small.
+    /// Camera-based 2D readers (Cognex Dataman, Honeywell N6603)
+    /// override via `ScannerProbe::new().with_port(80)` for their
+    /// HTTP REST endpoint.
+    Scanner,
+    /// V16: HMI surface (V14 category). Default port targets VNC
+    /// (5900), the most common remote-access port across Siemens
+    /// Comfort Panels, AB PanelView, Schneider Magelis. Web-based
+    /// HMIs override to 80/443; smart-glasses HMT-1 to its pairing
+    /// port. The probe just confirms "something HMI-shaped is on
+    /// the wire here" — the binding wizard does the deeper
+    /// fingerprinting.
+    Hmi,
+    /// V16: IIoT gateway / edge server (V15 category). Default
+    /// port targets 9001, the alternate-HTTP port Moxa UC and
+    /// Advantech UNO management UIs use. eWON Talk2M is on 9000;
+    /// Siemens Industrial Edge on 443. Override via
+    /// `GatewayProbe::new().with_port(...)`.
+    Gateway,
 }
 
 impl ProbeKind {
@@ -61,6 +82,9 @@ impl ProbeKind {
             ProbeKind::EthernetIp => 44818,
             ProbeKind::Vision => 554,
             ProbeKind::Robot => 29999,
+            ProbeKind::Scanner => 5084,
+            ProbeKind::Hmi => 5900,
+            ProbeKind::Gateway => 9001,
         }
     }
 
@@ -75,6 +99,9 @@ impl ProbeKind {
             ProbeKind::EthernetIp => "ethernet-ip",
             ProbeKind::Vision => "vision",
             ProbeKind::Robot => "robot",
+            ProbeKind::Scanner => "scanner",
+            ProbeKind::Hmi => "hmi",
+            ProbeKind::Gateway => "gateway",
         }
     }
 }
@@ -228,6 +255,9 @@ tcp_knock_probe!(ModbusProbe, ProbeKind::Modbus);
 tcp_knock_probe!(EthernetIpProbe, ProbeKind::EthernetIp);
 tcp_knock_probe!(VisionProbe, ProbeKind::Vision);
 tcp_knock_probe!(RobotProbe, ProbeKind::Robot);
+tcp_knock_probe!(ScannerProbe, ProbeKind::Scanner);
+tcp_knock_probe!(HmiProbe, ProbeKind::Hmi);
+tcp_knock_probe!(GatewayProbe, ProbeKind::Gateway);
 
 #[cfg(test)]
 mod tests {
@@ -244,6 +274,11 @@ mod tests {
         // sane defaults. Other vendors override via with_port().
         assert_eq!(ProbeKind::Vision.default_port(), 554);
         assert_eq!(ProbeKind::Robot.default_port(), 29999);
+        // V16 additions: LLRP (scanners) + VNC (HMI remote
+        // access) + alt-HTTP (gateway admin UI).
+        assert_eq!(ProbeKind::Scanner.default_port(), 5084);
+        assert_eq!(ProbeKind::Hmi.default_port(), 5900);
+        assert_eq!(ProbeKind::Gateway.default_port(), 9001);
     }
 
     #[test]
@@ -255,6 +290,9 @@ mod tests {
             ProbeKind::EthernetIp,
             ProbeKind::Vision,
             ProbeKind::Robot,
+            ProbeKind::Scanner,
+            ProbeKind::Hmi,
+            ProbeKind::Gateway,
         ];
         let mut slugs: Vec<&'static str> = kinds.iter().map(|k| k.slug()).collect();
         slugs.sort_unstable();
@@ -280,6 +318,23 @@ mod tests {
         assert_eq!(v, ProbeKind::Vision);
         let r: ProbeKind = serde_json::from_str("\"robot\"").unwrap();
         assert_eq!(r, ProbeKind::Robot);
+    }
+
+    #[test]
+    fn probe_kind_serde_round_trip_for_v16_variants() {
+        // Same wire-format pin for the V16 additions — Scanner,
+        // Hmi, Gateway. Renaming a variant breaks Edge Function
+        // pattern-matches; pin the kebab tags.
+        for (variant, expected) in [
+            (ProbeKind::Scanner, "\"scanner\""),
+            (ProbeKind::Hmi, "\"hmi\""),
+            (ProbeKind::Gateway, "\"gateway\""),
+        ] {
+            let json = serde_json::to_string(&variant).unwrap();
+            assert_eq!(json, expected);
+            let back: ProbeKind = serde_json::from_str(expected).unwrap();
+            assert_eq!(back, variant);
+        }
     }
 
     /// Spawn an in-process TCP listener on 127.0.0.1:0 and return the
@@ -477,5 +532,80 @@ mod tests {
             }
             Err(e) => panic!("unexpected error: {e}"),
         }
+    }
+
+    #[tokio::test]
+    async fn scanner_probe_against_live_port_returns_device() {
+        // V16: LLRP-shaped TCP-knock. Camera-based 2D readers
+        // override the port; the kind tag stays Scanner so
+        // downstream binding wizard handles them uniformly.
+        let port = spawn_open_port().await;
+        let probe = ScannerProbe::new().with_port(port);
+        let dev = probe.probe_host("127.0.0.1", port).await.unwrap();
+        let dev = dev.expect("open port should yield Some(device)");
+        assert_eq!(dev.probe, ProbeKind::Scanner);
+        assert_eq!(dev.fingerprint, format!("127.0.0.1:{port}/scanner"));
+    }
+
+    #[tokio::test]
+    async fn hmi_probe_against_live_port_returns_device() {
+        // V16: VNC default for industrial HMI remote-access.
+        // Web HMIs override to 80/443; smart-glasses HMT-1 to
+        // its pairing port. Probe tag stays Hmi.
+        let port = spawn_open_port().await;
+        let probe = HmiProbe::new().with_port(port);
+        let dev = probe.probe_host("127.0.0.1", port).await.unwrap();
+        let dev = dev.expect("open port should yield Some(device)");
+        assert_eq!(dev.probe, ProbeKind::Hmi);
+        assert_eq!(dev.fingerprint, format!("127.0.0.1:{port}/hmi"));
+    }
+
+    #[tokio::test]
+    async fn gateway_probe_against_live_port_returns_device() {
+        // V16: alt-HTTP default for gateway management UI. eWON
+        // Talk2M (9000), Siemens Industrial Edge (443) override.
+        let port = spawn_open_port().await;
+        let probe = GatewayProbe::new().with_port(port);
+        let dev = probe.probe_host("127.0.0.1", port).await.unwrap();
+        let dev = dev.expect("open port should yield Some(device)");
+        assert_eq!(dev.probe, ProbeKind::Gateway);
+        assert_eq!(dev.fingerprint, format!("127.0.0.1:{port}/gateway"));
+    }
+
+    #[tokio::test]
+    async fn scanner_probe_against_dead_port_returns_none_not_error() {
+        // Closed-port path: Ok(None), not error. Same contract as
+        // the V9 probes — the scanner skips the host rather than
+        // halting the loop.
+        let port = {
+            let l = TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let p = l.local_addr().unwrap().port();
+            drop(l);
+            p
+        };
+        let probe = ScannerProbe::new()
+            .with_port(port)
+            .with_timeout(Duration::from_millis(200));
+        match probe.probe_host("127.0.0.1", port).await {
+            Ok(None) => {}
+            Ok(Some(_)) => {
+                // Rare kernel-reuse race; not a bug.
+            }
+            Err(e) => panic!("unexpected error: {e}"),
+        }
+    }
+
+    #[tokio::test]
+    async fn gateway_probe_with_port_override_targets_vendor_specific_port() {
+        // Industrial gateways come in three vendor-specific
+        // port shapes (Moxa 9001, eWON 9000, Siemens 443).
+        // The override path produces a device tagged Gateway
+        // regardless of port — the binding wizard differentiates
+        // by vendor fingerprint, not by port.
+        let port = spawn_open_port().await;
+        let probe = GatewayProbe::new().with_port(port);
+        assert_eq!(probe.target_port(), port);
+        let dev = probe.probe_host("127.0.0.1", port).await.unwrap().unwrap();
+        assert_eq!(dev.probe, ProbeKind::Gateway);
     }
 }

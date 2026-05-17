@@ -29,8 +29,8 @@ pub mod suggestion;
 
 pub use cidr::{expand_cidr, CidrError, MAX_HOSTS};
 pub use probe::{
-    DiscoveryProbe, EthernetIpProbe, ModbusProbe, MqttProbe, OpcUaProbe, ProbeError, ProbeKind,
-    RobotProbe, VisionProbe, DEFAULT_PROBE_TIMEOUT,
+    DiscoveryProbe, EthernetIpProbe, GatewayProbe, HmiProbe, ModbusProbe, MqttProbe, OpcUaProbe,
+    ProbeError, ProbeKind, RobotProbe, ScannerProbe, VisionProbe, DEFAULT_PROBE_TIMEOUT,
 };
 pub use result::{DiscoveredDevice, VendorMetadata};
 pub use scanner::{ScanError, ScanRequest, Scanner};
