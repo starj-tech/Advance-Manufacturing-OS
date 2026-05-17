@@ -272,6 +272,7 @@ dependencies = [
  "async-trait",
  "chrono",
  "nalgebra",
+ "proptest",
  "serde",
  "serde_json",
  "thiserror 1.0.69",
