@@ -27,6 +27,7 @@ pub mod gateway_sample;
 pub mod hlc;
 pub mod http_reconciler;
 pub mod local_reconciler;
+pub mod operator_event;
 pub mod outbox;
 pub mod payload;
 pub mod reconcile;
@@ -46,6 +47,9 @@ pub use gateway_sample::{
 pub use hlc::{HlcError, HlcGenerator, SystemClock, WallClock};
 pub use http_reconciler::HttpReconciler;
 pub use local_reconciler::LocalReconciler;
+pub use operator_event::{
+    encode_event, EventEncodingError, OperatorEventRecord, OPERATOR_EVENTS_ENTITY,
+};
 pub use outbox::{Op, Outbox, OutboxEntry, OutboxError};
 pub use payload::{decrypt_entry, encrypt_entry, PayloadError};
 pub use reconcile::{
