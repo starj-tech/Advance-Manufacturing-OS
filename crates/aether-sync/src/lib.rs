@@ -23,6 +23,7 @@ pub mod actuator_command;
 pub mod applier;
 pub mod automerge_merge;
 pub mod engine;
+pub mod gateway_sample;
 pub mod hlc;
 pub mod http_reconciler;
 pub mod local_reconciler;
@@ -38,6 +39,10 @@ pub use actuator_command::{
 pub use applier::{Applier, ApplierError, ApplyOutcome, MemoryApplier};
 pub use automerge_merge::{merge_documents, MergeError};
 pub use engine::{EngineError, PullStats, PushStats, SyncEngine};
+pub use gateway_sample::{
+    encode_sample, GatewaySampleRecord, SampleEncodingError, GATEWAY_SAMPLES_ENTITY,
+    MAX_SAMPLE_PAYLOAD_BYTES,
+};
 pub use hlc::{HlcError, HlcGenerator, SystemClock, WallClock};
 pub use http_reconciler::HttpReconciler;
 pub use local_reconciler::LocalReconciler;
