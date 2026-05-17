@@ -37,6 +37,19 @@ pub enum ProbeKind {
     Mqtt,
     Modbus,
     EthernetIp,
+    /// Machine-vision camera. Default port targets RTSP (554) — the
+    /// near-universal streaming endpoint across industrial and
+    /// security cameras (Axis, Hikvision, Basler, Cognex). ONVIF
+    /// devices that don't expose RTSP can be discovered on the
+    /// alternative HTTP port via `VisionProbe::new().with_port(80)`.
+    Vision,
+    /// Robot arm / AGV controller. Default port targets the
+    /// Universal Robots Dashboard (29999) — UR cobots dominate the
+    /// SME-friendly half of the market and the Dashboard service
+    /// has the loosest TCP-knock signature. Other vendors expose
+    /// override via `RobotProbe::new().with_port(...)`: KUKA EKI
+    /// (54600 typical), FANUC FOCAS (8193), ABB RWS (80/443).
+    Robot,
 }
 
 impl ProbeKind {
@@ -46,6 +59,8 @@ impl ProbeKind {
             ProbeKind::Mqtt => 1883,
             ProbeKind::Modbus => 502,
             ProbeKind::EthernetIp => 44818,
+            ProbeKind::Vision => 554,
+            ProbeKind::Robot => 29999,
         }
     }
 
@@ -58,6 +73,8 @@ impl ProbeKind {
             ProbeKind::Mqtt => "mqtt",
             ProbeKind::Modbus => "modbus",
             ProbeKind::EthernetIp => "ethernet-ip",
+            ProbeKind::Vision => "vision",
+            ProbeKind::Robot => "robot",
         }
     }
 }
@@ -209,6 +226,8 @@ tcp_knock_probe!(OpcUaProbe, ProbeKind::OpcUa);
 tcp_knock_probe!(MqttProbe, ProbeKind::Mqtt);
 tcp_knock_probe!(ModbusProbe, ProbeKind::Modbus);
 tcp_knock_probe!(EthernetIpProbe, ProbeKind::EthernetIp);
+tcp_knock_probe!(VisionProbe, ProbeKind::Vision);
+tcp_knock_probe!(RobotProbe, ProbeKind::Robot);
 
 #[cfg(test)]
 mod tests {
@@ -221,6 +240,10 @@ mod tests {
         assert_eq!(ProbeKind::Mqtt.default_port(), 1883);
         assert_eq!(ProbeKind::Modbus.default_port(), 502);
         assert_eq!(ProbeKind::EthernetIp.default_port(), 44818);
+        // V9 additions: RTSP (cameras) + UR Dashboard (cobots) as
+        // sane defaults. Other vendors override via with_port().
+        assert_eq!(ProbeKind::Vision.default_port(), 554);
+        assert_eq!(ProbeKind::Robot.default_port(), 29999);
     }
 
     #[test]
@@ -230,6 +253,8 @@ mod tests {
             ProbeKind::Mqtt,
             ProbeKind::Modbus,
             ProbeKind::EthernetIp,
+            ProbeKind::Vision,
+            ProbeKind::Robot,
         ];
         let mut slugs: Vec<&'static str> = kinds.iter().map(|k| k.slug()).collect();
         slugs.sort_unstable();
@@ -239,6 +264,22 @@ mod tests {
         for s in slugs {
             assert!(!s.contains('_'), "slug `{s}` should use kebab-case");
         }
+    }
+
+    #[test]
+    fn probe_kind_serde_round_trip_for_v9_variants() {
+        // Wire-format pin for the new variants — the kebab-case
+        // serde tag is what Edge Functions and the desktop frontend
+        // pattern-match against, so a typo here is a cross-stack
+        // breakage. Pin both directions explicitly.
+        let vision_json = serde_json::to_string(&ProbeKind::Vision).unwrap();
+        assert_eq!(vision_json, "\"vision\"");
+        let robot_json = serde_json::to_string(&ProbeKind::Robot).unwrap();
+        assert_eq!(robot_json, "\"robot\"");
+        let v: ProbeKind = serde_json::from_str("\"vision\"").unwrap();
+        assert_eq!(v, ProbeKind::Vision);
+        let r: ProbeKind = serde_json::from_str("\"robot\"").unwrap();
+        assert_eq!(r, ProbeKind::Robot);
     }
 
     /// Spawn an in-process TCP listener on 127.0.0.1:0 and return the
@@ -367,5 +408,74 @@ mod tests {
         let probe = EthernetIpProbe::new().with_port(port);
         let dev = probe.probe_host("127.0.0.1", port).await.unwrap().unwrap();
         assert_eq!(dev.fingerprint, format!("127.0.0.1:{port}/ethernet-ip"));
+    }
+
+    #[tokio::test]
+    async fn vision_probe_against_live_port_returns_device() {
+        // V9: same TCP-knock contract as the four PLC probes, but
+        // tagged Vision so the operator sees "camera reachable" in
+        // the UI. RTSP handshake (DESCRIBE + 200 OK) will layer on
+        // top once `aether-vision` ships an ONVIF/RTSP detector;
+        // the TCP-knock is enough to populate the scan UI today.
+        let port = spawn_open_port().await;
+        let probe = VisionProbe::new().with_port(port);
+        let dev = probe.probe_host("127.0.0.1", port).await.unwrap();
+        let dev = dev.expect("open port should yield Some(device)");
+        assert_eq!(dev.probe, ProbeKind::Vision);
+        assert_eq!(dev.host, "127.0.0.1");
+        assert_eq!(dev.port, port);
+        assert_eq!(dev.fingerprint, format!("127.0.0.1:{port}/vision"));
+    }
+
+    #[tokio::test]
+    async fn robot_probe_against_live_port_returns_device() {
+        // V9: matches the UR Dashboard surface in production. Other
+        // cobot vendors override the port via with_port — the kind
+        // tag stays Robot so downstream code (binding wizard,
+        // suggested actuator type) can react the same way regardless
+        // of which vendor we hit.
+        let port = spawn_open_port().await;
+        let probe = RobotProbe::new().with_port(port);
+        let dev = probe.probe_host("127.0.0.1", port).await.unwrap();
+        let dev = dev.expect("open port should yield Some(device)");
+        assert_eq!(dev.probe, ProbeKind::Robot);
+        assert_eq!(dev.fingerprint, format!("127.0.0.1:{port}/robot"));
+    }
+
+    #[tokio::test]
+    async fn robot_probe_with_port_override_targets_kuka_eki_port() {
+        // Most cobot fleets aren't UR. Pin that the override path
+        // produces a device tagged Robot regardless of port — the
+        // operator's CIDR scan of a mixed-vendor cell should yield
+        // the same Robot tag for a KUKA at 54600 and a UR at 29999.
+        let port = spawn_open_port().await;
+        let probe = RobotProbe::new().with_port(port);
+        assert_eq!(probe.target_port(), port);
+        let dev = probe.probe_host("127.0.0.1", port).await.unwrap().unwrap();
+        assert_eq!(dev.probe, ProbeKind::Robot);
+    }
+
+    #[tokio::test]
+    async fn vision_probe_against_dead_port_returns_none_not_error() {
+        // Closed-port path mirrors `mqtt_probe_against_dead_port_…`
+        // — the scanner relies on Ok(None) for "skip this host"
+        // rather than an error, so a transient camera bounce won't
+        // halt the surrounding scan loop.
+        let port = {
+            let l = TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let p = l.local_addr().unwrap().port();
+            drop(l);
+            p
+        };
+        let probe = VisionProbe::new()
+            .with_port(port)
+            .with_timeout(Duration::from_millis(200));
+        match probe.probe_host("127.0.0.1", port).await {
+            Ok(None) => {}
+            Ok(Some(_)) => {
+                // Rare kernel-reuse race; not a bug.
+            }
+            Err(e) => panic!("unexpected error: {e}"),
+        }
     }
 }
