@@ -48,6 +48,12 @@ pub enum CommandKind {
     /// data type. Reads don't have a CommandKind because they're
     /// side-effect-free and bypass the permit gate.
     WriteTag,
+    /// V14: push an announcement / prompt / acknowledgement
+    /// request to an HMI surface (touchscreen, rugged tablet,
+    /// smart glasses, pendant). The HMI impl renders the
+    /// content; operator interactions flow back through the
+    /// non-dispatch `Hmi::pending_events` method.
+    Announce,
 }
 
 impl CommandKind {
@@ -60,6 +66,7 @@ impl CommandKind {
             CommandKind::Halt => "halt",
             CommandKind::Scan => "scan",
             CommandKind::WriteTag => "write-tag",
+            CommandKind::Announce => "announce",
         }
     }
 }
@@ -116,6 +123,50 @@ pub enum ActuatorCommand {
     /// Reads are NOT in the command enum because they bypass the
     /// permit gate; see `aether_controllers::Controller::read_tag`.
     WriteTag { address: String, value: TagValue },
+    /// V14: render an announcement to an HMI surface. `severity`
+    /// drives the visual treatment (Info banner, Warning toast,
+    /// Critical full-screen, Emergency red-alert with haptic).
+    /// `summary` is the one-line title; `body` is the optional
+    /// detail string. HMI impls render based on their surface
+    /// (touchscreen vs. smart-glasses AR vs. pendant 4-line LCD).
+    Announce {
+        severity: AnnounceSeverity,
+        summary: String,
+        body: Option<String>,
+    },
+}
+
+/// Severity tiers for HMI announcements. Maps to ANSI/ISA-18.2
+/// alarm priorities and the V5 `aether-safety::sos` tiering so
+/// the same alarm taxonomy flows end-to-end from operator
+/// notification through SOS escalation.
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum AnnounceSeverity {
+    /// Informational — workflow progress, shift handover.
+    Info,
+    /// Warning — out-of-tolerance reading, missed maintenance
+    /// window. Recoverable without intervention.
+    Warning,
+    /// Critical — equipment fault, safety interlock open,
+    /// requires operator action.
+    Critical,
+    /// Emergency — imminent harm to people or product. Surfaces
+    /// as a full-screen modal that can't be dismissed without
+    /// supervisor unlock; cross-references the V5 SOS tier 1
+    /// pipeline.
+    Emergency,
+}
+
+impl AnnounceSeverity {
+    pub fn slug(&self) -> &'static str {
+        match self {
+            AnnounceSeverity::Info => "info",
+            AnnounceSeverity::Warning => "warning",
+            AnnounceSeverity::Critical => "critical",
+            AnnounceSeverity::Emergency => "emergency",
+        }
+    }
 }
 
 /// Typed value for a controller tag write. Mirrors the IEC 61131-3
@@ -183,6 +234,7 @@ impl ActuatorCommand {
             ActuatorCommand::DispatchJob { .. } => CommandKind::DispatchJob,
             ActuatorCommand::Halt => CommandKind::Halt,
             ActuatorCommand::WriteTag { .. } => CommandKind::WriteTag,
+            ActuatorCommand::Announce { .. } => CommandKind::Announce,
             ActuatorCommand::Scan { .. } => CommandKind::Scan,
         }
     }
@@ -217,6 +269,7 @@ mod tests {
             CommandKind::Halt,
             CommandKind::Scan,
             CommandKind::WriteTag,
+            CommandKind::Announce,
         ];
         let mut slugs: Vec<&'static str> = kinds.iter().map(|k| k.slug()).collect();
         slugs.sort_unstable();
@@ -297,6 +350,46 @@ mod tests {
 
         let v = serde_json::to_value(TagValue::Text("recipe-A".into())).unwrap();
         assert_eq!(v, serde_json::json!({"type": "text", "value": "recipe-A"}));
+    }
+
+    #[test]
+    fn announce_variant_round_trips_through_serde() {
+        // V14: pin the HMI command wire format.
+        let cmd = ActuatorCommand::Announce {
+            severity: AnnounceSeverity::Critical,
+            summary: "spindle fault on M-204".into(),
+            body: Some("axis Z servo timeout, fault code 4732".into()),
+        };
+        let s = serde_json::to_string(&cmd).unwrap();
+        assert!(s.contains("\"kind\":\"announce\""));
+        assert!(s.contains("\"severity\":\"critical\""));
+        let back: ActuatorCommand = serde_json::from_str(&s).unwrap();
+        assert_eq!(back, cmd);
+        assert_eq!(cmd.kind(), CommandKind::Announce);
+        assert_eq!(cmd.kind().slug(), "announce");
+    }
+
+    #[test]
+    fn announce_body_is_optional_for_short_form_announcements() {
+        let cmd = ActuatorCommand::Announce {
+            severity: AnnounceSeverity::Info,
+            summary: "shift handover at 14:00".into(),
+            body: None,
+        };
+        let s = serde_json::to_string(&cmd).unwrap();
+        let back: ActuatorCommand = serde_json::from_str(&s).unwrap();
+        assert_eq!(back, cmd);
+    }
+
+    #[test]
+    fn announce_severity_slug_matches_iso_alarm_taxonomy() {
+        // Slugs map to the V5 SOS tier names + ANSI/ISA-18.2
+        // alarm priorities. Pin them so a rename doesn't desync
+        // from the SOS escalation pipeline.
+        assert_eq!(AnnounceSeverity::Info.slug(), "info");
+        assert_eq!(AnnounceSeverity::Warning.slug(), "warning");
+        assert_eq!(AnnounceSeverity::Critical.slug(), "critical");
+        assert_eq!(AnnounceSeverity::Emergency.slug(), "emergency");
     }
 
     #[test]

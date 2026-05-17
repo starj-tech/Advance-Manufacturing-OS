@@ -71,6 +71,10 @@ id_newtype!(
     ControllerId,
     "Identifier for a PLC / PAC / CNC / DCS controller."
 );
+id_newtype!(
+    HmiId,
+    "Identifier for an HMI surface (touchscreen / rugged tablet / smart glasses / pendant)."
+);
 
 /// Generic ULID-style entity identifier serialized as a string.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize)]
