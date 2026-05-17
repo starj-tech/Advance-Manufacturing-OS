@@ -19,6 +19,7 @@
 //! This PR ships the public API surface and types. The reconciliation
 //! algorithm, conflict handlers, and Automerge integration land in PR #2.
 
+pub mod actuator_command;
 pub mod applier;
 pub mod automerge_merge;
 pub mod engine;
@@ -30,6 +31,10 @@ pub mod payload;
 pub mod reconcile;
 pub mod sqlite_outbox;
 
+pub use actuator_command::{
+    encode_command_creation, encode_status_transition, ActuatorCommandRecord,
+    ActuatorCommandStatus, EncodingError as ActuatorCommandEncodingError, ACTUATOR_COMMANDS_ENTITY,
+};
 pub use applier::{Applier, ApplierError, ApplyOutcome, MemoryApplier};
 pub use automerge_merge::{merge_documents, MergeError};
 pub use engine::{EngineError, PullStats, PushStats, SyncEngine};
