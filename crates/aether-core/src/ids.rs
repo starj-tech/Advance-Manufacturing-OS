@@ -67,6 +67,10 @@ id_newtype!(
     ScannerId,
     "Identifier for an auto-id scanner (barcode / QR / RFID / NFC)."
 );
+id_newtype!(
+    ControllerId,
+    "Identifier for a PLC / PAC / CNC / DCS controller."
+);
 
 /// Generic ULID-style entity identifier serialized as a string.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize)]

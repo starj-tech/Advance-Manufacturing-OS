@@ -40,6 +40,14 @@ pub enum CommandKind {
     /// because a camera-based QR scan and an RFID antenna read
     /// have to share one command surface.
     Scan,
+    /// V13: write a value to a named tag on a PLC / PAC / CNC /
+    /// DCS controller. Distinct from MoveJoint because tags
+    /// aren't a fixed-shape numeric address space — they're
+    /// vendor-defined named symbols, and the value can be bool /
+    /// int / float / text / bytes depending on the underlying
+    /// data type. Reads don't have a CommandKind because they're
+    /// side-effect-free and bypass the permit gate.
+    WriteTag,
 }
 
 impl CommandKind {
@@ -51,6 +59,7 @@ impl CommandKind {
             CommandKind::DispatchJob => "dispatch-job",
             CommandKind::Halt => "halt",
             CommandKind::Scan => "scan",
+            CommandKind::WriteTag => "write-tag",
         }
     }
 }
@@ -99,6 +108,56 @@ pub enum ActuatorCommand {
     /// continuous mode reject `Continuous`; fixed-mode industrial
     /// readers reject `Manual`.
     Scan { trigger: ScanTrigger },
+    /// V13: write a typed value to a controller tag. `address` is
+    /// the vendor-defined symbol (`"ns=2;s=Channel1.Device1.Coil0"`
+    /// for OPC-UA, `"%MX0.0"` for IEC 61131, etc.) — the controller
+    /// impl knows how to parse it. `value` carries the typed
+    /// payload so a bool tag never gets a float and vice versa.
+    /// Reads are NOT in the command enum because they bypass the
+    /// permit gate; see `aether_controllers::Controller::read_tag`.
+    WriteTag { address: String, value: TagValue },
+}
+
+/// Typed value for a controller tag write. Mirrors the IEC 61131-3
+/// elementary types that show up across OPC-UA / Modbus / EtherNet/
+/// IP / S7. `Text` and `Bytes` cover the few extensions that show
+/// up in PAC/CNC controllers (recipe names, raw register dumps).
+/// Anything richer (structures, arrays) round-trips as `Bytes`
+/// today; a future session may add struct support if a pilot
+/// tenant actually needs it.
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[serde(tag = "type", content = "value", rename_all = "kebab-case")]
+pub enum TagValue {
+    Bool(bool),
+    /// 64-bit signed integer — superset of IEC INT/DINT/LINT
+    /// without lossy down-casts at the trait boundary.
+    Int(i64),
+    /// 64-bit IEEE float — superset of REAL/LREAL.
+    Float(f64),
+    /// UTF-8 text. Some vendors use this for recipe names and
+    /// program selectors. Validate length against the tag's
+    /// declared capacity at the impl level.
+    Text(String),
+    /// Opaque bytes for struct / array writes that don't decompose
+    /// cleanly into the elementary types. The controller impl
+    /// validates byte length against the tag's declared width.
+    Bytes(Vec<u8>),
+}
+
+impl TagValue {
+    /// Kebab-case discriminator slug. Persisted into the
+    /// `actuator_commands.result` JSON so an auditor can filter
+    /// "every bool write to a safety coil in the last 24 hours"
+    /// without parsing the value field.
+    pub fn slug(&self) -> &'static str {
+        match self {
+            TagValue::Bool(_) => "bool",
+            TagValue::Int(_) => "int",
+            TagValue::Float(_) => "float",
+            TagValue::Text(_) => "text",
+            TagValue::Bytes(_) => "bytes",
+        }
+    }
 }
 
 /// How the scan was initiated. Shapes the scanner's behavior:
@@ -123,6 +182,7 @@ impl ActuatorCommand {
             ActuatorCommand::MoveLinear { .. } => CommandKind::MoveLinear,
             ActuatorCommand::DispatchJob { .. } => CommandKind::DispatchJob,
             ActuatorCommand::Halt => CommandKind::Halt,
+            ActuatorCommand::WriteTag { .. } => CommandKind::WriteTag,
             ActuatorCommand::Scan { .. } => CommandKind::Scan,
         }
     }
@@ -156,6 +216,7 @@ mod tests {
             CommandKind::DispatchJob,
             CommandKind::Halt,
             CommandKind::Scan,
+            CommandKind::WriteTag,
         ];
         let mut slugs: Vec<&'static str> = kinds.iter().map(|k| k.slug()).collect();
         slugs.sort_unstable();
@@ -194,6 +255,59 @@ mod tests {
         assert_eq!(manual, "\"manual\"");
         assert_eq!(auto, "\"auto\"");
         assert_eq!(cont, "\"continuous\"");
+    }
+
+    #[test]
+    fn write_tag_variant_round_trips_through_serde() {
+        // V13: pin wire format for the controller-side variant.
+        let cmd = ActuatorCommand::WriteTag {
+            address: "ns=2;s=Channel1.Device1.Coil0".into(),
+            value: TagValue::Bool(true),
+        };
+        let s = serde_json::to_string(&cmd).unwrap();
+        assert!(s.contains("\"kind\":\"write-tag\""));
+        assert!(s.contains("\"type\":\"bool\""));
+        assert!(s.contains("\"value\":true"));
+        let back: ActuatorCommand = serde_json::from_str(&s).unwrap();
+        assert_eq!(back, cmd);
+        assert_eq!(cmd.kind(), CommandKind::WriteTag);
+        assert_eq!(cmd.kind().slug(), "write-tag");
+    }
+
+    #[test]
+    fn tag_value_slug_is_kebab_case_for_every_variant() {
+        // Slug lands in the audit row JSON; renames are schema
+        // breakage.
+        assert_eq!(TagValue::Bool(true).slug(), "bool");
+        assert_eq!(TagValue::Int(42).slug(), "int");
+        assert_eq!(TagValue::Float(1.5).slug(), "float");
+        assert_eq!(TagValue::Text("x".into()).slug(), "text");
+        assert_eq!(TagValue::Bytes(vec![1, 2]).slug(), "bytes");
+    }
+
+    #[test]
+    fn tag_value_serde_uses_externally_tagged_type_and_value() {
+        // Pin the JSON layout — `{"type": "<slug>", "value": <v>}`
+        // — so Edge Functions can pattern-match without knowing
+        // the variant set in advance.
+        let v = serde_json::to_value(TagValue::Float(2.5)).unwrap();
+        assert_eq!(v, serde_json::json!({"type": "float", "value": 2.5}));
+        let back: TagValue = serde_json::from_value(v).unwrap();
+        assert_eq!(back, TagValue::Float(2.5));
+
+        let v = serde_json::to_value(TagValue::Text("recipe-A".into())).unwrap();
+        assert_eq!(v, serde_json::json!({"type": "text", "value": "recipe-A"}));
+    }
+
+    #[test]
+    fn tag_value_bool_and_int_with_same_underlying_zero_serialize_distinctly() {
+        // `TagValue::Bool(false)` and `TagValue::Int(0)` must
+        // produce different JSON — the type tag carries the
+        // distinction so the controller impl can route to the
+        // right backing typed write.
+        let b = serde_json::to_string(&TagValue::Bool(false)).unwrap();
+        let i = serde_json::to_string(&TagValue::Int(0)).unwrap();
+        assert_ne!(b, i);
     }
 
     #[test]
