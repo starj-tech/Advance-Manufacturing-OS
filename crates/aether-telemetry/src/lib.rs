@@ -3,10 +3,15 @@
 //! producers against a slow durable sink.
 
 pub mod batch;
+pub mod circuit;
 
 pub use batch::{
     spawn_batcher, BatchConfig, BatchHandle, DEFAULT_BATCH_MAX_ITEMS, DEFAULT_CHANNEL_CAPACITY,
     DEFAULT_FLUSH_INTERVAL,
+};
+pub use circuit::{
+    BreakerConfig, BreakerState, CircuitBreaker, Decision, DEFAULT_COOLDOWN,
+    DEFAULT_FAILURE_THRESHOLD,
 };
 
 use tracing_subscriber::{fmt, prelude::*, EnvFilter};
