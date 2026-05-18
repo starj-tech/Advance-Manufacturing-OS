@@ -21,12 +21,14 @@
 //! (OPC-UA `find_servers`, Modbus 0x2B/0x0E Read Device Identification,
 //! CIP List Identity).
 
+pub mod actuator_binding;
 pub mod cidr;
 pub mod probe;
 pub mod result;
 pub mod scanner;
 pub mod suggestion;
 
+pub use actuator_binding::{suggest_actuator, ActuatorBindingSuggestion, SuggestedActuatorKind};
 pub use cidr::{expand_cidr, CidrError, MAX_HOSTS};
 pub use probe::{
     DiscoveryProbe, EthernetIpProbe, GatewayProbe, HmiProbe, ModbusProbe, MqttProbe, OpcUaProbe,
