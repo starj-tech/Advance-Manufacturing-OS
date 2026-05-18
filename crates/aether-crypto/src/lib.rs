@@ -22,6 +22,7 @@ pub mod derive;
 pub mod envelope;
 pub mod kdf;
 pub mod keystore;
+pub mod manager;
 pub mod recovery;
 pub mod signer;
 pub mod vault;
@@ -32,6 +33,7 @@ pub use derive::{SubKey, SUBKEY_LEN};
 pub use envelope::{open, seal};
 pub use kdf::{derive_master_key, MasterKey, ARGON2_MEM_KIB, ARGON2_PARALLELISM, ARGON2_TIME_COST};
 pub use keystore::{KeyHandle, Keystore, MemoryKeystore};
+pub use manager::{master_handle, BootstrapResult, MasterKeyManager};
 pub use recovery::{derive_master_key_for_tenant, RecoveryPhrase, PHRASE_ENTROPY_BITS};
 pub use signer::{verify, Signer, SigningError, VerifyingKey};
 pub use vault::{vault_handle, DeviceKey, SessionVault, WrappedMasterKey};
@@ -52,6 +54,14 @@ pub enum CryptoError {
 
     #[error("signature: {0}")]
     Signature(String),
+
+    /// Pre-flight contract violation surfaced before any
+    /// crypto primitive runs (wrong-length stored key,
+    /// double-bootstrap, missing bind, etc.). Static-str payload
+    /// because these are programmer-facing diagnostics, not
+    /// operator-facing strings.
+    #[error("invalid parameter: {0}")]
+    InvalidParameter(&'static str),
 
     #[error("not implemented: {0}")]
     NotImplemented(&'static str),
