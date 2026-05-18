@@ -25,6 +25,7 @@ members = [
     "crates/aether-controllers",
     "crates/aether-hmi",
     "crates/aether-gateway",
+    "crates/aether-integration-tests",
     "tools/opcua-mock-server",
     "tools/module-signer-cli",
 ]

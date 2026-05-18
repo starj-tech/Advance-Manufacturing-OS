@@ -261,6 +261,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "aether-integration-tests"
+version = "0.1.0"
+dependencies = [
+ "aether-actuators",
+ "aether-autoid",
+ "aether-controllers",
+ "aether-core",
+ "aether-crypto",
+ "aether-db",
+ "aether-discovery",
+ "aether-gateway",
+ "aether-hmi",
+ "aether-safety",
+ "aether-sync",
+ "async-trait",
+ "chrono",
+ "serde_json",
+ "tokio",
+ "uuid",
+]
+
+[[package]]
 name = "aether-modules"
 version = "0.1.0"
 dependencies = [

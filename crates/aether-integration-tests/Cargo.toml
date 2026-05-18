@@ -1,0 +1,35 @@
+[package]
+name = "aether-integration-tests"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+publish = false
+authors.workspace = true
+
+# This crate exists only to host cross-crate integration tests
+# that exercise the full Phase-2 actuator + audit + sync chain
+# end-to-end. The lib is intentionally empty — all the testing
+# lives under `tests/`.
+
+[lib]
+path = "src/lib.rs"
+doctest = false
+
+[dev-dependencies]
+aether-core = { path = "../aether-core" }
+aether-actuators = { path = "../aether-actuators" }
+aether-safety = { path = "../aether-safety" }
+aether-autoid = { path = "../aether-autoid" }
+aether-controllers = { path = "../aether-controllers" }
+aether-hmi = { path = "../aether-hmi" }
+aether-gateway = { path = "../aether-gateway" }
+aether-discovery = { path = "../aether-discovery" }
+aether-sync = { path = "../aether-sync" }
+aether-db = { path = "../aether-db" }
+aether-crypto = { path = "../aether-crypto" }
+
+tokio = { workspace = true }
+chrono = { workspace = true }
+uuid = { workspace = true }
+serde_json = { workspace = true }
+async-trait = { workspace = true }
