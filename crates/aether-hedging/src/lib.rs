@@ -11,6 +11,7 @@
 //! recommendation. ML / time-series forecasts ship in PR #7 alongside
 //! the analytics module.
 
+pub mod alpha_vantage;
 pub mod feed;
 pub mod forecast;
 pub mod fx;
@@ -18,6 +19,10 @@ pub mod http_feed;
 pub mod model;
 pub mod recommend;
 
+pub use alpha_vantage::{
+    alpha_vantage_function, AlphaVantageFeed, DEFAULT_BASE_URL as ALPHA_VANTAGE_DEFAULT_BASE_URL,
+    DEFAULT_TIMEOUT as ALPHA_VANTAGE_DEFAULT_TIMEOUT,
+};
 pub use feed::{CommodityFeed, FeedError, PriceObservation};
 pub use forecast::{
     EwmaForecast, Forecast, ForecastModel, SmaForecast, DEFAULT_BAND_SIGMA, DEFAULT_EWMA_ALPHA,
