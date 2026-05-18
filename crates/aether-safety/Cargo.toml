@@ -15,6 +15,7 @@ thiserror = { workspace = true }
 tracing = { workspace = true }
 chrono = { workspace = true }
 uuid = { workspace = true }
+futures = { workspace = true }
 # mDNS + BLE wiring lands in PR #5.
 # mdns-sd = { workspace = true }
 # btleplug = { workspace = true }
