@@ -19,7 +19,9 @@ pub mod model;
 pub mod recommend;
 
 pub use feed::{CommodityFeed, FeedError, PriceObservation};
-pub use forecast::{Forecast, ForecastModel, SmaForecast};
+pub use forecast::{
+    EwmaForecast, Forecast, ForecastModel, SmaForecast, DEFAULT_BAND_SIGMA, DEFAULT_EWMA_ALPHA,
+};
 pub use fx::{FxError, FxRateProvider, StaticFxRates};
 pub use http_feed::HttpCommodityFeed;
 pub use model::{Commodity, MaterialExposure};
