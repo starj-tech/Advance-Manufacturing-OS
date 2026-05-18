@@ -44,8 +44,10 @@ pub mod actuator;
 pub mod command;
 pub mod gate;
 pub mod permit;
+pub mod traced;
 
 pub use actuator::{Actuator, ActuatorError, ActuatorResult, MockActuator};
 pub use command::{ActuatorCommand, AnnounceSeverity, CommandKind, ScanTrigger, TagValue};
 pub use gate::{gate, GateError};
 pub use permit::{ActuatorPermit, PermitTtl, DEFAULT_PERMIT_TTL};
+pub use traced::{outcome_slug, traced_dispatch};
