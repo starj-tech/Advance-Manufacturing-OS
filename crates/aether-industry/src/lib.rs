@@ -25,8 +25,13 @@
 
 pub mod capability;
 pub mod industry;
+pub mod onboarding;
 pub mod profile;
 
 pub use capability::{Capability, CapabilityKind};
 pub use industry::{Industry, INDUSTRIES};
+pub use onboarding::{
+    validate, validate_display_name, validate_region, validate_slug, OnboardingError,
+    OnboardingInput, ALLOWED_REGIONS, MAX_NAME_LEN, MAX_SLUG_LEN, MIN_SLUG_LEN,
+};
 pub use profile::{profile_for, IndustryProfile, ProfileError};
