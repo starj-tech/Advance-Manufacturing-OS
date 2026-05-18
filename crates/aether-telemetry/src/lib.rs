@@ -1,4 +1,13 @@
-//! Tracing + metrics initialization.
+//! Tracing + metrics initialization, plus a backpressure-aware
+//! batch aggregator for telemetry pipelines that need to throttle
+//! producers against a slow durable sink.
+
+pub mod batch;
+
+pub use batch::{
+    spawn_batcher, BatchConfig, BatchHandle, DEFAULT_BATCH_MAX_ITEMS, DEFAULT_CHANNEL_CAPACITY,
+    DEFAULT_FLUSH_INTERVAL,
+};
 
 use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
