@@ -31,6 +31,7 @@ pub mod operator_event;
 pub mod outbox;
 pub mod payload;
 pub mod reconcile;
+pub mod resolve;
 pub mod scan_event;
 pub mod sqlite_outbox;
 
@@ -56,6 +57,7 @@ pub use payload::{decrypt_entry, encrypt_entry, PayloadError};
 pub use reconcile::{
     policy_for, Conflict, ConflictPolicy, PullResult, PushResult, Reconciler, ReconcilerError,
 };
+pub use resolve::{resolve, ConflictOutcome};
 pub use scan_event::{
     encode_scan, ScanEncodingError, ScanEventRecord, MAX_SCAN_PAYLOAD_BYTES, SCAN_EVENTS_ENTITY,
 };
