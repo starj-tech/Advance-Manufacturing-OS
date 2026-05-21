@@ -5,6 +5,7 @@
 pub mod batch;
 pub mod circuit;
 pub mod health;
+pub mod otlp;
 pub mod sentry_init;
 
 pub use batch::{
@@ -18,6 +19,11 @@ pub use circuit::{
 pub use health::{
     body_to_json, route as health_route, serve as serve_health, CheckResult, FailureDetail,
     HealthBody, HealthError, HealthServer, DEFAULT_CHECK_TIMEOUT, DEFAULT_HEALTH_PORT,
+};
+pub use otlp::{
+    parse_headers as parse_otlp_headers, tracing_layer as otlp_tracing_layer, OtlpConfig,
+    OtlpConfigError, DEFAULT_EXPORT_TIMEOUT, OTLP_ENDPOINT_ENV, OTLP_HEADERS_ENV,
+    OTLP_SERVICE_NAME_ENV,
 };
 pub use sentry_init::{
     tracing_layer as sentry_tracing_layer, SentryConfig, SentryConfigError, SENTRY_DSN_ENV,
