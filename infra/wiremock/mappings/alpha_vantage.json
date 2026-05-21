@@ -1,0 +1,92 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/query",
+        "queryParameters": {
+          "function": { "equalTo": "COPPER" }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+          "name": "Global Price of Copper",
+          "interval": "daily",
+          "unit": "dollars per pound",
+          "data": [
+            { "date": "2026-05-15", "value": "4.21" },
+            { "date": "2026-05-14", "value": "4.18" },
+            { "date": "2026-05-13", "value": "4.15" }
+          ]
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/query",
+        "queryParameters": {
+          "function": { "equalTo": "ALUMINUM" }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+          "name": "Global Price of Aluminum",
+          "interval": "daily",
+          "unit": "dollars per metric ton",
+          "data": [
+            { "date": "2026-05-15", "value": "2510.00" },
+            { "date": "2026-05-14", "value": "2495.50" }
+          ]
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/query",
+        "queryParameters": {
+          "function": { "equalTo": "BRENT" }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+          "name": "Crude Oil Prices: Brent",
+          "interval": "daily",
+          "unit": "dollars per barrel",
+          "data": [
+            { "date": "2026-05-15", "value": "82.40" },
+            { "date": "2026-05-14", "value": "81.95" }
+          ]
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/query",
+        "queryParameters": {
+          "function": { "equalTo": "NATURAL_GAS" }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json" },
+        "jsonBody": {
+          "name": "Henry Hub Natural Gas Spot Price",
+          "interval": "daily",
+          "unit": "dollars per million BTU",
+          "data": [
+            { "date": "2026-05-15", "value": "2.55" }
+          ]
+        }
+      }
+    }
+  ]
+}
