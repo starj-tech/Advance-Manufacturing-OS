@@ -4,6 +4,7 @@
 
 pub mod batch;
 pub mod circuit;
+pub mod health;
 
 pub use batch::{
     spawn_batcher, BatchConfig, BatchHandle, DEFAULT_BATCH_MAX_ITEMS, DEFAULT_CHANNEL_CAPACITY,
@@ -12,6 +13,10 @@ pub use batch::{
 pub use circuit::{
     BreakerConfig, BreakerState, CircuitBreaker, Decision, DEFAULT_COOLDOWN,
     DEFAULT_FAILURE_THRESHOLD,
+};
+pub use health::{
+    body_to_json, route as health_route, serve as serve_health, CheckResult, FailureDetail,
+    HealthBody, HealthError, HealthServer, DEFAULT_CHECK_TIMEOUT, DEFAULT_HEALTH_PORT,
 };
 
 use tracing_subscriber::{fmt, prelude::*, EnvFilter};
