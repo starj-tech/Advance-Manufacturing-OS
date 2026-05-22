@@ -28,6 +28,7 @@ pub mod hlc;
 pub mod http_reconciler;
 pub mod local_reconciler;
 pub mod metrics;
+pub mod metrics_symptom;
 pub mod operator_event;
 pub mod outbox;
 pub mod payload;
@@ -51,6 +52,10 @@ pub use hlc::{HlcError, HlcGenerator, SystemClock, WallClock};
 pub use http_reconciler::HttpReconciler;
 pub use local_reconciler::LocalReconciler;
 pub use metrics::{MetricsSnapshot, SyncMetrics};
+pub use metrics_symptom::{
+    metrics_symptoms, MetricsSymptom, BACKLOG_CRITICAL_WATERMARK, BACKLOG_HIGH_WATERMARK,
+    PULL_FAILURE_RATIO_THRESHOLD,
+};
 pub use operator_event::{
     encode_event, EventEncodingError, OperatorEventRecord, OPERATOR_EVENTS_ENTITY,
 };
