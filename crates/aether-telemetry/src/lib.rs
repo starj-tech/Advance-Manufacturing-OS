@@ -4,6 +4,7 @@
 
 pub mod batch;
 pub mod circuit;
+pub mod circuit_symptom;
 pub mod health;
 pub mod otlp;
 pub mod sentry_init;
@@ -15,6 +16,9 @@ pub use batch::{
 pub use circuit::{
     BreakerConfig, BreakerState, CircuitBreaker, Decision, DEFAULT_COOLDOWN,
     DEFAULT_FAILURE_THRESHOLD,
+};
+pub use circuit_symptom::{
+    breaker_symptom, breaker_symptoms, BreakerSymptom, KIND_BREAKER_HALF_OPEN, KIND_BREAKER_OPEN,
 };
 pub use health::{
     body_to_json, route as health_route, serve as serve_health, CheckResult, FailureDetail,
