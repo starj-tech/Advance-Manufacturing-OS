@@ -206,6 +206,8 @@ name = "aether-healing"
 version = "0.1.0"
 dependencies = [
  "aether-core",
+ "aether-sync",
+ "aether-telemetry",
  "async-trait",
  "chrono",
  "serde",

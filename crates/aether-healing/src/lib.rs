@@ -21,6 +21,7 @@ pub mod dispatcher;
 pub mod ledger;
 pub mod policy;
 pub mod sqlite_corruption;
+pub mod symptom_bridge;
 pub mod sync_stuck;
 pub mod telemetry_overflow;
 
