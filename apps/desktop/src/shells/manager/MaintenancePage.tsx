@@ -1,10 +1,12 @@
+import { useTranslation } from '@aether/i18n';
 import { Placeholder } from '../_shared/Placeholder';
 
 export function MaintenancePage() {
+  const { t } = useTranslation();
   return (
     <Placeholder
-      title="Predictive maintenance"
-      description="Vibration/thermal anomalies, RUL forecasts, work-order generation."
+      title={t('page.maintenance.title')}
+      description={t('page.maintenance.desc')}
       shipsIn="PR #3 + analytics module (PR #7)"
     />
   );

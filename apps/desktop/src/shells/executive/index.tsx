@@ -1,4 +1,5 @@
 import { Routes, Route, NavLink, Navigate } from 'react-router-dom';
+import { useTranslation } from '@aether/i18n';
 import { ShellLayout } from '../_shared/ShellLayout';
 import { OverviewPage } from './OverviewPage';
 import { DigitalTwinPage } from './DigitalTwinPage';
@@ -6,17 +7,18 @@ import { ProjectionsPage } from './ProjectionsPage';
 import { CompliancePage } from './CompliancePage';
 
 const NAV = [
-  { to: 'overview', label: 'Overview' },
-  { to: 'digital-twin', label: 'Digital twin' },
-  { to: 'projections', label: 'AI projections' },
-  { to: 'compliance', label: 'Compliance' },
+  { to: 'overview', labelKey: 'nav.executive.overview' },
+  { to: 'digital-twin', labelKey: 'nav.executive.digitalTwin' },
+  { to: 'projections', labelKey: 'nav.executive.projections' },
+  { to: 'compliance', labelKey: 'nav.executive.compliance' },
 ];
 
 export default function ExecutiveShell() {
+  const { t } = useTranslation();
   return (
     <ShellLayout
-      title="Executive"
-      subtitle="Vision · Strategy · Capital allocation"
+      title={t('shell.executive.title')}
+      subtitle={t('shell.executive.subtitle')}
       sidebar={
         <nav style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {NAV.map((n) => (
@@ -31,7 +33,7 @@ export default function ExecutiveShell() {
                 background: isActive ? 'var(--aether-bg-elevated)' : 'transparent',
               })}
             >
-              {n.label}
+              {t(n.labelKey)}
             </NavLink>
           ))}
         </nav>

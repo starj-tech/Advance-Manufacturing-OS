@@ -1,4 +1,5 @@
 import { Routes, Route, NavLink, Navigate } from 'react-router-dom';
+import { useTranslation } from '@aether/i18n';
 import { ShellLayout } from '../_shared/ShellLayout';
 import { WorkOrdersPage } from './WorkOrdersPage';
 import { MachinesPage } from './MachinesPage';
@@ -10,21 +11,22 @@ import { SupplyChainPage } from './SupplyChainPage';
 import { SupportPage } from './SupportPage';
 
 const NAV = [
-  { to: 'work-orders', label: 'Work orders' },
-  { to: 'machines', label: 'Machines' },
-  { to: 'maintenance', label: 'Maintenance' },
-  { to: 'inventory', label: 'Inventory' },
-  { to: 'supply-chain', label: 'Supply chain' },
-  { to: 'roster', label: 'Roster' },
-  { to: 'certifications', label: 'Certifications' },
-  { to: 'support', label: 'AI support' },
+  { to: 'work-orders', labelKey: 'nav.manager.workOrders' },
+  { to: 'machines', labelKey: 'nav.manager.machines' },
+  { to: 'maintenance', labelKey: 'nav.manager.maintenance' },
+  { to: 'inventory', labelKey: 'nav.manager.inventory' },
+  { to: 'supply-chain', labelKey: 'nav.manager.supplyChain' },
+  { to: 'roster', labelKey: 'nav.manager.roster' },
+  { to: 'certifications', labelKey: 'nav.manager.certifications' },
+  { to: 'support', labelKey: 'nav.manager.support' },
 ];
 
 export default function ManagerShell() {
+  const { t } = useTranslation();
   return (
     <ShellLayout
-      title="Manager"
-      subtitle="Operations · Maintenance · Inventory · People"
+      title={t('shell.manager.title')}
+      subtitle={t('shell.manager.subtitle')}
       sidebar={
         <nav style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {NAV.map((n) => (
@@ -39,7 +41,7 @@ export default function ManagerShell() {
                 background: isActive ? 'var(--aether-bg-elevated)' : 'transparent',
               })}
             >
-              {n.label}
+              {t(n.labelKey)}
             </NavLink>
           ))}
         </nav>

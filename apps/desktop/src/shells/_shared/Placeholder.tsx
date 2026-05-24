@@ -1,4 +1,5 @@
 import { Card, CardBody, CardHeader, Stack } from '@aether/ui-kit';
+import { useTranslation } from '@aether/i18n';
 import type { ReactNode } from 'react';
 
 export interface PlaceholderProps {
@@ -10,6 +11,7 @@ export interface PlaceholderProps {
 }
 
 export function Placeholder({ title, description, children, shipsIn }: PlaceholderProps) {
+  const { t } = useTranslation();
   return (
     <Stack gap={16}>
       <Card>
@@ -17,7 +19,7 @@ export function Placeholder({ title, description, children, shipsIn }: Placehold
         <CardBody>
           {children ?? (
             <p style={{ color: 'var(--aether-fg-muted)', fontSize: 13, margin: 0 }}>
-              Skeleton page — the real implementation lands in a follow-up PR.
+              {t('common.skeletonNote')}
               {shipsIn ? ` (${shipsIn})` : ''}
             </p>
           )}

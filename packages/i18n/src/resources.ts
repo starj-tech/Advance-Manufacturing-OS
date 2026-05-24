@@ -69,6 +69,55 @@ const enUS: Messages = {
   'employee.clock.clockIn': 'Clock in',
   'employee.clock.clockOut': 'Clock out',
   'employee.clock.geofenceNote': 'Geofence + presence broadcast wires up in PR #5.',
+
+  // Shell layout titles / subtitles
+  'shell.developer.title': 'Developer',
+  'shell.developer.subtitle': 'Infrastructure · Modules · Audit · Telemetry',
+  'shell.executive.title': 'Executive',
+  'shell.executive.subtitle': 'Vision · Strategy · Capital allocation',
+  'shell.manager.title': 'Manager',
+  'shell.manager.subtitle': 'Operations · Maintenance · Inventory · People',
+
+  // Developer nav
+  'nav.developer.infrastructure': 'Infrastructure',
+  'nav.developer.discovery': 'IoT discovery',
+  'nav.developer.industry': 'Industry profile',
+  'nav.developer.modules': 'Module registry',
+  'nav.developer.audit': 'Audit log',
+  'nav.developer.health': 'System health',
+
+  // Executive nav
+  'nav.executive.overview': 'Overview',
+  'nav.executive.digitalTwin': 'Digital twin',
+  'nav.executive.projections': 'AI projections',
+  'nav.executive.compliance': 'Compliance',
+
+  // Manager nav
+  'nav.manager.workOrders': 'Work orders',
+  'nav.manager.machines': 'Machines',
+  'nav.manager.maintenance': 'Maintenance',
+  'nav.manager.inventory': 'Inventory',
+  'nav.manager.supplyChain': 'Supply chain',
+  'nav.manager.roster': 'Roster',
+  'nav.manager.certifications': 'Certifications',
+  'nav.manager.support': 'AI support',
+
+  // Shared skeleton-page note (Placeholder default body)
+  'common.skeletonNote': 'Skeleton page — the real implementation lands in a follow-up PR.',
+
+  // Skeleton page titles / descriptions
+  'page.audit.title': 'Audit log',
+  'page.audit.desc':
+    'Append-only ledger of every privileged action. Streamed via Supabase Realtime.',
+  'page.modules.title': 'Module registry',
+  'page.modules.desc': 'Browse, install, pin, and revoke modules across this tenant.',
+  'page.projections.title': 'AI projections',
+  'page.projections.desc': 'Profitability scenarios driven by historical telemetry + ML forecasts.',
+  'page.maintenance.title': 'Predictive maintenance',
+  'page.maintenance.desc': 'Vibration/thermal anomalies, RUL forecasts, work-order generation.',
+  'page.roster.title': 'Roster',
+  'page.roster.desc':
+    'Operators on shift, certifications, presence (mDNS-driven), shift assignments.',
 };
 
 // en-GB shares the US base; only spellings / tax-ish phrasing
@@ -111,6 +160,51 @@ const nlNL: Messages = {
   'employee.clock.clockIn': 'Inklokken',
   'employee.clock.clockOut': 'Uitklokken',
   'employee.clock.geofenceNote': 'Geofence + aanwezigheidsuitzending volgt in PR #5.',
+
+  'shell.developer.title': 'Ontwikkelaar',
+  'shell.developer.subtitle': 'Infrastructuur · Modules · Audit · Telemetrie',
+  'shell.executive.title': 'Directie',
+  'shell.executive.subtitle': 'Visie · Strategie · Kapitaalallocatie',
+  'shell.manager.title': 'Manager',
+  'shell.manager.subtitle': 'Operatie · Onderhoud · Voorraad · Mensen',
+
+  'nav.developer.infrastructure': 'Infrastructuur',
+  'nav.developer.discovery': 'IoT-detectie',
+  'nav.developer.industry': 'Sectorprofiel',
+  'nav.developer.modules': 'Moduleregister',
+  'nav.developer.audit': 'Auditlogboek',
+  'nav.developer.health': 'Systeemstatus',
+
+  'nav.executive.overview': 'Overzicht',
+  'nav.executive.digitalTwin': 'Digitale tweeling',
+  'nav.executive.projections': 'AI-prognoses',
+  'nav.executive.compliance': 'Naleving',
+
+  'nav.manager.workOrders': 'Werkorders',
+  'nav.manager.machines': 'Machines',
+  'nav.manager.maintenance': 'Onderhoud',
+  'nav.manager.inventory': 'Voorraad',
+  'nav.manager.supplyChain': 'Toeleveringsketen',
+  'nav.manager.roster': 'Rooster',
+  'nav.manager.certifications': 'Certificeringen',
+  'nav.manager.support': 'AI-ondersteuning',
+
+  'common.skeletonNote': 'Skeletpagina — de echte implementatie volgt in een latere PR.',
+
+  'page.audit.title': 'Auditlogboek',
+  'page.audit.desc':
+    'Append-only logboek van elke bevoorrechte actie. Gestreamd via Supabase Realtime.',
+  'page.modules.title': 'Moduleregister',
+  'page.modules.desc': 'Modules bekijken, installeren, vastzetten en intrekken voor deze tenant.',
+  'page.projections.title': 'AI-prognoses',
+  'page.projections.desc':
+    'Winstgevendheidsscenario’s op basis van historische telemetrie + ML-prognoses.',
+  'page.maintenance.title': 'Voorspellend onderhoud',
+  'page.maintenance.desc':
+    'Trillings-/thermische afwijkingen, RUL-prognoses, generatie van werkorders.',
+  'page.roster.title': 'Rooster',
+  'page.roster.desc':
+    'Operators in dienst, certificeringen, aanwezigheid (mDNS-gestuurd), dienstindelingen.',
 };
 
 const deDE: Messages = {
@@ -149,6 +243,52 @@ const deDE: Messages = {
   'employee.clock.clockIn': 'Einstempeln',
   'employee.clock.clockOut': 'Ausstempeln',
   'employee.clock.geofenceNote': 'Geofence + Anwesenheitsübertragung folgt in PR #5.',
+
+  'shell.developer.title': 'Entwickler',
+  'shell.developer.subtitle': 'Infrastruktur · Module · Audit · Telemetrie',
+  'shell.executive.title': 'Geschäftsleitung',
+  'shell.executive.subtitle': 'Vision · Strategie · Kapitalallokation',
+  'shell.manager.title': 'Manager',
+  'shell.manager.subtitle': 'Betrieb · Wartung · Bestand · Personal',
+
+  'nav.developer.infrastructure': 'Infrastruktur',
+  'nav.developer.discovery': 'IoT-Erkennung',
+  'nav.developer.industry': 'Branchenprofil',
+  'nav.developer.modules': 'Modulregister',
+  'nav.developer.audit': 'Audit-Protokoll',
+  'nav.developer.health': 'Systemzustand',
+
+  'nav.executive.overview': 'Übersicht',
+  'nav.executive.digitalTwin': 'Digitaler Zwilling',
+  'nav.executive.projections': 'KI-Prognosen',
+  'nav.executive.compliance': 'Compliance',
+
+  'nav.manager.workOrders': 'Arbeitsaufträge',
+  'nav.manager.machines': 'Maschinen',
+  'nav.manager.maintenance': 'Wartung',
+  'nav.manager.inventory': 'Bestand',
+  'nav.manager.supplyChain': 'Lieferkette',
+  'nav.manager.roster': 'Dienstplan',
+  'nav.manager.certifications': 'Zertifizierungen',
+  'nav.manager.support': 'KI-Support',
+
+  'common.skeletonNote': 'Gerüstseite — die echte Implementierung folgt in einem späteren PR.',
+
+  'page.audit.title': 'Audit-Protokoll',
+  'page.audit.desc':
+    'Append-only-Protokoll jeder privilegierten Aktion. Gestreamt über Supabase Realtime.',
+  'page.modules.title': 'Modulregister',
+  'page.modules.desc':
+    'Module für diesen Mandanten durchsuchen, installieren, anheften und widerrufen.',
+  'page.projections.title': 'KI-Prognosen',
+  'page.projections.desc':
+    'Rentabilitätsszenarien auf Basis historischer Telemetrie + ML-Prognosen.',
+  'page.maintenance.title': 'Vorausschauende Wartung',
+  'page.maintenance.desc':
+    'Vibrations-/Thermalanomalien, RUL-Prognosen, Erzeugung von Arbeitsaufträgen.',
+  'page.roster.title': 'Dienstplan',
+  'page.roster.desc':
+    'Operatoren im Dienst, Zertifizierungen, Anwesenheit (mDNS-gesteuert), Schichtzuweisungen.',
 };
 
 const idID: Messages = {
@@ -187,6 +327,49 @@ const idID: Messages = {
   'employee.clock.clockIn': 'Absen masuk',
   'employee.clock.clockOut': 'Absen keluar',
   'employee.clock.geofenceNote': 'Geofence + siaran kehadiran menyusul di PR #5.',
+
+  'shell.developer.title': 'Pengembang',
+  'shell.developer.subtitle': 'Infrastruktur · Modul · Audit · Telemetri',
+  'shell.executive.title': 'Eksekutif',
+  'shell.executive.subtitle': 'Visi · Strategi · Alokasi modal',
+  'shell.manager.title': 'Manajer',
+  'shell.manager.subtitle': 'Operasi · Pemeliharaan · Inventaris · Orang',
+
+  'nav.developer.infrastructure': 'Infrastruktur',
+  'nav.developer.discovery': 'Penemuan IoT',
+  'nav.developer.industry': 'Profil industri',
+  'nav.developer.modules': 'Registri modul',
+  'nav.developer.audit': 'Log audit',
+  'nav.developer.health': 'Kesehatan sistem',
+
+  'nav.executive.overview': 'Ikhtisar',
+  'nav.executive.digitalTwin': 'Kembar digital',
+  'nav.executive.projections': 'Proyeksi AI',
+  'nav.executive.compliance': 'Kepatuhan',
+
+  'nav.manager.workOrders': 'Perintah kerja',
+  'nav.manager.machines': 'Mesin',
+  'nav.manager.maintenance': 'Pemeliharaan',
+  'nav.manager.inventory': 'Inventaris',
+  'nav.manager.supplyChain': 'Rantai pasok',
+  'nav.manager.roster': 'Jadwal kerja',
+  'nav.manager.certifications': 'Sertifikasi',
+  'nav.manager.support': 'Dukungan AI',
+
+  'common.skeletonNote': 'Halaman kerangka — implementasi sebenarnya menyusul di PR berikutnya.',
+
+  'page.audit.title': 'Log audit',
+  'page.audit.desc':
+    'Catatan hanya-tambah untuk setiap tindakan berhak istimewa. Dialirkan via Supabase Realtime.',
+  'page.modules.title': 'Registri modul',
+  'page.modules.desc': 'Telusuri, pasang, sematkan, dan cabut modul di seluruh tenant ini.',
+  'page.projections.title': 'Proyeksi AI',
+  'page.projections.desc': 'Skenario profitabilitas berdasarkan telemetri historis + prakiraan ML.',
+  'page.maintenance.title': 'Pemeliharaan prediktif',
+  'page.maintenance.desc': 'Anomali getaran/termal, prakiraan RUL, pembuatan perintah kerja.',
+  'page.roster.title': 'Jadwal kerja',
+  'page.roster.desc':
+    'Operator yang bertugas, sertifikasi, kehadiran (berbasis mDNS), penugasan shift.',
 };
 
 const jaJP: Messages = {
@@ -225,6 +408,47 @@ const jaJP: Messages = {
   'employee.clock.clockIn': '出勤',
   'employee.clock.clockOut': '退勤',
   'employee.clock.geofenceNote': 'ジオフェンス + 在席配信はPR #5で対応します。',
+
+  'shell.developer.title': '開発者',
+  'shell.developer.subtitle': 'インフラ · モジュール · 監査 · テレメトリ',
+  'shell.executive.title': '経営層',
+  'shell.executive.subtitle': 'ビジョン · 戦略 · 資本配分',
+  'shell.manager.title': 'マネージャー',
+  'shell.manager.subtitle': '運用 · 保全 · 在庫 · 人員',
+
+  'nav.developer.infrastructure': 'インフラ',
+  'nav.developer.discovery': 'IoT検出',
+  'nav.developer.industry': '業種プロファイル',
+  'nav.developer.modules': 'モジュールレジストリ',
+  'nav.developer.audit': '監査ログ',
+  'nav.developer.health': 'システム正常性',
+
+  'nav.executive.overview': '概要',
+  'nav.executive.digitalTwin': 'デジタルツイン',
+  'nav.executive.projections': 'AI予測',
+  'nav.executive.compliance': 'コンプライアンス',
+
+  'nav.manager.workOrders': '作業指示',
+  'nav.manager.machines': '設備',
+  'nav.manager.maintenance': '保全',
+  'nav.manager.inventory': '在庫',
+  'nav.manager.supplyChain': 'サプライチェーン',
+  'nav.manager.roster': '勤務表',
+  'nav.manager.certifications': '認定',
+  'nav.manager.support': 'AIサポート',
+
+  'common.skeletonNote': 'スケルトンページ — 実装は今後のPRで対応します。',
+
+  'page.audit.title': '監査ログ',
+  'page.audit.desc': 'すべての特権操作の追記専用台帳。Supabase Realtimeでストリーミングされます。',
+  'page.modules.title': 'モジュールレジストリ',
+  'page.modules.desc': 'このテナント全体でモジュールを参照・インストール・固定・取り消しします。',
+  'page.projections.title': 'AI予測',
+  'page.projections.desc': '過去のテレメトリとML予測に基づく収益シナリオ。',
+  'page.maintenance.title': '予知保全',
+  'page.maintenance.desc': '振動・熱の異常、RUL予測、作業指示の生成。',
+  'page.roster.title': '勤務表',
+  'page.roster.desc': '勤務中のオペレーター、認定、在席（mDNSベース）、シフト割り当て。',
 };
 
 const zhCN: Messages = {
@@ -263,6 +487,47 @@ const zhCN: Messages = {
   'employee.clock.clockIn': '上班打卡',
   'employee.clock.clockOut': '下班打卡',
   'employee.clock.geofenceNote': '地理围栏 + 在场广播将在 PR #5 接入。',
+
+  'shell.developer.title': '开发者',
+  'shell.developer.subtitle': '基础设施 · 模块 · 审计 · 遥测',
+  'shell.executive.title': '高管',
+  'shell.executive.subtitle': '愿景 · 战略 · 资本配置',
+  'shell.manager.title': '经理',
+  'shell.manager.subtitle': '运营 · 维护 · 库存 · 人员',
+
+  'nav.developer.infrastructure': '基础设施',
+  'nav.developer.discovery': 'IoT 发现',
+  'nav.developer.industry': '行业配置',
+  'nav.developer.modules': '模块注册表',
+  'nav.developer.audit': '审计日志',
+  'nav.developer.health': '系统健康',
+
+  'nav.executive.overview': '概览',
+  'nav.executive.digitalTwin': '数字孪生',
+  'nav.executive.projections': 'AI 预测',
+  'nav.executive.compliance': '合规',
+
+  'nav.manager.workOrders': '工单',
+  'nav.manager.machines': '设备',
+  'nav.manager.maintenance': '维护',
+  'nav.manager.inventory': '库存',
+  'nav.manager.supplyChain': '供应链',
+  'nav.manager.roster': '排班',
+  'nav.manager.certifications': '认证',
+  'nav.manager.support': 'AI 支持',
+
+  'common.skeletonNote': '骨架页面 — 真实实现将在后续 PR 中完成。',
+
+  'page.audit.title': '审计日志',
+  'page.audit.desc': '每个特权操作的仅追加账本。通过 Supabase Realtime 流式传输。',
+  'page.modules.title': '模块注册表',
+  'page.modules.desc': '在此租户中浏览、安装、固定和吊销模块。',
+  'page.projections.title': 'AI 预测',
+  'page.projections.desc': '基于历史遥测 + ML 预测的盈利情景。',
+  'page.maintenance.title': '预测性维护',
+  'page.maintenance.desc': '振动/热异常、RUL 预测、工单生成。',
+  'page.roster.title': '排班',
+  'page.roster.desc': '在岗操作员、认证、在场（基于 mDNS）、班次分配。',
 };
 
 /// Master registry keyed by BCP-47 tag. `useTranslation`

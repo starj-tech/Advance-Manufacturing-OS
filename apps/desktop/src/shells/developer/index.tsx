@@ -1,4 +1,5 @@
 import { Routes, Route, NavLink, Navigate } from 'react-router-dom';
+import { useTranslation } from '@aether/i18n';
 import { InfrastructurePage } from './InfrastructurePage';
 import { ModuleRegistryPage } from './ModuleRegistryPage';
 import { AuditLogPage } from './AuditLogPage';
@@ -8,19 +9,20 @@ import { IndustryProfilePage } from './IndustryProfilePage';
 import { ShellLayout } from '../_shared/ShellLayout';
 
 const NAV = [
-  { to: 'infrastructure', label: 'Infrastructure' },
-  { to: 'discovery', label: 'IoT discovery' },
-  { to: 'industry', label: 'Industry profile' },
-  { to: 'modules', label: 'Module registry' },
-  { to: 'audit', label: 'Audit log' },
-  { to: 'health', label: 'System health' },
+  { to: 'infrastructure', labelKey: 'nav.developer.infrastructure' },
+  { to: 'discovery', labelKey: 'nav.developer.discovery' },
+  { to: 'industry', labelKey: 'nav.developer.industry' },
+  { to: 'modules', labelKey: 'nav.developer.modules' },
+  { to: 'audit', labelKey: 'nav.developer.audit' },
+  { to: 'health', labelKey: 'nav.developer.health' },
 ];
 
 export default function DeveloperShell() {
+  const { t } = useTranslation();
   return (
     <ShellLayout
-      title="Developer"
-      subtitle="Infrastructure · Modules · Audit · Telemetry"
+      title={t('shell.developer.title')}
+      subtitle={t('shell.developer.subtitle')}
       sidebar={
         <nav style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {NAV.map((n) => (
@@ -35,7 +37,7 @@ export default function DeveloperShell() {
                 background: isActive ? 'var(--aether-bg-elevated)' : 'transparent',
               })}
             >
-              {n.label}
+              {t(n.labelKey)}
             </NavLink>
           ))}
         </nav>
