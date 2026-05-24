@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { GloveButton, gloveTokens } from '@aether/glove-kit';
+import { useTranslation } from '@aether/i18n';
 
 export function ClockPage() {
+  const { t } = useTranslation();
   const [clockedIn, setClockedIn] = useState(false);
   const [since, setSince] = useState<number | null>(null);
 
@@ -27,15 +29,17 @@ export function ClockPage() {
       }}
     >
       <h1 style={{ margin: 0, fontSize: 28, fontWeight: 800 }}>
-        {clockedIn ? 'On shift' : 'Off shift'}
+        {clockedIn ? t('employee.clock.onShift') : t('employee.clock.offShift')}
       </h1>
       {since !== null ? (
-        <p style={{ margin: 0, color: 'var(--aether-fg-muted)', fontSize: gloveTokens.fontSizeBody }}>
-          Clocked in at {new Date(since).toLocaleTimeString()}
+        <p
+          style={{ margin: 0, color: 'var(--aether-fg-muted)', fontSize: gloveTokens.fontSizeBody }}
+        >
+          {t('employee.clock.clockedInAt', { time: new Date(since).toLocaleTimeString() })}
         </p>
       ) : null}
       <GloveButton variant={clockedIn ? 'danger' : 'primary'} fullWidth onClick={toggle}>
-        {clockedIn ? 'Clock out' : 'Clock in'}
+        {clockedIn ? t('employee.clock.clockOut') : t('employee.clock.clockIn')}
       </GloveButton>
       <p
         style={{
@@ -45,7 +49,7 @@ export function ClockPage() {
           textAlign: 'center',
         }}
       >
-        Geofence + presence broadcast wires up in PR #5.
+        {t('employee.clock.geofenceNote')}
       </p>
     </div>
   );

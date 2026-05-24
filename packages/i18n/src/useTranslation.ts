@@ -1,21 +1,23 @@
 import { useLocale } from './LocaleProvider';
+import { interpolate, resolveMessage } from './resources';
 
 /**
- * Minimal translation hook. PR #6 plugs in a real resource bundle
- * loader (lazy fetch from Supabase Storage or bundled per-locale JSON);
- * for the skeleton we return the key as-is so the UI doesn't break
- * when a translation is missing.
+ * Translation hook backed by the in-binary resource catalog
+ * (`resources.ts`). Resolves `key` against the active locale's
+ * bundle, falling back to `en-US`, then to the key itself.
+ * `{name}`-style placeholders in the resolved string are
+ * substituted from `params`.
+ *
+ * The previous skeleton returned the key verbatim regardless of
+ * locale — which is why switching to Deutsch / Nederlands left
+ * every string in English. This version does the real lookup, so
+ * a non-English locale now translates every keyed string and only
+ * falls through to English for keys a given locale hasn't
+ * translated yet.
  */
 export function useTranslation() {
   const { locale } = useLocale();
-  const t = (key: string, params?: Record<string, string | number>) => {
-    let s = key;
-    if (params) {
-      for (const [k, v] of Object.entries(params)) {
-        s = s.replaceAll(`{${k}}`, String(v));
-      }
-    }
-    return s;
-  };
+  const t = (key: string, params?: Record<string, string | number>) =>
+    interpolate(resolveMessage(locale.tag, key), params);
   return { t, locale };
 }

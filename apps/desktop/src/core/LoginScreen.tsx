@@ -1,32 +1,18 @@
 import { Navigate, useNavigate } from 'react-router-dom';
+import { useTranslation } from '@aether/i18n';
 import { useSession } from './session-provider';
 import type { Role } from '@aether/shell-runtime';
 
-const ROLES: Array<{ id: Role; label: string; description: string }> = [
-  {
-    id: 'developer',
-    label: 'Developer',
-    description: 'Infrastructure, module registry, audit log',
-  },
-  {
-    id: 'executive',
-    label: 'Executive',
-    description: 'Digital twin, KPI dashboards, AI projections',
-  },
-  {
-    id: 'manager',
-    label: 'Manager',
-    description: 'Work orders, machines, predictive maintenance, inventory',
-  },
-  {
-    id: 'employee',
-    label: 'Employee',
-    description: 'Task cards, SOS, clock in/out (glove-friendly)',
-  },
+const ROLES: Array<{ id: Role; labelKey: string; descKey: string }> = [
+  { id: 'developer', labelKey: 'role.developer.label', descKey: 'role.developer.desc' },
+  { id: 'executive', labelKey: 'role.executive.label', descKey: 'role.executive.desc' },
+  { id: 'manager', labelKey: 'role.manager.label', descKey: 'role.manager.desc' },
+  { id: 'employee', labelKey: 'role.employee.label', descKey: 'role.employee.desc' },
 ];
 
 export function LoginScreen() {
   const { session, signInDevMode } = useSession();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   if (session) {
@@ -52,9 +38,7 @@ export function LoginScreen() {
           <h1 style={{ fontSize: 36, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>
             AETHER-OS
           </h1>
-          <p style={{ color: 'var(--aether-fg-muted)', marginTop: 8 }}>
-            Industrial Operating System — Foundation Skeleton
-          </p>
+          <p style={{ color: 'var(--aether-fg-muted)', marginTop: 8 }}>{t('app.tagline')}</p>
         </header>
 
         <div
@@ -74,7 +58,7 @@ export function LoginScreen() {
               margin: '0 0 16px',
             }}
           >
-            Dev mode — passkey wiring lands in next PR
+            {t('login.devNotice')}
           </p>
           <div style={{ display: 'grid', gap: 12 }}>
             {ROLES.map((r) => (
@@ -92,9 +76,9 @@ export function LoginScreen() {
                   gap: 4,
                 }}
               >
-                <span style={{ fontWeight: 600 }}>{r.label}</span>
+                <span style={{ fontWeight: 600 }}>{t(r.labelKey)}</span>
                 <span style={{ color: 'var(--aether-fg-muted)', fontSize: 13 }}>
-                  {r.description}
+                  {t(r.descKey)}
                 </span>
               </button>
             ))}

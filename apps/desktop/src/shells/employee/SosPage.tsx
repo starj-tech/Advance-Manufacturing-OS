@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { SosButton, gloveTokens } from '@aether/glove-kit';
+import { useTranslation } from '@aether/i18n';
 
 export function SosPage() {
+  const { t } = useTranslation();
   const [status, setStatus] = useState<'idle' | 'sent' | 'failed'>('idle');
 
   return (
@@ -16,7 +18,7 @@ export function SosPage() {
         padding: gloveTokens.spacingLg,
       }}
     >
-      <h1 style={{ margin: 0, fontSize: 32, fontWeight: 800 }}>Emergency</h1>
+      <h1 style={{ margin: 0, fontSize: 32, fontWeight: 800 }}>{t('employee.sos.title')}</h1>
       <p
         style={{
           margin: 0,
@@ -26,8 +28,7 @@ export function SosPage() {
           maxWidth: 360,
         }}
       >
-        Hold the button for 2 seconds. Your supervisor and on-shift safety team
-        are alerted instantly. Location is included.
+        {t('employee.sos.instructions')}
       </p>
 
       <SosButton
@@ -50,7 +51,7 @@ export function SosPage() {
             fontWeight: 600,
           }}
         >
-          Alert sent (skeleton). Real broadcast wires up in PR #5.
+          {t('employee.sos.alertSent')}
         </div>
       ) : null}
     </div>

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { SHELLS, useIndustry, useShellStore } from '@aether/shell-runtime';
 import { StatusPill } from '@aether/ui-kit';
-import { useLocale } from '@aether/i18n';
+import { useLocale, useTranslation } from '@aether/i18n';
 import { useSession } from '../core/session-provider';
 import { useShellSwitcher } from '../core/shell-switcher';
 
@@ -19,6 +19,7 @@ export function TopBar() {
   const navigate = useNavigate();
   const { switchShell } = useShellSwitcher();
   const { locale, setLocale, available } = useLocale();
+  const { t } = useTranslation();
   const industry = useIndustry();
 
   if (!session) return null;
@@ -78,13 +79,15 @@ export function TopBar() {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         {industry ? (
-          <StatusPill kind="info">industry · {formatIndustry(industry)}</StatusPill>
+          <StatusPill kind="info">
+            {t('topbar.industry', { name: formatIndustry(industry) })}
+          </StatusPill>
         ) : null}
-        <StatusPill kind="warning">offline · sync paused</StatusPill>
+        <StatusPill kind="warning">{t('topbar.offline')}</StatusPill>
         <select
           value={locale.tag}
           onChange={(e) => setLocale(e.target.value)}
-          aria-label="Language and currency"
+          aria-label={t('topbar.langAria')}
           style={{
             background: 'var(--aether-bg)',
             color: 'var(--aether-fg)',
@@ -102,7 +105,7 @@ export function TopBar() {
         </select>
         <button
           onClick={() => navigate('/_notifications')}
-          aria-label={`${notifications} notifications`}
+          aria-label={t('topbar.notificationsAria', { count: notifications })}
           style={{
             background: 'transparent',
             border: '1px solid var(--aether-border)',
@@ -114,9 +117,7 @@ export function TopBar() {
         >
           🔔 {notifications}
         </button>
-        <span style={{ fontSize: 13, color: 'var(--aether-fg-muted)' }}>
-          {session.displayName}
-        </span>
+        <span style={{ fontSize: 13, color: 'var(--aether-fg-muted)' }}>{session.displayName}</span>
         <button
           onClick={signOut}
           style={{
@@ -128,7 +129,7 @@ export function TopBar() {
             fontSize: 13,
           }}
         >
-          Sign out
+          {t('topbar.signOut')}
         </button>
       </div>
     </header>

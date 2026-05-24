@@ -1,13 +1,15 @@
 import { NavLink } from 'react-router-dom';
 import { gloveTokens } from '@aether/glove-kit';
+import { useTranslation } from '@aether/i18n';
 
 const ITEMS = [
-  { to: 'tasks', label: 'Tasks' },
-  { to: 'sos', label: 'SOS' },
-  { to: 'clock', label: 'Clock' },
+  { to: 'tasks', labelKey: 'employee.nav.tasks' },
+  { to: 'sos', labelKey: 'employee.nav.sos' },
+  { to: 'clock', labelKey: 'employee.nav.clock' },
 ];
 
 export function EmployeeNav() {
+  const { t } = useTranslation();
   return (
     <nav
       style={{
@@ -32,7 +34,7 @@ export function EmployeeNav() {
             borderTop: isActive ? '3px solid var(--aether-accent)' : '3px solid transparent',
           })}
         >
-          {i.label}
+          {t(i.labelKey)}
         </NavLink>
       ))}
     </nav>

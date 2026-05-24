@@ -1,4 +1,5 @@
 import { TaskCard, gloveTokens } from '@aether/glove-kit';
+import { useTranslation } from '@aether/i18n';
 
 const TASKS = [
   {
@@ -22,6 +23,7 @@ const TASKS = [
 ];
 
 export function TasksPage() {
+  const { t } = useTranslation();
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: gloveTokens.spacingMd }}>
       <h1
@@ -32,13 +34,18 @@ export function TasksPage() {
           letterSpacing: '-0.01em',
         }}
       >
-        Your tasks
+        {t('employee.tasks.title')}
       </h1>
       <p style={{ margin: 0, color: 'var(--aether-fg-muted)', fontSize: gloveTokens.fontSizeBody }}>
-        Tap a card to open. Long-press SOS at any time.
+        {t('employee.tasks.subtitle')}
       </p>
       <div
-        style={{ display: 'flex', flexDirection: 'column', gap: gloveTokens.spacingSm, marginTop: 8 }}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: gloveTokens.spacingSm,
+          marginTop: 8,
+        }}
       >
         {TASKS.map((t) => (
           <TaskCard key={t.id} title={t.title} subtitle={t.subtitle} status={t.status} />
