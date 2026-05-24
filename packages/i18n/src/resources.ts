@@ -118,6 +118,47 @@ const enUS: Messages = {
   'page.roster.title': 'Roster',
   'page.roster.desc':
     'Operators on shift, certifications, presence (mDNS-driven), shift assignments.',
+
+  // Executive · overview
+  'page.overview.title': 'Overview',
+  'page.overview.kpi.oee': 'OEE (overall)',
+  'page.overview.kpi.throughput': 'Throughput (units/h)',
+  'page.overview.kpi.quality': 'Quality first-pass',
+  'page.overview.kpi.margin': 'Margin (rolling 30d)',
+  'page.overview.hint.telemetry': 'wired in PR #3',
+  'page.overview.hint.finance': 'finance feed in PR #5',
+
+  // Executive · digital twin
+  'page.digitalTwin.title': 'Digital twin',
+  'page.digitalTwin.viewerTitle': 'Plant viewer',
+  'page.digitalTwin.viewerSubtitle': 'React Three Fiber scene mounts here in PR #6',
+  'page.digitalTwin.placeholder': 'Placeholder · 3D model + live telemetry overlay coming in PR #6',
+
+  // Executive · compliance
+  'page.compliance.title': 'Compliance attestation',
+  'page.compliance.intro':
+    "Live status across every regulatory + voluntary standard you've enrolled in. Each report is signed by the AETHER attestation service so external auditors can verify it without trusting us.",
+  'page.compliance.rollup.enrolled': 'Enrolled',
+  'page.compliance.rollup.compliant': 'Compliant',
+  'page.compliance.rollup.needsReview': 'Needs review',
+  'page.compliance.rollup.nonCompliant': 'Non-compliant',
+  'page.compliance.standardsTitle': 'Standards',
+  'page.compliance.standardsSubtitle':
+    'Demo data — real probes wire up in PR #6 alongside the attestation signing key.',
+  'page.compliance.col.standard': 'Standard',
+  'page.compliance.col.jurisdiction': 'Jurisdiction',
+  'page.compliance.col.kind': 'Kind',
+  'page.compliance.col.controls': 'Controls',
+  'page.compliance.col.status': 'Status',
+  'page.compliance.col.lastReport': 'Last report',
+  'page.compliance.status.compliant': 'Compliant',
+  'page.compliance.status.needs-review': 'Needs review',
+  'page.compliance.status.non-compliant': 'Non-compliant',
+  'page.compliance.status.not-run': 'Not run',
+  'page.compliance.kind.international': 'International',
+  'page.compliance.kind.industry': 'Industry',
+  'page.compliance.kind.regulation': 'Regulation',
+  'page.compliance.kind.national': 'National',
 };
 
 // en-GB shares the US base; only spellings / tax-ish phrasing
@@ -205,6 +246,45 @@ const nlNL: Messages = {
   'page.roster.title': 'Rooster',
   'page.roster.desc':
     'Operators in dienst, certificeringen, aanwezigheid (mDNS-gestuurd), dienstindelingen.',
+
+  'page.overview.title': 'Overzicht',
+  'page.overview.kpi.oee': 'OEE (totaal)',
+  'page.overview.kpi.throughput': 'Doorvoer (stuks/u)',
+  'page.overview.kpi.quality': 'Kwaliteit eerste keer goed',
+  'page.overview.kpi.margin': 'Marge (voortschrijdend 30d)',
+  'page.overview.hint.telemetry': 'gekoppeld in PR #3',
+  'page.overview.hint.finance': 'financiële feed in PR #5',
+
+  'page.digitalTwin.title': 'Digitale tweeling',
+  'page.digitalTwin.viewerTitle': 'Fabrieksviewer',
+  'page.digitalTwin.viewerSubtitle': 'React Three Fiber-scène wordt hier gekoppeld in PR #6',
+  'page.digitalTwin.placeholder':
+    'Tijdelijke aanduiding · 3D-model + live telemetrie-overlay komt in PR #6',
+
+  'page.compliance.title': 'Nalevingsattest',
+  'page.compliance.intro':
+    'Live status van elke wettelijke + vrijwillige norm waarvoor je bent ingeschreven. Elk rapport wordt ondertekend door de AETHER-attestatieservice zodat externe auditors het kunnen verifiëren zonder ons te vertrouwen.',
+  'page.compliance.rollup.enrolled': 'Ingeschreven',
+  'page.compliance.rollup.compliant': 'Conform',
+  'page.compliance.rollup.needsReview': 'Beoordeling nodig',
+  'page.compliance.rollup.nonCompliant': 'Niet-conform',
+  'page.compliance.standardsTitle': 'Normen',
+  'page.compliance.standardsSubtitle':
+    'Demogegevens — echte probes worden gekoppeld in PR #6 samen met de attestatie-ondertekeningssleutel.',
+  'page.compliance.col.standard': 'Norm',
+  'page.compliance.col.jurisdiction': 'Rechtsgebied',
+  'page.compliance.col.kind': 'Soort',
+  'page.compliance.col.controls': 'Controles',
+  'page.compliance.col.status': 'Status',
+  'page.compliance.col.lastReport': 'Laatste rapport',
+  'page.compliance.status.compliant': 'Conform',
+  'page.compliance.status.needs-review': 'Beoordeling nodig',
+  'page.compliance.status.non-compliant': 'Niet-conform',
+  'page.compliance.status.not-run': 'Niet uitgevoerd',
+  'page.compliance.kind.international': 'Internationaal',
+  'page.compliance.kind.industry': 'Branche',
+  'page.compliance.kind.regulation': 'Regelgeving',
+  'page.compliance.kind.national': 'Nationaal',
 };
 
 const deDE: Messages = {
@@ -289,6 +369,45 @@ const deDE: Messages = {
   'page.roster.title': 'Dienstplan',
   'page.roster.desc':
     'Operatoren im Dienst, Zertifizierungen, Anwesenheit (mDNS-gesteuert), Schichtzuweisungen.',
+
+  'page.overview.title': 'Übersicht',
+  'page.overview.kpi.oee': 'OEE (gesamt)',
+  'page.overview.kpi.throughput': 'Durchsatz (Stück/h)',
+  'page.overview.kpi.quality': 'Qualität Erstdurchlauf',
+  'page.overview.kpi.margin': 'Marge (rollierend 30 T)',
+  'page.overview.hint.telemetry': 'angebunden in PR #3',
+  'page.overview.hint.finance': 'Finanz-Feed in PR #5',
+
+  'page.digitalTwin.title': 'Digitaler Zwilling',
+  'page.digitalTwin.viewerTitle': 'Werksansicht',
+  'page.digitalTwin.viewerSubtitle': 'React-Three-Fiber-Szene wird hier in PR #6 eingebunden',
+  'page.digitalTwin.placeholder':
+    'Platzhalter · 3D-Modell + Live-Telemetrie-Overlay folgt in PR #6',
+
+  'page.compliance.title': 'Compliance-Attestierung',
+  'page.compliance.intro':
+    'Live-Status für jede regulatorische + freiwillige Norm, für die Sie registriert sind. Jeder Bericht wird vom AETHER-Attestierungsdienst signiert, sodass externe Auditoren ihn überprüfen können, ohne uns vertrauen zu müssen.',
+  'page.compliance.rollup.enrolled': 'Registriert',
+  'page.compliance.rollup.compliant': 'Konform',
+  'page.compliance.rollup.needsReview': 'Prüfung nötig',
+  'page.compliance.rollup.nonCompliant': 'Nicht konform',
+  'page.compliance.standardsTitle': 'Normen',
+  'page.compliance.standardsSubtitle':
+    'Demodaten — echte Probes werden in PR #6 zusammen mit dem Attestierungs-Signaturschlüssel angebunden.',
+  'page.compliance.col.standard': 'Norm',
+  'page.compliance.col.jurisdiction': 'Zuständigkeit',
+  'page.compliance.col.kind': 'Art',
+  'page.compliance.col.controls': 'Kontrollen',
+  'page.compliance.col.status': 'Status',
+  'page.compliance.col.lastReport': 'Letzter Bericht',
+  'page.compliance.status.compliant': 'Konform',
+  'page.compliance.status.needs-review': 'Prüfung nötig',
+  'page.compliance.status.non-compliant': 'Nicht konform',
+  'page.compliance.status.not-run': 'Nicht ausgeführt',
+  'page.compliance.kind.international': 'International',
+  'page.compliance.kind.industry': 'Branche',
+  'page.compliance.kind.regulation': 'Regulierung',
+  'page.compliance.kind.national': 'National',
 };
 
 const idID: Messages = {
@@ -370,6 +489,45 @@ const idID: Messages = {
   'page.roster.title': 'Jadwal kerja',
   'page.roster.desc':
     'Operator yang bertugas, sertifikasi, kehadiran (berbasis mDNS), penugasan shift.',
+
+  'page.overview.title': 'Ikhtisar',
+  'page.overview.kpi.oee': 'OEE (keseluruhan)',
+  'page.overview.kpi.throughput': 'Hasil (unit/jam)',
+  'page.overview.kpi.quality': 'Kualitas lolos pertama',
+  'page.overview.kpi.margin': 'Margin (30 hari berjalan)',
+  'page.overview.hint.telemetry': 'dihubungkan di PR #3',
+  'page.overview.hint.finance': 'umpan keuangan di PR #5',
+
+  'page.digitalTwin.title': 'Kembar digital',
+  'page.digitalTwin.viewerTitle': 'Penampil pabrik',
+  'page.digitalTwin.viewerSubtitle': 'Adegan React Three Fiber dipasang di sini pada PR #6',
+  'page.digitalTwin.placeholder':
+    'Placeholder · model 3D + overlay telemetri langsung hadir di PR #6',
+
+  'page.compliance.title': 'Atestasi kepatuhan',
+  'page.compliance.intro':
+    'Status langsung di seluruh standar regulasi + sukarela yang Anda ikuti. Setiap laporan ditandatangani oleh layanan atestasi AETHER sehingga auditor eksternal dapat memverifikasinya tanpa harus memercayai kami.',
+  'page.compliance.rollup.enrolled': 'Terdaftar',
+  'page.compliance.rollup.compliant': 'Patuh',
+  'page.compliance.rollup.needsReview': 'Perlu tinjauan',
+  'page.compliance.rollup.nonCompliant': 'Tidak patuh',
+  'page.compliance.standardsTitle': 'Standar',
+  'page.compliance.standardsSubtitle':
+    'Data demo — probe sungguhan dihubungkan di PR #6 bersama kunci penandatanganan atestasi.',
+  'page.compliance.col.standard': 'Standar',
+  'page.compliance.col.jurisdiction': 'Yurisdiksi',
+  'page.compliance.col.kind': 'Jenis',
+  'page.compliance.col.controls': 'Kontrol',
+  'page.compliance.col.status': 'Status',
+  'page.compliance.col.lastReport': 'Laporan terakhir',
+  'page.compliance.status.compliant': 'Patuh',
+  'page.compliance.status.needs-review': 'Perlu tinjauan',
+  'page.compliance.status.non-compliant': 'Tidak patuh',
+  'page.compliance.status.not-run': 'Belum dijalankan',
+  'page.compliance.kind.international': 'Internasional',
+  'page.compliance.kind.industry': 'Industri',
+  'page.compliance.kind.regulation': 'Regulasi',
+  'page.compliance.kind.national': 'Nasional',
 };
 
 const jaJP: Messages = {
@@ -449,6 +607,45 @@ const jaJP: Messages = {
   'page.maintenance.desc': '振動・熱の異常、RUL予測、作業指示の生成。',
   'page.roster.title': '勤務表',
   'page.roster.desc': '勤務中のオペレーター、認定、在席（mDNSベース）、シフト割り当て。',
+
+  'page.overview.title': '概要',
+  'page.overview.kpi.oee': 'OEE（総合）',
+  'page.overview.kpi.throughput': 'スループット（個/時）',
+  'page.overview.kpi.quality': '一発良品率',
+  'page.overview.kpi.margin': '利益率（30日移動）',
+  'page.overview.hint.telemetry': 'PR #3で接続',
+  'page.overview.hint.finance': 'PR #5で財務フィード',
+
+  'page.digitalTwin.title': 'デジタルツイン',
+  'page.digitalTwin.viewerTitle': 'プラントビューア',
+  'page.digitalTwin.viewerSubtitle': 'React Three FiberシーンはPR #6でここに組み込まれます',
+  'page.digitalTwin.placeholder':
+    'プレースホルダー · 3Dモデル + ライブテレメトリオーバーレイはPR #6で対応',
+
+  'page.compliance.title': 'コンプライアンス認証',
+  'page.compliance.intro':
+    '登録済みのすべての規制・任意規格にわたるライブステータス。各レポートはAETHER認証サービスによって署名されるため、外部監査人は当社を信頼することなく検証できます。',
+  'page.compliance.rollup.enrolled': '登録済み',
+  'page.compliance.rollup.compliant': '適合',
+  'page.compliance.rollup.needsReview': '要確認',
+  'page.compliance.rollup.nonCompliant': '不適合',
+  'page.compliance.standardsTitle': '規格',
+  'page.compliance.standardsSubtitle':
+    'デモデータ — 実際のプローブはPR #6で認証署名鍵とともに接続されます。',
+  'page.compliance.col.standard': '規格',
+  'page.compliance.col.jurisdiction': '管轄',
+  'page.compliance.col.kind': '種類',
+  'page.compliance.col.controls': '統制',
+  'page.compliance.col.status': 'ステータス',
+  'page.compliance.col.lastReport': '最新レポート',
+  'page.compliance.status.compliant': '適合',
+  'page.compliance.status.needs-review': '要確認',
+  'page.compliance.status.non-compliant': '不適合',
+  'page.compliance.status.not-run': '未実行',
+  'page.compliance.kind.international': '国際',
+  'page.compliance.kind.industry': '業界',
+  'page.compliance.kind.regulation': '規制',
+  'page.compliance.kind.national': '国内',
 };
 
 const zhCN: Messages = {
@@ -528,6 +725,43 @@ const zhCN: Messages = {
   'page.maintenance.desc': '振动/热异常、RUL 预测、工单生成。',
   'page.roster.title': '排班',
   'page.roster.desc': '在岗操作员、认证、在场（基于 mDNS）、班次分配。',
+
+  'page.overview.title': '概览',
+  'page.overview.kpi.oee': 'OEE（综合）',
+  'page.overview.kpi.throughput': '产量（件/小时）',
+  'page.overview.kpi.quality': '一次合格率',
+  'page.overview.kpi.margin': '利润率（滚动 30 天）',
+  'page.overview.hint.telemetry': '在 PR #3 接入',
+  'page.overview.hint.finance': '在 PR #5 接入财务数据',
+
+  'page.digitalTwin.title': '数字孪生',
+  'page.digitalTwin.viewerTitle': '工厂查看器',
+  'page.digitalTwin.viewerSubtitle': 'React Three Fiber 场景将在 PR #6 接入此处',
+  'page.digitalTwin.placeholder': '占位符 · 3D 模型 + 实时遥测叠加将在 PR #6 接入',
+
+  'page.compliance.title': '合规认证',
+  'page.compliance.intro':
+    '您已注册的每项法规及自愿标准的实时状态。每份报告均由 AETHER 认证服务签名，外部审计员无需信任我们即可验证。',
+  'page.compliance.rollup.enrolled': '已注册',
+  'page.compliance.rollup.compliant': '合规',
+  'page.compliance.rollup.needsReview': '需复核',
+  'page.compliance.rollup.nonCompliant': '不合规',
+  'page.compliance.standardsTitle': '标准',
+  'page.compliance.standardsSubtitle': '演示数据 — 真实探针将在 PR #6 与认证签名密钥一起接入。',
+  'page.compliance.col.standard': '标准',
+  'page.compliance.col.jurisdiction': '司法管辖区',
+  'page.compliance.col.kind': '类别',
+  'page.compliance.col.controls': '控制项',
+  'page.compliance.col.status': '状态',
+  'page.compliance.col.lastReport': '最新报告',
+  'page.compliance.status.compliant': '合规',
+  'page.compliance.status.needs-review': '需复核',
+  'page.compliance.status.non-compliant': '不合规',
+  'page.compliance.status.not-run': '未运行',
+  'page.compliance.kind.international': '国际',
+  'page.compliance.kind.industry': '行业',
+  'page.compliance.kind.regulation': '法规',
+  'page.compliance.kind.national': '国家',
 };
 
 /// Master registry keyed by BCP-47 tag. `useTranslation`

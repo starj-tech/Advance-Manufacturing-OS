@@ -1,13 +1,15 @@
 import { Card, CardBody, CardHeader, Stack } from '@aether/ui-kit';
+import { useTranslation } from '@aether/i18n';
 
 export function DigitalTwinPage() {
+  const { t } = useTranslation();
   return (
     <Stack gap={16}>
-      <h1 style={{ margin: 0, fontSize: 24 }}>Digital twin</h1>
+      <h1 style={{ margin: 0, fontSize: 24 }}>{t('page.digitalTwin.title')}</h1>
       <Card>
         <CardHeader
-          title="Plant viewer"
-          subtitle="React Three Fiber scene mounts here in PR #6"
+          title={t('page.digitalTwin.viewerTitle')}
+          subtitle={t('page.digitalTwin.viewerSubtitle')}
         />
         <CardBody>
           <div
@@ -21,7 +23,7 @@ export function DigitalTwinPage() {
               fontSize: 13,
             }}
           >
-            Placeholder · 3D model + live telemetry overlay coming in PR #6
+            {t('page.digitalTwin.placeholder')}
           </div>
         </CardBody>
       </Card>
