@@ -56,11 +56,13 @@ name = "aether-compliance"
 version = "0.1.0"
 dependencies = [
  "aether-core",
+ "aether-db",
  "async-trait",
  "chrono",
  "serde",
  "serde_json",
  "sha2",
+ "sqlx",
  "thiserror 1.0.69",
  "tokio",
  "tracing",
