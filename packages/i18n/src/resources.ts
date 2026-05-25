@@ -383,6 +383,15 @@ const enUS: Messages = {
   'page.projections.col.pnl': 'Projected P&L',
   'page.projections.note':
     'Deterministic demo model. LSTM forecast + Monte Carlo + FX normalization wire up in PR #7.',
+
+  // Executive · digital twin (2D plant overview)
+  'page.digitalTwin.subtitle': 'Live plant floor — select a machine for telemetry.',
+  'page.digitalTwin.selectHint': 'Select a machine to see its live readings.',
+  'page.digitalTwin.reading.throughput': 'Throughput',
+  'page.digitalTwin.reading.temperature': 'Temperature',
+  'page.digitalTwin.reading.cycle': 'Cycle time',
+  'page.digitalTwin.note':
+    '2D plant overview. Full 3D digital twin (React Three Fiber) + live telemetry overlay land in PR #6.',
 };
 
 // en-GB shares the US base; only spellings / tax-ish phrasing
@@ -720,6 +729,14 @@ const nlNL: Messages = {
   'page.projections.col.pnl': 'Verwachte W&V',
   'page.projections.note':
     'Deterministisch demomodel. LSTM-prognose + Monte Carlo + FX-normalisatie worden gekoppeld in PR #7.',
+
+  'page.digitalTwin.subtitle': 'Live fabrieksvloer — selecteer een machine voor telemetrie.',
+  'page.digitalTwin.selectHint': 'Selecteer een machine om de live metingen te zien.',
+  'page.digitalTwin.reading.throughput': 'Doorvoer',
+  'page.digitalTwin.reading.temperature': 'Temperatuur',
+  'page.digitalTwin.reading.cycle': 'Cyclustijd',
+  'page.digitalTwin.note':
+    '2D-fabrieksoverzicht. Volledige 3D digital twin (React Three Fiber) + live telemetrie-overlay komen in PR #6.',
 };
 
 const deDE: Messages = {
@@ -1054,6 +1071,14 @@ const deDE: Messages = {
   'page.projections.col.pnl': 'Prognostizierte GuV',
   'page.projections.note':
     'Deterministisches Demomodell. LSTM-Prognose + Monte Carlo + FX-Normalisierung werden in PR #7 angebunden.',
+
+  'page.digitalTwin.subtitle': 'Live-Werkshalle — wählen Sie eine Maschine für Telemetrie.',
+  'page.digitalTwin.selectHint': 'Wählen Sie eine Maschine, um ihre Live-Werte zu sehen.',
+  'page.digitalTwin.reading.throughput': 'Durchsatz',
+  'page.digitalTwin.reading.temperature': 'Temperatur',
+  'page.digitalTwin.reading.cycle': 'Taktzeit',
+  'page.digitalTwin.note':
+    '2D-Werksübersicht. Vollständiger 3D-Digital-Twin (React Three Fiber) + Live-Telemetrie-Overlay folgen in PR #6.',
 };
 
 const idID: Messages = {
@@ -1383,6 +1408,14 @@ const idID: Messages = {
   'page.projections.col.pnl': 'Proyeksi L/R',
   'page.projections.note':
     'Model demo deterministik. Prakiraan LSTM + Monte Carlo + normalisasi FX dihubungkan di PR #7.',
+
+  'page.digitalTwin.subtitle': 'Lantai pabrik langsung — pilih mesin untuk telemetri.',
+  'page.digitalTwin.selectHint': 'Pilih mesin untuk melihat pembacaan langsungnya.',
+  'page.digitalTwin.reading.throughput': 'Hasil',
+  'page.digitalTwin.reading.temperature': 'Suhu',
+  'page.digitalTwin.reading.cycle': 'Waktu siklus',
+  'page.digitalTwin.note':
+    'Ikhtisar pabrik 2D. Digital twin 3D penuh (React Three Fiber) + overlay telemetri langsung hadir di PR #6.',
 };
 
 const jaJP: Messages = {
@@ -1708,6 +1741,14 @@ const jaJP: Messages = {
   'page.projections.col.pnl': '予測損益',
   'page.projections.note':
     '決定論的なデモモデル。LSTM予測 + モンテカルロ + FX正規化はPR #7で接続されます。',
+
+  'page.digitalTwin.subtitle': 'ライブの工場フロア — 機械を選択してテレメトリを表示。',
+  'page.digitalTwin.selectHint': '機械を選択するとライブ値が表示されます。',
+  'page.digitalTwin.reading.throughput': 'スループット',
+  'page.digitalTwin.reading.temperature': '温度',
+  'page.digitalTwin.reading.cycle': 'サイクルタイム',
+  'page.digitalTwin.note':
+    '2D工場概要。完全な3Dデジタルツイン（React Three Fiber）+ ライブテレメトリオーバーレイはPR #6で対応します。',
 };
 
 const zhCN: Messages = {
@@ -2025,6 +2066,14 @@ const zhCN: Messages = {
   'page.projections.col.unitMargin': '单位利润',
   'page.projections.col.pnl': '预测损益',
   'page.projections.note': '确定性演示模型。LSTM 预测 + 蒙特卡洛 + 汇率归一化将在 PR #7 接入。',
+
+  'page.digitalTwin.subtitle': '实时工厂车间 — 选择一台设备查看遥测。',
+  'page.digitalTwin.selectHint': '选择一台设备以查看其实时读数。',
+  'page.digitalTwin.reading.throughput': '产量',
+  'page.digitalTwin.reading.temperature': '温度',
+  'page.digitalTwin.reading.cycle': '节拍时间',
+  'page.digitalTwin.note':
+    '2D 工厂概览。完整 3D 数字孪生（React Three Fiber）+ 实时遥测叠加将在 PR #6 接入。',
 };
 
 /// Master registry keyed by BCP-47 tag. `useTranslation`
