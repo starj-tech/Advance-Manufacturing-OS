@@ -218,6 +218,49 @@ const enUS: Messages = {
   'page.industry.kind.compliance': 'compliance',
   'page.industry.kind.process': 'process',
   'page.industry.kind.sustainability': 'sustainability',
+
+  // Manager · work orders
+  'page.wo.title': 'Work orders',
+  'page.wo.new': 'New (PR #2)',
+  'page.wo.queueTitle': 'Active queue',
+  'page.wo.queueSubtitle': 'Realtime state arrives in PR #2 once the sync engine ships',
+  'page.wo.col.code': 'Code',
+  'page.wo.col.product': 'Product',
+  'page.wo.col.quantity': 'Quantity',
+  'page.wo.col.status': 'Status',
+  'page.wo.open': 'Open',
+  'page.wo.status.running': 'running',
+  'page.wo.status.released': 'released',
+  'page.wo.status.paused': 'paused',
+  'page.wo.status.draft': 'draft',
+
+  // Manager · machines
+  'page.machines.title': 'Machines',
+  'page.machines.note': 'Live OPC-UA / MQTT data wires up in PR #3.',
+  'page.machines.status.running': 'running',
+  'page.machines.status.idle': 'idle',
+  'page.machines.status.fault': 'fault',
+  'page.machines.status.maintenance': 'maintenance',
+
+  // Manager · certifications
+  'page.certs.title': 'Certifications & interlocks',
+  'page.certs.intro':
+    'Operators can only start a machine if every required certification is valid. The permit signal is wired directly to the safety relay — invalid certs mean the motor physically cannot energize.',
+  'page.certs.matrixTitle': 'Operator × machine matrix',
+  'page.certs.col.operator': 'Operator',
+  'page.certs.status.expired': 'expired',
+  'page.certs.status.missing': 'missing',
+
+  // Manager · AI support
+  'page.support.title': 'AI support',
+  'page.support.intro':
+    "When something goes wrong, you don't need to call us. AETHER-OS diagnoses, fixes what it safely can, and explains the rest in plain language. Anything that needs your approval shows up here with a single button.",
+  'page.support.urgency.ok': 'auto-fixed',
+  'page.support.urgency.watch': 'watching',
+  'page.support.urgency.needs-you': 'needs you',
+  'page.support.approved': 'approved · running now',
+  'page.support.approveBtn': 'Approve auto-fix',
+  'page.support.talkToHuman': 'Talk to a human (PR #5)',
 };
 
 // en-GB shares the US base; only spellings / tax-ish phrasing
@@ -400,6 +443,46 @@ const nlNL: Messages = {
   'page.industry.kind.compliance': 'naleving',
   'page.industry.kind.process': 'proces',
   'page.industry.kind.sustainability': 'duurzaamheid',
+
+  'page.wo.title': 'Werkorders',
+  'page.wo.new': 'Nieuw (PR #2)',
+  'page.wo.queueTitle': 'Actieve wachtrij',
+  'page.wo.queueSubtitle':
+    'Realtime status verschijnt in PR #2 zodra de synchronisatie-engine wordt uitgebracht',
+  'page.wo.col.code': 'Code',
+  'page.wo.col.product': 'Product',
+  'page.wo.col.quantity': 'Aantal',
+  'page.wo.col.status': 'Status',
+  'page.wo.open': 'Openen',
+  'page.wo.status.running': 'actief',
+  'page.wo.status.released': 'vrijgegeven',
+  'page.wo.status.paused': 'gepauzeerd',
+  'page.wo.status.draft': 'concept',
+
+  'page.machines.title': 'Machines',
+  'page.machines.note': 'Live OPC-UA-/MQTT-gegevens worden gekoppeld in PR #3.',
+  'page.machines.status.running': 'actief',
+  'page.machines.status.idle': 'inactief',
+  'page.machines.status.fault': 'storing',
+  'page.machines.status.maintenance': 'onderhoud',
+
+  'page.certs.title': 'Certificeringen & vergrendelingen',
+  'page.certs.intro':
+    'Operators kunnen een machine alleen starten als elke vereiste certificering geldig is. Het toestemmingssignaal is rechtstreeks op het veiligheidsrelais aangesloten — ongeldige certificeringen betekenen dat de motor fysiek niet kan inschakelen.',
+  'page.certs.matrixTitle': 'Operator × machine-matrix',
+  'page.certs.col.operator': 'Operator',
+  'page.certs.status.expired': 'verlopen',
+  'page.certs.status.missing': 'ontbreekt',
+
+  'page.support.title': 'AI-ondersteuning',
+  'page.support.intro':
+    'Als er iets misgaat, hoef je ons niet te bellen. AETHER-OS stelt een diagnose, lost veilig op wat het kan en legt de rest in gewone taal uit. Alles wat jouw goedkeuring nodig heeft, verschijnt hier met één knop.',
+  'page.support.urgency.ok': 'automatisch opgelost',
+  'page.support.urgency.watch': 'in de gaten',
+  'page.support.urgency.needs-you': 'actie nodig',
+  'page.support.approved': 'goedgekeurd · wordt nu uitgevoerd',
+  'page.support.approveBtn': 'Auto-fix goedkeuren',
+  'page.support.talkToHuman': 'Praat met een mens (PR #5)',
 };
 
 const deDE: Messages = {
@@ -579,6 +662,46 @@ const deDE: Messages = {
   'page.industry.kind.compliance': 'Compliance',
   'page.industry.kind.process': 'Prozess',
   'page.industry.kind.sustainability': 'Nachhaltigkeit',
+
+  'page.wo.title': 'Arbeitsaufträge',
+  'page.wo.new': 'Neu (PR #2)',
+  'page.wo.queueTitle': 'Aktive Warteschlange',
+  'page.wo.queueSubtitle':
+    'Echtzeitstatus erscheint in PR #2, sobald die Synchronisierungs-Engine ausgeliefert wird',
+  'page.wo.col.code': 'Code',
+  'page.wo.col.product': 'Produkt',
+  'page.wo.col.quantity': 'Menge',
+  'page.wo.col.status': 'Status',
+  'page.wo.open': 'Öffnen',
+  'page.wo.status.running': 'läuft',
+  'page.wo.status.released': 'freigegeben',
+  'page.wo.status.paused': 'pausiert',
+  'page.wo.status.draft': 'Entwurf',
+
+  'page.machines.title': 'Maschinen',
+  'page.machines.note': 'Live-OPC-UA-/MQTT-Daten werden in PR #3 angebunden.',
+  'page.machines.status.running': 'läuft',
+  'page.machines.status.idle': 'inaktiv',
+  'page.machines.status.fault': 'Störung',
+  'page.machines.status.maintenance': 'Wartung',
+
+  'page.certs.title': 'Zertifizierungen & Verriegelungen',
+  'page.certs.intro':
+    'Operatoren können eine Maschine nur starten, wenn jede erforderliche Zertifizierung gültig ist. Das Freigabesignal ist direkt mit dem Sicherheitsrelais verbunden — ungültige Zertifizierungen bedeuten, dass der Motor physisch nicht anlaufen kann.',
+  'page.certs.matrixTitle': 'Operator-×-Maschine-Matrix',
+  'page.certs.col.operator': 'Operator',
+  'page.certs.status.expired': 'abgelaufen',
+  'page.certs.status.missing': 'fehlt',
+
+  'page.support.title': 'KI-Support',
+  'page.support.intro':
+    'Wenn etwas schiefgeht, müssen Sie uns nicht anrufen. AETHER-OS stellt eine Diagnose, behebt sicher, was möglich ist, und erklärt den Rest in einfacher Sprache. Alles, was Ihre Freigabe erfordert, erscheint hier mit einer einzigen Schaltfläche.',
+  'page.support.urgency.ok': 'automatisch behoben',
+  'page.support.urgency.watch': 'wird beobachtet',
+  'page.support.urgency.needs-you': 'Aktion nötig',
+  'page.support.approved': 'freigegeben · läuft jetzt',
+  'page.support.approveBtn': 'Auto-Fix freigeben',
+  'page.support.talkToHuman': 'Mit einem Menschen sprechen (PR #5)',
 };
 
 const idID: Messages = {
@@ -754,6 +877,45 @@ const idID: Messages = {
   'page.industry.kind.compliance': 'kepatuhan',
   'page.industry.kind.process': 'proses',
   'page.industry.kind.sustainability': 'keberlanjutan',
+
+  'page.wo.title': 'Perintah kerja',
+  'page.wo.new': 'Baru (PR #2)',
+  'page.wo.queueTitle': 'Antrean aktif',
+  'page.wo.queueSubtitle': 'Status realtime hadir di PR #2 setelah mesin sinkronisasi dirilis',
+  'page.wo.col.code': 'Kode',
+  'page.wo.col.product': 'Produk',
+  'page.wo.col.quantity': 'Jumlah',
+  'page.wo.col.status': 'Status',
+  'page.wo.open': 'Buka',
+  'page.wo.status.running': 'berjalan',
+  'page.wo.status.released': 'dirilis',
+  'page.wo.status.paused': 'dijeda',
+  'page.wo.status.draft': 'draf',
+
+  'page.machines.title': 'Mesin',
+  'page.machines.note': 'Data OPC-UA / MQTT langsung dihubungkan di PR #3.',
+  'page.machines.status.running': 'berjalan',
+  'page.machines.status.idle': 'menganggur',
+  'page.machines.status.fault': 'gangguan',
+  'page.machines.status.maintenance': 'pemeliharaan',
+
+  'page.certs.title': 'Sertifikasi & interlock',
+  'page.certs.intro':
+    'Operator hanya dapat menjalankan mesin jika setiap sertifikasi yang diperlukan valid. Sinyal izin terhubung langsung ke relai keselamatan — sertifikasi tidak valid berarti motor secara fisik tidak dapat menyala.',
+  'page.certs.matrixTitle': 'Matriks operator × mesin',
+  'page.certs.col.operator': 'Operator',
+  'page.certs.status.expired': 'kedaluwarsa',
+  'page.certs.status.missing': 'tidak ada',
+
+  'page.support.title': 'Dukungan AI',
+  'page.support.intro':
+    'Saat terjadi masalah, Anda tidak perlu menghubungi kami. AETHER-OS mendiagnosis, memperbaiki yang aman untuk diperbaiki, dan menjelaskan sisanya dalam bahasa sederhana. Apa pun yang membutuhkan persetujuan Anda muncul di sini dengan satu tombol.',
+  'page.support.urgency.ok': 'diperbaiki otomatis',
+  'page.support.urgency.watch': 'memantau',
+  'page.support.urgency.needs-you': 'perlu Anda',
+  'page.support.approved': 'disetujui · berjalan sekarang',
+  'page.support.approveBtn': 'Setujui perbaikan otomatis',
+  'page.support.talkToHuman': 'Bicara dengan manusia (PR #5)',
 };
 
 const jaJP: Messages = {
@@ -926,6 +1088,45 @@ const jaJP: Messages = {
   'page.industry.kind.compliance': 'コンプライアンス',
   'page.industry.kind.process': 'プロセス',
   'page.industry.kind.sustainability': 'サステナビリティ',
+
+  'page.wo.title': '作業指示',
+  'page.wo.new': '新規（PR #2）',
+  'page.wo.queueTitle': 'アクティブキュー',
+  'page.wo.queueSubtitle': 'リアルタイム状態は、同期エンジンが出荷されるPR #2で表示されます',
+  'page.wo.col.code': 'コード',
+  'page.wo.col.product': '製品',
+  'page.wo.col.quantity': '数量',
+  'page.wo.col.status': 'ステータス',
+  'page.wo.open': '開く',
+  'page.wo.status.running': '稼働中',
+  'page.wo.status.released': 'リリース済み',
+  'page.wo.status.paused': '一時停止',
+  'page.wo.status.draft': '下書き',
+
+  'page.machines.title': '設備',
+  'page.machines.note': 'ライブのOPC-UA / MQTTデータはPR #3で接続されます。',
+  'page.machines.status.running': '稼働中',
+  'page.machines.status.idle': '待機',
+  'page.machines.status.fault': '故障',
+  'page.machines.status.maintenance': '保全',
+
+  'page.certs.title': '認定 & インターロック',
+  'page.certs.intro':
+    '必要なすべての認定が有効な場合にのみ、オペレーターは設備を起動できます。許可信号は安全リレーに直接接続されており、無効な認定ではモーターは物理的に起動できません。',
+  'page.certs.matrixTitle': 'オペレーター × 設備マトリクス',
+  'page.certs.col.operator': 'オペレーター',
+  'page.certs.status.expired': '期限切れ',
+  'page.certs.status.missing': '未取得',
+
+  'page.support.title': 'AIサポート',
+  'page.support.intro':
+    '問題が発生しても、当社に電話する必要はありません。AETHER-OSが診断し、安全に対処できるものは修正し、残りを平易な言葉で説明します。承認が必要なものは、ボタン1つでここに表示されます。',
+  'page.support.urgency.ok': '自動修正済み',
+  'page.support.urgency.watch': '監視中',
+  'page.support.urgency.needs-you': '要対応',
+  'page.support.approved': '承認済み · 実行中',
+  'page.support.approveBtn': '自動修正を承認',
+  'page.support.talkToHuman': '担当者と話す（PR #5）',
 };
 
 const zhCN: Messages = {
@@ -1093,6 +1294,45 @@ const zhCN: Messages = {
   'page.industry.kind.compliance': '合规',
   'page.industry.kind.process': '工艺',
   'page.industry.kind.sustainability': '可持续性',
+
+  'page.wo.title': '工单',
+  'page.wo.new': '新建（PR #2）',
+  'page.wo.queueTitle': '活动队列',
+  'page.wo.queueSubtitle': '实时状态将在同步引擎发布的 PR #2 中显示',
+  'page.wo.col.code': '编号',
+  'page.wo.col.product': '产品',
+  'page.wo.col.quantity': '数量',
+  'page.wo.col.status': '状态',
+  'page.wo.open': '打开',
+  'page.wo.status.running': '运行中',
+  'page.wo.status.released': '已下达',
+  'page.wo.status.paused': '已暂停',
+  'page.wo.status.draft': '草稿',
+
+  'page.machines.title': '设备',
+  'page.machines.note': '实时 OPC-UA / MQTT 数据将在 PR #3 接入。',
+  'page.machines.status.running': '运行中',
+  'page.machines.status.idle': '空闲',
+  'page.machines.status.fault': '故障',
+  'page.machines.status.maintenance': '维护',
+
+  'page.certs.title': '认证与联锁',
+  'page.certs.intro':
+    '只有在每项必需认证均有效时，操作员才能启动设备。许可信号直接连接到安全继电器 — 认证无效意味着电机在物理上无法通电。',
+  'page.certs.matrixTitle': '操作员 × 设备矩阵',
+  'page.certs.col.operator': '操作员',
+  'page.certs.status.expired': '已过期',
+  'page.certs.status.missing': '缺失',
+
+  'page.support.title': 'AI 支持',
+  'page.support.intro':
+    '出现问题时，您无需联系我们。AETHER-OS 会进行诊断，安全地修复力所能及的问题，并用通俗语言解释其余部分。任何需要您批准的事项都会在此通过一个按钮显示。',
+  'page.support.urgency.ok': '已自动修复',
+  'page.support.urgency.watch': '监视中',
+  'page.support.urgency.needs-you': '需要您处理',
+  'page.support.approved': '已批准 · 正在运行',
+  'page.support.approveBtn': '批准自动修复',
+  'page.support.talkToHuman': '联系人工（PR #5）',
 };
 
 /// Master registry keyed by BCP-47 tag. `useTranslation`

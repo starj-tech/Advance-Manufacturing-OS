@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Card, CardBody, CardHeader, Stack, StatusPill, Button } from '@aether/ui-kit';
+import { useTranslation } from '@aether/i18n';
 
 interface ManagerHealingCard {
   at: string;
@@ -37,34 +38,41 @@ const CARDS: ManagerHealingCard[] = [
   },
 ];
 
-const PILL: Record<ManagerHealingCard['urgency'], { kind: 'success' | 'warning' | 'danger'; label: string }> = {
-  ok: { kind: 'success', label: 'auto-fixed' },
-  watch: { kind: 'warning', label: 'watching' },
-  'needs-you': { kind: 'danger', label: 'needs you' },
+const PILL: Record<ManagerHealingCard['urgency'], 'success' | 'warning' | 'danger'> = {
+  ok: 'success',
+  watch: 'warning',
+  'needs-you': 'danger',
 };
 
 export function SupportPage() {
+  const { t } = useTranslation();
   const [confirmed, setConfirmed] = useState<Set<string>>(new Set());
 
   return (
     <Stack gap={16}>
       <header>
-        <h1 style={{ margin: 0, fontSize: 24 }}>AI support</h1>
-        <p style={{ margin: '4px 0 0', color: 'var(--aether-fg-muted)', fontSize: 13, maxWidth: 720 }}>
-          When something goes wrong, you don't need to call us. AETHER-OS diagnoses,
-          fixes what it safely can, and explains the rest in plain language. Anything that
-          needs your approval shows up here with a single button.
+        <h1 style={{ margin: 0, fontSize: 24 }}>{t('page.support.title')}</h1>
+        <p
+          style={{
+            margin: '4px 0 0',
+            color: 'var(--aether-fg-muted)',
+            fontSize: 13,
+            maxWidth: 720,
+          }}
+        >
+          {t('page.support.intro')}
         </p>
       </header>
 
       {CARDS.map((c) => {
-        const pill = PILL[c.urgency];
         const isConfirmed = confirmed.has(c.at);
         return (
           <Card key={c.at}>
             <CardHeader title={c.title} subtitle={c.at}>
               <div style={{ position: 'absolute', top: 16, right: 16 }}>
-                <StatusPill kind={pill.kind}>{pill.label}</StatusPill>
+                <StatusPill kind={PILL[c.urgency]}>
+                  {t(`page.support.urgency.${c.urgency}`)}
+                </StatusPill>
               </div>
             </CardHeader>
             <CardBody>
@@ -72,7 +80,7 @@ export function SupportPage() {
               {c.requiresConfirmation ? (
                 <Stack direction="row" gap={8} style={{ marginTop: 12 }}>
                   {isConfirmed ? (
-                    <StatusPill kind="success">approved · running now</StatusPill>
+                    <StatusPill kind="success">{t('page.support.approved')}</StatusPill>
                   ) : (
                     <>
                       <Button
@@ -80,10 +88,10 @@ export function SupportPage() {
                         size="md"
                         onClick={() => setConfirmed((s) => new Set(s).add(c.at))}
                       >
-                        Approve auto-fix
+                        {t('page.support.approveBtn')}
                       </Button>
                       <Button variant="ghost" size="md" disabled>
-                        Talk to a human (PR #5)
+                        {t('page.support.talkToHuman')}
                       </Button>
                     </>
                   )}

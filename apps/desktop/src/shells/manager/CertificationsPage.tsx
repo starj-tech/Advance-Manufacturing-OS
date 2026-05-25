@@ -1,4 +1,5 @@
 import { Card, CardBody, CardHeader, Stack, StatusPill } from '@aether/ui-kit';
+import { useTranslation } from '@aether/i18n';
 
 interface Cell {
   status: 'valid' | 'expired' | 'missing';
@@ -42,24 +43,23 @@ const PILL: Record<Cell['status'], 'success' | 'warning' | 'danger'> = {
 };
 
 export function CertificationsPage() {
+  const { t } = useTranslation();
   return (
     <Stack gap={16}>
       <header>
-        <h1 style={{ margin: 0, fontSize: 24 }}>Certifications & interlocks</h1>
+        <h1 style={{ margin: 0, fontSize: 24 }}>{t('page.certs.title')}</h1>
         <p style={{ margin: '4px 0 0', color: 'var(--aether-fg-muted)', fontSize: 13 }}>
-          Operators can only start a machine if every required certification is valid. The
-          permit signal is wired directly to the safety relay — invalid certs mean the motor
-          physically cannot energize.
+          {t('page.certs.intro')}
         </p>
       </header>
 
       <Card padded={false}>
-        <CardHeader title="Operator × machine matrix" />
+        <CardHeader title={t('page.certs.matrixTitle')} />
         <CardBody>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr style={{ textAlign: 'left', color: 'var(--aether-fg-muted)' }}>
-                <th style={th}>Operator</th>
+                <th style={th}>{t('page.certs.col.operator')}</th>
                 {MACHINES.map((m) => (
                   <th key={m} style={th}>
                     {m}
@@ -76,7 +76,9 @@ export function CertificationsPage() {
                     return (
                       <td key={m} style={td}>
                         <StatusPill kind={PILL[cell.status]}>
-                          {cell.status === 'valid' ? `✓ ${cell.expires}` : cell.status}
+                          {cell.status === 'valid'
+                            ? `✓ ${cell.expires}`
+                            : t(`page.certs.status.${cell.status}`)}
                         </StatusPill>
                       </td>
                     );
