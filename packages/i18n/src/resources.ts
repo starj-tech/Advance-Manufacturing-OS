@@ -366,6 +366,23 @@ const enUS: Messages = {
   'page.roster.empty': 'No operators match the filter.',
   'page.roster.note':
     'Presence is mDNS-driven (PR #5); shift assignments come from the HR module (later).',
+
+  // Executive · AI projections (live model)
+  'page.projections.horizon': 'Horizon',
+  'page.projections.dayShort': '{days}d',
+  'page.projections.scenario': 'Scenario',
+  'page.projections.scenario.base': 'Base',
+  'page.projections.scenario.optimistic': 'Optimistic',
+  'page.projections.scenario.pessimistic': 'Pessimistic',
+  'page.projections.kpi.margin': 'Projected margin',
+  'page.projections.kpi.volume': 'Projected volume',
+  'page.projections.kpi.exposure': 'Commodity exposure',
+  'page.projections.col.product': 'Product',
+  'page.projections.col.volume': 'Forecast volume',
+  'page.projections.col.unitMargin': 'Unit margin',
+  'page.projections.col.pnl': 'Projected P&L',
+  'page.projections.note':
+    'Deterministic demo model. LSTM forecast + Monte Carlo + FX normalization wire up in PR #7.',
 };
 
 // en-GB shares the US base; only spellings / tax-ish phrasing
@@ -687,6 +704,22 @@ const nlNL: Messages = {
   'page.roster.empty': 'Geen operators komen overeen met het filter.',
   'page.roster.note':
     'Aanwezigheid is mDNS-gestuurd (PR #5); dienstindelingen komen uit de HR-module (later).',
+
+  'page.projections.horizon': 'Horizon',
+  'page.projections.dayShort': '{days}d',
+  'page.projections.scenario': 'Scenario',
+  'page.projections.scenario.base': 'Basis',
+  'page.projections.scenario.optimistic': 'Optimistisch',
+  'page.projections.scenario.pessimistic': 'Pessimistisch',
+  'page.projections.kpi.margin': 'Verwachte marge',
+  'page.projections.kpi.volume': 'Verwacht volume',
+  'page.projections.kpi.exposure': 'Grondstofblootstelling',
+  'page.projections.col.product': 'Product',
+  'page.projections.col.volume': 'Prognosevolume',
+  'page.projections.col.unitMargin': 'Marge per stuk',
+  'page.projections.col.pnl': 'Verwachte W&V',
+  'page.projections.note':
+    'Deterministisch demomodel. LSTM-prognose + Monte Carlo + FX-normalisatie worden gekoppeld in PR #7.',
 };
 
 const deDE: Messages = {
@@ -1005,6 +1038,22 @@ const deDE: Messages = {
   'page.roster.empty': 'Keine Operatoren entsprechen dem Filter.',
   'page.roster.note':
     'Anwesenheit ist mDNS-gesteuert (PR #5); Schichtzuweisungen stammen aus dem HR-Modul (später).',
+
+  'page.projections.horizon': 'Horizont',
+  'page.projections.dayShort': '{days} T',
+  'page.projections.scenario': 'Szenario',
+  'page.projections.scenario.base': 'Basis',
+  'page.projections.scenario.optimistic': 'Optimistisch',
+  'page.projections.scenario.pessimistic': 'Pessimistisch',
+  'page.projections.kpi.margin': 'Prognostizierte Marge',
+  'page.projections.kpi.volume': 'Prognostiziertes Volumen',
+  'page.projections.kpi.exposure': 'Rohstoffexposition',
+  'page.projections.col.product': 'Produkt',
+  'page.projections.col.volume': 'Prognosevolumen',
+  'page.projections.col.unitMargin': 'Marge je Stück',
+  'page.projections.col.pnl': 'Prognostizierte GuV',
+  'page.projections.note':
+    'Deterministisches Demomodell. LSTM-Prognose + Monte Carlo + FX-Normalisierung werden in PR #7 angebunden.',
 };
 
 const idID: Messages = {
@@ -1318,6 +1367,22 @@ const idID: Messages = {
   'page.roster.empty': 'Tidak ada operator yang cocok dengan filter.',
   'page.roster.note':
     'Kehadiran berbasis mDNS (PR #5); penugasan shift berasal dari modul HR (nanti).',
+
+  'page.projections.horizon': 'Horizon',
+  'page.projections.dayShort': '{days} hr',
+  'page.projections.scenario': 'Skenario',
+  'page.projections.scenario.base': 'Dasar',
+  'page.projections.scenario.optimistic': 'Optimistis',
+  'page.projections.scenario.pessimistic': 'Pesimistis',
+  'page.projections.kpi.margin': 'Proyeksi margin',
+  'page.projections.kpi.volume': 'Proyeksi volume',
+  'page.projections.kpi.exposure': 'Eksposur komoditas',
+  'page.projections.col.product': 'Produk',
+  'page.projections.col.volume': 'Volume prakiraan',
+  'page.projections.col.unitMargin': 'Margin per unit',
+  'page.projections.col.pnl': 'Proyeksi L/R',
+  'page.projections.note':
+    'Model demo deterministik. Prakiraan LSTM + Monte Carlo + normalisasi FX dihubungkan di PR #7.',
 };
 
 const jaJP: Messages = {
@@ -1627,6 +1692,22 @@ const jaJP: Messages = {
   'page.roster.empty': 'フィルターに一致するオペレーターはいません。',
   'page.roster.note':
     '在席はmDNSベース（PR #5）、シフト割り当てはHRモジュール（後日）から取得します。',
+
+  'page.projections.horizon': '期間',
+  'page.projections.dayShort': '{days}日',
+  'page.projections.scenario': 'シナリオ',
+  'page.projections.scenario.base': '標準',
+  'page.projections.scenario.optimistic': '楽観',
+  'page.projections.scenario.pessimistic': '悲観',
+  'page.projections.kpi.margin': '予測利益',
+  'page.projections.kpi.volume': '予測数量',
+  'page.projections.kpi.exposure': '商品エクスポージャー',
+  'page.projections.col.product': '製品',
+  'page.projections.col.volume': '予測数量',
+  'page.projections.col.unitMargin': '単位利益',
+  'page.projections.col.pnl': '予測損益',
+  'page.projections.note':
+    '決定論的なデモモデル。LSTM予測 + モンテカルロ + FX正規化はPR #7で接続されます。',
 };
 
 const zhCN: Messages = {
@@ -1929,6 +2010,21 @@ const zhCN: Messages = {
   'page.roster.certsValid': '{valid}/{total} 有效',
   'page.roster.empty': '没有符合筛选条件的操作员。',
   'page.roster.note': '在场基于 mDNS（PR #5）；班次分配来自 HR 模块（稍后）。',
+
+  'page.projections.horizon': '周期',
+  'page.projections.dayShort': '{days} 天',
+  'page.projections.scenario': '情景',
+  'page.projections.scenario.base': '基准',
+  'page.projections.scenario.optimistic': '乐观',
+  'page.projections.scenario.pessimistic': '悲观',
+  'page.projections.kpi.margin': '预测利润',
+  'page.projections.kpi.volume': '预测产量',
+  'page.projections.kpi.exposure': '大宗商品敞口',
+  'page.projections.col.product': '产品',
+  'page.projections.col.volume': '预测产量',
+  'page.projections.col.unitMargin': '单位利润',
+  'page.projections.col.pnl': '预测损益',
+  'page.projections.note': '确定性演示模型。LSTM 预测 + 蒙特卡洛 + 汇率归一化将在 PR #7 接入。',
 };
 
 /// Master registry keyed by BCP-47 tag. `useTranslation`
