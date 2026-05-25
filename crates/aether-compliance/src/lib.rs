@@ -34,6 +34,7 @@ pub mod runner;
 pub mod signature_binding_probe;
 pub mod standard;
 pub mod suite;
+pub mod writer;
 
 pub use audit_immutable_probe::AuditTrailImmutableProbe;
 pub use breach_notification_probe::BreachNotificationProbe;
@@ -55,3 +56,4 @@ pub use runner::ProbeRunner;
 pub use signature_binding_probe::SignatureBindingProbe;
 pub use standard::{ComplianceStandard, StandardKind};
 pub use suite::{build_suite, is_known_standard, probe_for, run_standard, ReportWindow};
+pub use writer::EvidenceWriter;
