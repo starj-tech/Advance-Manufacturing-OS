@@ -132,8 +132,10 @@ impl ForecastModel for SmaForecast {
 ///
 /// The recurrence:
 ///
-///     m_t = α · x_t + (1 - α) · m_{t-1}
-///     v_t = α · (x_t - m_t)² + (1 - α) · v_{t-1}
+/// ```text
+/// m_t = α · x_t + (1 - α) · m_{t-1}
+/// v_t = α · (x_t - m_t)² + (1 - α) · v_{t-1}
+/// ```
 ///
 /// where `m_t` is the running mean (the point forecast) and
 /// `v_t` is the EW variance. The 1-σ band is `[m - √v, m + √v]`
