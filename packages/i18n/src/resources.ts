@@ -159,6 +159,65 @@ const enUS: Messages = {
   'page.compliance.kind.industry': 'Industry',
   'page.compliance.kind.regulation': 'Regulation',
   'page.compliance.kind.national': 'National',
+
+  // Developer · infrastructure
+  'page.infra.title': 'Infrastructure',
+  'page.infra.note':
+    'Service health metrics arrive in PR #2 once aether-telemetry is wired into the Tauri runtime.',
+
+  // Developer · discovery
+  'page.discovery.title': 'IoT Auto-Discovery',
+  'page.discovery.intro':
+    'Scan the local network for OPC-UA, MQTT, Modbus, and EtherNet/IP devices. Suggested tag bindings appear next to each match.',
+  'page.discovery.scan': 'Scan network',
+  'page.discovery.scanning': 'Scanning…',
+  'page.discovery.scanningNote':
+    'Probing /24 with 64-way concurrency · 4 protocol probes · 1.5s/host timeout',
+  'page.discovery.emptyNote':
+    'No scan in progress. The skeleton displays demo results when you click "Scan network". Real probing wires up in PR #3 alongside the protocol bridges.',
+  'page.discovery.bindings': '{count} suggested tag bindings · fingerprint',
+  'page.discovery.addToInventory': 'Add to inventory (PR #3)',
+
+  // Developer · system health
+  'page.health.title': 'System health',
+  'page.health.intro':
+    'Sync lag, outbox depth, telemetry throughput, plus the Neural Auto-Healing event ledger.',
+  'page.health.kpi.outbox': 'Outbox depth',
+  'page.health.kpi.syncLag': 'Sync lag (p99)',
+  'page.health.kpi.telemetryRate': 'Telemetry rate',
+  'page.health.kpi.diskFree': 'Disk free',
+  'page.health.kpiHint': 'wired in PR #3',
+  'page.health.ledgerTitle': 'Healing ledger',
+  'page.health.ledgerSubtitle':
+    'Append-only audit of every automatic remediation. Demo data shown.',
+  'page.health.col.when': 'When',
+  'page.health.col.source': 'Source',
+  'page.health.col.symptom': 'Symptom',
+  'page.health.col.policy': 'Policy',
+  'page.health.col.outcome': 'Outcome',
+  'page.health.outcome.applied': 'applied',
+  'page.health.outcome.skipped': 'skipped',
+  'page.health.outcome.failed': 'failed',
+
+  // Developer · industry profile
+  'page.industry.title': 'Industry profile',
+  'page.industry.intro':
+    "Pick the tenant's industry. AETHER-OS auto-activates capabilities, default modules, and compliance standards — no per-customer fork. 21 verticals supported. The picker below drives the live CapabilityProvider; switch to Manager → Inventory to see the columns reshape.",
+  'page.industry.more': '+ 18 more (PR #6)',
+  'page.industry.capsSuffix': '{count} auto-capabilities',
+  'page.industry.capsSubtitle': 'Activated automatically when this profile is set on the tenant.',
+  'page.industry.modulesTitle': 'Auto-installed modules',
+  'page.industry.modulesSubtitle': 'Provisioned at tenant onboarding',
+  'page.industry.none': 'None',
+  'page.industry.standardsTitle': 'Default compliance standards',
+  'page.industry.standardsSubtitle': 'Seeded into aether-compliance',
+  'page.industry.kind.tracking': 'tracking',
+  'page.industry.kind.quality': 'quality',
+  'page.industry.kind.maintenance': 'maintenance',
+  'page.industry.kind.safety': 'safety',
+  'page.industry.kind.compliance': 'compliance',
+  'page.industry.kind.process': 'process',
+  'page.industry.kind.sustainability': 'sustainability',
 };
 
 // en-GB shares the US base; only spellings / tax-ish phrasing
@@ -285,6 +344,62 @@ const nlNL: Messages = {
   'page.compliance.kind.industry': 'Branche',
   'page.compliance.kind.regulation': 'Regelgeving',
   'page.compliance.kind.national': 'Nationaal',
+
+  'page.infra.title': 'Infrastructuur',
+  'page.infra.note':
+    'Service-statusmetrieken verschijnen in PR #2 zodra aether-telemetry in de Tauri-runtime is gekoppeld.',
+
+  'page.discovery.title': 'IoT-autodetectie',
+  'page.discovery.intro':
+    'Scan het lokale netwerk op OPC-UA-, MQTT-, Modbus- en EtherNet/IP-apparaten. Voorgestelde tagkoppelingen verschijnen naast elke match.',
+  'page.discovery.scan': 'Netwerk scannen',
+  'page.discovery.scanning': 'Bezig met scannen…',
+  'page.discovery.scanningNote':
+    'Sonderen van /24 met 64-voudige gelijktijdigheid · 4 protocolprobes · 1,5 s/host time-out',
+  'page.discovery.emptyNote':
+    'Geen scan bezig. Het skelet toont demoresultaten wanneer je op “Netwerk scannen” klikt. Echt sonderen wordt gekoppeld in PR #3 samen met de protocolbruggen.',
+  'page.discovery.bindings': '{count} voorgestelde tagkoppelingen · vingerafdruk',
+  'page.discovery.addToInventory': 'Aan voorraad toevoegen (PR #3)',
+
+  'page.health.title': 'Systeemstatus',
+  'page.health.intro':
+    'Synchronisatievertraging, outbox-diepte, telemetriedoorvoer, plus het logboek van Neural Auto-Healing.',
+  'page.health.kpi.outbox': 'Outbox-diepte',
+  'page.health.kpi.syncLag': 'Synchronisatievertraging (p99)',
+  'page.health.kpi.telemetryRate': 'Telemetriesnelheid',
+  'page.health.kpi.diskFree': 'Vrije schijfruimte',
+  'page.health.kpiHint': 'gekoppeld in PR #3',
+  'page.health.ledgerTitle': 'Herstellogboek',
+  'page.health.ledgerSubtitle':
+    'Append-only audit van elke automatische herstelactie. Demogegevens getoond.',
+  'page.health.col.when': 'Wanneer',
+  'page.health.col.source': 'Bron',
+  'page.health.col.symptom': 'Symptoom',
+  'page.health.col.policy': 'Beleid',
+  'page.health.col.outcome': 'Resultaat',
+  'page.health.outcome.applied': 'toegepast',
+  'page.health.outcome.skipped': 'overgeslagen',
+  'page.health.outcome.failed': 'mislukt',
+
+  'page.industry.title': 'Sectorprofiel',
+  'page.industry.intro':
+    'Kies de sector van de tenant. AETHER-OS activeert automatisch mogelijkheden, standaardmodules en nalevingsnormen — geen aparte versie per klant. 21 branches ondersteund. De keuze hieronder stuurt de live CapabilityProvider aan; ga naar Manager → Voorraad om de kolommen te zien hervormen.',
+  'page.industry.more': '+ 18 meer (PR #6)',
+  'page.industry.capsSuffix': '{count} automatische mogelijkheden',
+  'page.industry.capsSubtitle':
+    'Automatisch geactiveerd wanneer dit profiel op de tenant is ingesteld.',
+  'page.industry.modulesTitle': 'Automatisch geïnstalleerde modules',
+  'page.industry.modulesSubtitle': 'Voorzien bij tenant-onboarding',
+  'page.industry.none': 'Geen',
+  'page.industry.standardsTitle': 'Standaard nalevingsnormen',
+  'page.industry.standardsSubtitle': 'Geïnitialiseerd in aether-compliance',
+  'page.industry.kind.tracking': 'tracering',
+  'page.industry.kind.quality': 'kwaliteit',
+  'page.industry.kind.maintenance': 'onderhoud',
+  'page.industry.kind.safety': 'veiligheid',
+  'page.industry.kind.compliance': 'naleving',
+  'page.industry.kind.process': 'proces',
+  'page.industry.kind.sustainability': 'duurzaamheid',
 };
 
 const deDE: Messages = {
@@ -408,6 +523,62 @@ const deDE: Messages = {
   'page.compliance.kind.industry': 'Branche',
   'page.compliance.kind.regulation': 'Regulierung',
   'page.compliance.kind.national': 'National',
+
+  'page.infra.title': 'Infrastruktur',
+  'page.infra.note':
+    'Service-Zustandsmetriken erscheinen in PR #2, sobald aether-telemetry in die Tauri-Laufzeit eingebunden ist.',
+
+  'page.discovery.title': 'IoT-Autoerkennung',
+  'page.discovery.intro':
+    'Durchsuchen Sie das lokale Netzwerk nach OPC-UA-, MQTT-, Modbus- und EtherNet/IP-Geräten. Vorgeschlagene Tag-Bindungen erscheinen neben jedem Treffer.',
+  'page.discovery.scan': 'Netzwerk scannen',
+  'page.discovery.scanning': 'Scannen…',
+  'page.discovery.scanningNote':
+    'Sondierung /24 mit 64-facher Nebenläufigkeit · 4 Protokoll-Probes · 1,5 s/Host-Timeout',
+  'page.discovery.emptyNote':
+    'Kein Scan aktiv. Das Gerüst zeigt Demo-Ergebnisse, wenn Sie auf „Netzwerk scannen“ klicken. Echte Sondierung wird in PR #3 zusammen mit den Protokollbrücken eingebunden.',
+  'page.discovery.bindings': '{count} vorgeschlagene Tag-Bindungen · Fingerabdruck',
+  'page.discovery.addToInventory': 'Zum Bestand hinzufügen (PR #3)',
+
+  'page.health.title': 'Systemzustand',
+  'page.health.intro':
+    'Synchronisierungsverzögerung, Outbox-Tiefe, Telemetriedurchsatz sowie das Ereignisprotokoll der neuronalen Selbstheilung.',
+  'page.health.kpi.outbox': 'Outbox-Tiefe',
+  'page.health.kpi.syncLag': 'Synchronisierungsverzögerung (p99)',
+  'page.health.kpi.telemetryRate': 'Telemetrierate',
+  'page.health.kpi.diskFree': 'Freier Speicher',
+  'page.health.kpiHint': 'angebunden in PR #3',
+  'page.health.ledgerTitle': 'Heilungsprotokoll',
+  'page.health.ledgerSubtitle':
+    'Append-only-Audit jeder automatischen Behebung. Demodaten gezeigt.',
+  'page.health.col.when': 'Wann',
+  'page.health.col.source': 'Quelle',
+  'page.health.col.symptom': 'Symptom',
+  'page.health.col.policy': 'Richtlinie',
+  'page.health.col.outcome': 'Ergebnis',
+  'page.health.outcome.applied': 'angewendet',
+  'page.health.outcome.skipped': 'übersprungen',
+  'page.health.outcome.failed': 'fehlgeschlagen',
+
+  'page.industry.title': 'Branchenprofil',
+  'page.industry.intro':
+    'Wählen Sie die Branche des Mandanten. AETHER-OS aktiviert automatisch Funktionen, Standardmodule und Compliance-Normen — kein Fork pro Kunde. 21 Branchen unterstützt. Die Auswahl unten steuert den Live-CapabilityProvider; wechseln Sie zu Manager → Bestand, um die Spalten umformen zu sehen.',
+  'page.industry.more': '+ 18 weitere (PR #6)',
+  'page.industry.capsSuffix': '{count} Auto-Funktionen',
+  'page.industry.capsSubtitle':
+    'Automatisch aktiviert, wenn dieses Profil für den Mandanten gesetzt ist.',
+  'page.industry.modulesTitle': 'Automatisch installierte Module',
+  'page.industry.modulesSubtitle': 'Bereitgestellt beim Mandanten-Onboarding',
+  'page.industry.none': 'Keine',
+  'page.industry.standardsTitle': 'Standard-Compliance-Normen',
+  'page.industry.standardsSubtitle': 'In aether-compliance initialisiert',
+  'page.industry.kind.tracking': 'Verfolgung',
+  'page.industry.kind.quality': 'Qualität',
+  'page.industry.kind.maintenance': 'Wartung',
+  'page.industry.kind.safety': 'Sicherheit',
+  'page.industry.kind.compliance': 'Compliance',
+  'page.industry.kind.process': 'Prozess',
+  'page.industry.kind.sustainability': 'Nachhaltigkeit',
 };
 
 const idID: Messages = {
@@ -528,6 +699,61 @@ const idID: Messages = {
   'page.compliance.kind.industry': 'Industri',
   'page.compliance.kind.regulation': 'Regulasi',
   'page.compliance.kind.national': 'Nasional',
+
+  'page.infra.title': 'Infrastruktur',
+  'page.infra.note':
+    'Metrik kesehatan layanan hadir di PR #2 setelah aether-telemetry terhubung ke runtime Tauri.',
+
+  'page.discovery.title': 'Penemuan Otomatis IoT',
+  'page.discovery.intro':
+    'Pindai jaringan lokal untuk perangkat OPC-UA, MQTT, Modbus, dan EtherNet/IP. Saran pengikatan tag muncul di samping setiap kecocokan.',
+  'page.discovery.scan': 'Pindai jaringan',
+  'page.discovery.scanning': 'Memindai…',
+  'page.discovery.scanningNote':
+    'Menyelidiki /24 dengan konkurensi 64 arah · 4 probe protokol · batas waktu 1,5 dtk/host',
+  'page.discovery.emptyNote':
+    'Tidak ada pemindaian berlangsung. Kerangka menampilkan hasil demo saat Anda mengklik “Pindai jaringan”. Penyelidikan sungguhan dihubungkan di PR #3 bersama jembatan protokol.',
+  'page.discovery.bindings': '{count} saran pengikatan tag · sidik jari',
+  'page.discovery.addToInventory': 'Tambahkan ke inventaris (PR #3)',
+
+  'page.health.title': 'Kesehatan sistem',
+  'page.health.intro':
+    'Jeda sinkronisasi, kedalaman outbox, throughput telemetri, plus buku besar peristiwa Neural Auto-Healing.',
+  'page.health.kpi.outbox': 'Kedalaman outbox',
+  'page.health.kpi.syncLag': 'Jeda sinkronisasi (p99)',
+  'page.health.kpi.telemetryRate': 'Laju telemetri',
+  'page.health.kpi.diskFree': 'Ruang disk bebas',
+  'page.health.kpiHint': 'dihubungkan di PR #3',
+  'page.health.ledgerTitle': 'Buku besar penyembuhan',
+  'page.health.ledgerSubtitle':
+    'Audit hanya-tambah untuk setiap remediasi otomatis. Data demo ditampilkan.',
+  'page.health.col.when': 'Kapan',
+  'page.health.col.source': 'Sumber',
+  'page.health.col.symptom': 'Gejala',
+  'page.health.col.policy': 'Kebijakan',
+  'page.health.col.outcome': 'Hasil',
+  'page.health.outcome.applied': 'diterapkan',
+  'page.health.outcome.skipped': 'dilewati',
+  'page.health.outcome.failed': 'gagal',
+
+  'page.industry.title': 'Profil industri',
+  'page.industry.intro':
+    'Pilih industri tenant. AETHER-OS otomatis mengaktifkan kapabilitas, modul default, dan standar kepatuhan — tanpa fork per pelanggan. 21 vertikal didukung. Pemilih di bawah menggerakkan CapabilityProvider langsung; beralih ke Manajer → Inventaris untuk melihat kolom berubah bentuk.',
+  'page.industry.more': '+ 18 lainnya (PR #6)',
+  'page.industry.capsSuffix': '{count} kapabilitas otomatis',
+  'page.industry.capsSubtitle': 'Diaktifkan otomatis saat profil ini disetel pada tenant.',
+  'page.industry.modulesTitle': 'Modul terpasang otomatis',
+  'page.industry.modulesSubtitle': 'Disediakan saat onboarding tenant',
+  'page.industry.none': 'Tidak ada',
+  'page.industry.standardsTitle': 'Standar kepatuhan default',
+  'page.industry.standardsSubtitle': 'Ditanamkan ke aether-compliance',
+  'page.industry.kind.tracking': 'pelacakan',
+  'page.industry.kind.quality': 'kualitas',
+  'page.industry.kind.maintenance': 'pemeliharaan',
+  'page.industry.kind.safety': 'keselamatan',
+  'page.industry.kind.compliance': 'kepatuhan',
+  'page.industry.kind.process': 'proses',
+  'page.industry.kind.sustainability': 'keberlanjutan',
 };
 
 const jaJP: Messages = {
@@ -646,6 +872,60 @@ const jaJP: Messages = {
   'page.compliance.kind.industry': '業界',
   'page.compliance.kind.regulation': '規制',
   'page.compliance.kind.national': '国内',
+
+  'page.infra.title': 'インフラ',
+  'page.infra.note':
+    'サービス正常性メトリクスは、aether-telemetryがTauriランタイムに組み込まれるPR #2で表示されます。',
+
+  'page.discovery.title': 'IoT自動検出',
+  'page.discovery.intro':
+    'ローカルネットワークでOPC-UA、MQTT、Modbus、EtherNet/IPデバイスをスキャンします。各一致の横に推奨タグバインディングが表示されます。',
+  'page.discovery.scan': 'ネットワークをスキャン',
+  'page.discovery.scanning': 'スキャン中…',
+  'page.discovery.scanningNote':
+    '/24を64並列でプローブ · 4つのプロトコルプローブ · ホストあたり1.5秒タイムアウト',
+  'page.discovery.emptyNote':
+    'スキャンは実行されていません。「ネットワークをスキャン」をクリックすると、スケルトンはデモ結果を表示します。実際のプローブはPR #3でプロトコルブリッジとともに接続されます。',
+  'page.discovery.bindings': '推奨タグバインディング {count} 件 · フィンガープリント',
+  'page.discovery.addToInventory': '在庫に追加（PR #3）',
+
+  'page.health.title': 'システム正常性',
+  'page.health.intro':
+    '同期遅延、outbox深度、テレメトリスループット、さらにNeural Auto-Healingのイベント台帳。',
+  'page.health.kpi.outbox': 'Outbox深度',
+  'page.health.kpi.syncLag': '同期遅延（p99）',
+  'page.health.kpi.telemetryRate': 'テレメトリ速度',
+  'page.health.kpi.diskFree': '空きディスク',
+  'page.health.kpiHint': 'PR #3で接続',
+  'page.health.ledgerTitle': 'ヒーリング台帳',
+  'page.health.ledgerSubtitle': 'すべての自動修復の追記専用監査。デモデータを表示。',
+  'page.health.col.when': '日時',
+  'page.health.col.source': 'ソース',
+  'page.health.col.symptom': '症状',
+  'page.health.col.policy': 'ポリシー',
+  'page.health.col.outcome': '結果',
+  'page.health.outcome.applied': '適用',
+  'page.health.outcome.skipped': 'スキップ',
+  'page.health.outcome.failed': '失敗',
+
+  'page.industry.title': '業種プロファイル',
+  'page.industry.intro':
+    'テナントの業種を選択します。AETHER-OSは機能、デフォルトモジュール、コンプライアンス規格を自動的に有効化します — 顧客ごとのフォークは不要。21業種に対応。下のピッカーはライブのCapabilityProviderを制御します。マネージャー → 在庫に切り替えると列が再構成されるのを確認できます。',
+  'page.industry.more': '+ 他18件（PR #6）',
+  'page.industry.capsSuffix': '自動機能 {count} 件',
+  'page.industry.capsSubtitle': 'このプロファイルがテナントに設定されると自動的に有効化されます。',
+  'page.industry.modulesTitle': '自動インストールされるモジュール',
+  'page.industry.modulesSubtitle': 'テナントのオンボーディング時にプロビジョニング',
+  'page.industry.none': 'なし',
+  'page.industry.standardsTitle': 'デフォルトのコンプライアンス規格',
+  'page.industry.standardsSubtitle': 'aether-complianceに初期投入',
+  'page.industry.kind.tracking': 'トラッキング',
+  'page.industry.kind.quality': '品質',
+  'page.industry.kind.maintenance': '保全',
+  'page.industry.kind.safety': '安全',
+  'page.industry.kind.compliance': 'コンプライアンス',
+  'page.industry.kind.process': 'プロセス',
+  'page.industry.kind.sustainability': 'サステナビリティ',
 };
 
 const zhCN: Messages = {
@@ -762,6 +1042,57 @@ const zhCN: Messages = {
   'page.compliance.kind.industry': '行业',
   'page.compliance.kind.regulation': '法规',
   'page.compliance.kind.national': '国家',
+
+  'page.infra.title': '基础设施',
+  'page.infra.note': '服务健康指标将在 PR #2 中显示，届时 aether-telemetry 已接入 Tauri 运行时。',
+
+  'page.discovery.title': 'IoT 自动发现',
+  'page.discovery.intro':
+    '扫描本地网络以查找 OPC-UA、MQTT、Modbus 和 EtherNet/IP 设备。建议的标签绑定显示在每个匹配项旁边。',
+  'page.discovery.scan': '扫描网络',
+  'page.discovery.scanning': '扫描中…',
+  'page.discovery.scanningNote': '以 64 路并发探测 /24 · 4 个协议探针 · 每主机 1.5 秒超时',
+  'page.discovery.emptyNote':
+    '没有正在进行的扫描。点击“扫描网络”时骨架会显示演示结果。真实探测将在 PR #3 与协议网桥一起接入。',
+  'page.discovery.bindings': '{count} 个建议标签绑定 · 指纹',
+  'page.discovery.addToInventory': '添加到库存（PR #3）',
+
+  'page.health.title': '系统健康',
+  'page.health.intro': '同步延迟、outbox 深度、遥测吞吐量，以及神经自愈事件账本。',
+  'page.health.kpi.outbox': 'Outbox 深度',
+  'page.health.kpi.syncLag': '同步延迟（p99）',
+  'page.health.kpi.telemetryRate': '遥测速率',
+  'page.health.kpi.diskFree': '可用磁盘',
+  'page.health.kpiHint': '在 PR #3 接入',
+  'page.health.ledgerTitle': '自愈账本',
+  'page.health.ledgerSubtitle': '每次自动修复的仅追加审计。显示演示数据。',
+  'page.health.col.when': '时间',
+  'page.health.col.source': '来源',
+  'page.health.col.symptom': '症状',
+  'page.health.col.policy': '策略',
+  'page.health.col.outcome': '结果',
+  'page.health.outcome.applied': '已应用',
+  'page.health.outcome.skipped': '已跳过',
+  'page.health.outcome.failed': '失败',
+
+  'page.industry.title': '行业配置',
+  'page.industry.intro':
+    '选择租户的行业。AETHER-OS 会自动激活功能、默认模块和合规标准 — 无需为每个客户分叉。支持 21 个垂直行业。下方选择器驱动实时 CapabilityProvider；切换到 经理 → 库存 即可看到列重新排布。',
+  'page.industry.more': '+ 还有 18 个（PR #6）',
+  'page.industry.capsSuffix': '{count} 项自动功能',
+  'page.industry.capsSubtitle': '在为租户设置此配置时自动激活。',
+  'page.industry.modulesTitle': '自动安装的模块',
+  'page.industry.modulesSubtitle': '在租户引导时预置',
+  'page.industry.none': '无',
+  'page.industry.standardsTitle': '默认合规标准',
+  'page.industry.standardsSubtitle': '已注入 aether-compliance',
+  'page.industry.kind.tracking': '追踪',
+  'page.industry.kind.quality': '质量',
+  'page.industry.kind.maintenance': '维护',
+  'page.industry.kind.safety': '安全',
+  'page.industry.kind.compliance': '合规',
+  'page.industry.kind.process': '工艺',
+  'page.industry.kind.sustainability': '可持续性',
 };
 
 /// Master registry keyed by BCP-47 tag. `useTranslation`
