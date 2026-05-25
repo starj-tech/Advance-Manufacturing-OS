@@ -312,6 +312,25 @@ const enUS: Messages = {
   'page.audit.count': '{shown} of {total} events',
   'page.audit.realtimeNote':
     'Append-only · hash-chained. Live Supabase Realtime stream wires up in PR #2.',
+
+  // Developer · module registry (live)
+  'page.modules.installedTitle': 'Installed modules',
+  'page.modules.availableTitle': 'Available in registry',
+  'page.modules.col.module': 'Module',
+  'page.modules.col.version': 'Version',
+  'page.modules.col.publisher': 'Publisher',
+  'page.modules.col.signature': 'Signature',
+  'page.modules.sig.verified': 'verified',
+  'page.modules.sig.unsigned': 'unsigned',
+  'page.modules.state.enabled': 'enabled',
+  'page.modules.state.disabled': 'disabled',
+  'page.modules.enable': 'Enable',
+  'page.modules.disable': 'Disable',
+  'page.modules.revoke': 'Revoke',
+  'page.modules.install': 'Install',
+  'page.modules.emptyAvailable': 'Every registry module is installed.',
+  'page.modules.note':
+    'Bundles are ed25519-signed and capability-gated. Live registry fetch + kill-switch wire up in PR #4.',
 };
 
 // en-GB shares the US base; only spellings / tax-ish phrasing
@@ -582,6 +601,24 @@ const nlNL: Messages = {
   'page.audit.count': '{shown} van {total} gebeurtenissen',
   'page.audit.realtimeNote':
     'Append-only · hash-geketend. Live Supabase Realtime-stream wordt gekoppeld in PR #2.',
+
+  'page.modules.installedTitle': 'Geïnstalleerde modules',
+  'page.modules.availableTitle': 'Beschikbaar in register',
+  'page.modules.col.module': 'Module',
+  'page.modules.col.version': 'Versie',
+  'page.modules.col.publisher': 'Uitgever',
+  'page.modules.col.signature': 'Handtekening',
+  'page.modules.sig.verified': 'geverifieerd',
+  'page.modules.sig.unsigned': 'niet-ondertekend',
+  'page.modules.state.enabled': 'ingeschakeld',
+  'page.modules.state.disabled': 'uitgeschakeld',
+  'page.modules.enable': 'Inschakelen',
+  'page.modules.disable': 'Uitschakelen',
+  'page.modules.revoke': 'Intrekken',
+  'page.modules.install': 'Installeren',
+  'page.modules.emptyAvailable': 'Elke registermodule is geïnstalleerd.',
+  'page.modules.note':
+    'Bundels zijn ed25519-ondertekend en capability-gated. Live registerophaling + kill-switch worden gekoppeld in PR #4.',
 };
 
 const deDE: Messages = {
@@ -849,6 +886,24 @@ const deDE: Messages = {
   'page.audit.count': '{shown} von {total} Ereignissen',
   'page.audit.realtimeNote':
     'Append-only · hash-verkettet. Live-Supabase-Realtime-Stream wird in PR #2 angebunden.',
+
+  'page.modules.installedTitle': 'Installierte Module',
+  'page.modules.availableTitle': 'Im Register verfügbar',
+  'page.modules.col.module': 'Modul',
+  'page.modules.col.version': 'Version',
+  'page.modules.col.publisher': 'Herausgeber',
+  'page.modules.col.signature': 'Signatur',
+  'page.modules.sig.verified': 'verifiziert',
+  'page.modules.sig.unsigned': 'unsigniert',
+  'page.modules.state.enabled': 'aktiviert',
+  'page.modules.state.disabled': 'deaktiviert',
+  'page.modules.enable': 'Aktivieren',
+  'page.modules.disable': 'Deaktivieren',
+  'page.modules.revoke': 'Widerrufen',
+  'page.modules.install': 'Installieren',
+  'page.modules.emptyAvailable': 'Jedes Registermodul ist installiert.',
+  'page.modules.note':
+    'Bundles sind ed25519-signiert und capability-gated. Live-Registerabruf + Kill-Switch werden in PR #4 angebunden.',
 };
 
 const idID: Messages = {
@@ -1111,6 +1166,24 @@ const idID: Messages = {
   'page.audit.count': '{shown} dari {total} peristiwa',
   'page.audit.realtimeNote':
     'Hanya-tambah · ber-hash-chain. Stream Supabase Realtime langsung dihubungkan di PR #2.',
+
+  'page.modules.installedTitle': 'Modul terpasang',
+  'page.modules.availableTitle': 'Tersedia di registri',
+  'page.modules.col.module': 'Modul',
+  'page.modules.col.version': 'Versi',
+  'page.modules.col.publisher': 'Penerbit',
+  'page.modules.col.signature': 'Tanda tangan',
+  'page.modules.sig.verified': 'terverifikasi',
+  'page.modules.sig.unsigned': 'tidak ditandatangani',
+  'page.modules.state.enabled': 'aktif',
+  'page.modules.state.disabled': 'nonaktif',
+  'page.modules.enable': 'Aktifkan',
+  'page.modules.disable': 'Nonaktifkan',
+  'page.modules.revoke': 'Cabut',
+  'page.modules.install': 'Pasang',
+  'page.modules.emptyAvailable': 'Semua modul registri sudah terpasang.',
+  'page.modules.note':
+    'Bundel ditandatangani ed25519 dan dibatasi kapabilitas. Pengambilan registri langsung + kill-switch dihubungkan di PR #4.',
 };
 
 const jaJP: Messages = {
@@ -1370,6 +1443,24 @@ const jaJP: Messages = {
   'page.audit.count': '{total} 件中 {shown} 件',
   'page.audit.realtimeNote':
     '追記専用 · ハッシュチェーン。ライブのSupabase RealtimeストリームはPR #2で接続されます。',
+
+  'page.modules.installedTitle': 'インストール済みモジュール',
+  'page.modules.availableTitle': 'レジストリで利用可能',
+  'page.modules.col.module': 'モジュール',
+  'page.modules.col.version': 'バージョン',
+  'page.modules.col.publisher': '発行元',
+  'page.modules.col.signature': '署名',
+  'page.modules.sig.verified': '検証済み',
+  'page.modules.sig.unsigned': '未署名',
+  'page.modules.state.enabled': '有効',
+  'page.modules.state.disabled': '無効',
+  'page.modules.enable': '有効化',
+  'page.modules.disable': '無効化',
+  'page.modules.revoke': '取り消し',
+  'page.modules.install': 'インストール',
+  'page.modules.emptyAvailable': 'すべてのレジストリモジュールがインストール済みです。',
+  'page.modules.note':
+    'バンドルはed25519署名され、機能ゲートされています。ライブのレジストリ取得 + キルスイッチはPR #4で接続されます。',
 };
 
 const zhCN: Messages = {
@@ -1623,6 +1714,24 @@ const zhCN: Messages = {
   'page.audit.empty': '没有匹配的事件。',
   'page.audit.count': '{total} 个事件中的 {shown} 个',
   'page.audit.realtimeNote': '仅追加 · 哈希链。实时 Supabase Realtime 流将在 PR #2 接入。',
+
+  'page.modules.installedTitle': '已安装模块',
+  'page.modules.availableTitle': '注册表中可用',
+  'page.modules.col.module': '模块',
+  'page.modules.col.version': '版本',
+  'page.modules.col.publisher': '发布者',
+  'page.modules.col.signature': '签名',
+  'page.modules.sig.verified': '已验证',
+  'page.modules.sig.unsigned': '未签名',
+  'page.modules.state.enabled': '已启用',
+  'page.modules.state.disabled': '已禁用',
+  'page.modules.enable': '启用',
+  'page.modules.disable': '禁用',
+  'page.modules.revoke': '吊销',
+  'page.modules.install': '安装',
+  'page.modules.emptyAvailable': '注册表中的每个模块都已安装。',
+  'page.modules.note':
+    '捆绑包经 ed25519 签名并受能力门控。实时注册表获取 + 终止开关将在 PR #4 接入。',
 };
 
 /// Master registry keyed by BCP-47 tag. `useTranslation`
