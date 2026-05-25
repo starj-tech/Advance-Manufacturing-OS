@@ -7,12 +7,14 @@
 //! together so a caller (desktop IPC, CLI, Edge Function pre-flight) makes
 //! one call instead of hand-assembling probes.
 //!
-//! ## Partial coverage is expected
-//! Not every control point has a probe yet (the catalog has ~60; the
-//! implemented set is smaller). [`build_suite`] silently skips controls
-//! without a probe — the report covers what can be checked automatically,
-//! and the un-probed controls remain manual-attestation items. As more
-//! probes land they're picked up here by adding one match arm.
+//! ## Coverage
+//! Every control point in the catalog now maps to an automated probe —
+//! specific probes for the bespoke controls, plus two generic families
+//! ([`crate::CURRENCY_CONTROLS`] "artifact on file & current" and
+//! [`crate::VIOLATION_CONTROLS`] "zero open violations"). [`build_suite`]
+//! still uses `filter_map`, so a control added later without a probe is
+//! skipped rather than panicking; the `every_catalog_control_has_a_probe`
+//! test guards that we don't regress below full coverage unnoticed.
 //!
 //! ## Time context
 //! Probes split into "point-in-time" (need a `since` window start or an
@@ -28,7 +30,8 @@ use crate::runner::ProbeRunner;
 use crate::{
     ArtifactCurrencyProbe, AuditTrailImmutableProbe, BreachNotificationProbe, ColdChainProbe,
     DsarPipelineProbe, EncryptionAtRestProbe, IncidentLogProbe, KeyRotationProbe,
-    PeriodicReviewProbe, ReviewKind, SignatureBindingProbe, CURRENCY_CONTROLS,
+    PeriodicReviewProbe, ReviewKind, SignatureBindingProbe, ViolationCountProbe, CURRENCY_CONTROLS,
+    VIOLATION_CONTROLS,
 };
 use chrono::{DateTime, Duration, Utc};
 use std::sync::Arc;
@@ -92,20 +95,23 @@ pub fn probe_for(
         "dp-breach-notification" => Arc::new(BreachNotificationProbe::new(evidence)),
         "dp-dsar-pipeline" => Arc::new(DsarPipelineProbe::new(evidence)),
         "er-signature-binding" => Arc::new(SignatureBindingProbe::new(evidence)),
-        // Large "artifact on file & current" family — one generic probe
-        // per registry entry (see CURRENCY_CONTROLS).
+        // Generic families: "artifact on file & current" (CURRENCY_CONTROLS)
+        // and "zero open violations" (VIOLATION_CONTROLS). One probe per
+        // registry entry; the branches are mutually exclusive so `evidence`
+        // moves at most once.
         _ => {
-            return CURRENCY_CONTROLS
-                .iter()
-                .find(|(c, _)| *c == control_id)
-                .map(move |(cid, max_age)| {
-                    Arc::new(ArtifactCurrencyProbe::new(
-                        evidence,
-                        cid,
-                        *max_age,
-                        window.as_of,
-                    )) as Arc<dyn Probe>
-                });
+            if let Some((cid, max_age)) = CURRENCY_CONTROLS.iter().find(|(c, _)| *c == control_id) {
+                return Some(Arc::new(ArtifactCurrencyProbe::new(
+                    evidence,
+                    cid,
+                    *max_age,
+                    window.as_of,
+                )));
+            }
+            if let Some(cid) = VIOLATION_CONTROLS.iter().find(|c| **c == control_id) {
+                return Some(Arc::new(ViolationCountProbe::new(evidence, cid)));
+            }
+            return None;
         }
     };
     Some(probe)
@@ -173,13 +179,27 @@ mod tests {
     }
 
     #[test]
-    fn suite_skips_controls_without_a_probe() {
-        // iso-9001 lists 5 controls: qms-document-control (currency),
-        // qms-mgmt-review + qms-internal-audit (periodic review) are
-        // probe-backed; qms-non-conformance and qms-capa are still manual
-        // (count-based) and must be skipped.
+    fn iso_9001_suite_is_fully_covered() {
+        // All 5 iso-9001 controls now have a probe: qms-document-control
+        // (currency), qms-mgmt-review + qms-internal-audit (periodic
+        // review), qms-non-conformance + qms-capa (violation count).
         let suite = build_suite("iso-9001", evidence(), window());
-        assert_eq!(suite.len(), 3);
+        assert_eq!(suite.len(), 5);
+    }
+
+    #[test]
+    fn every_catalog_control_has_a_probe() {
+        // "Probe sampai habis": every control point in the catalog maps to
+        // an automated probe (specific, currency, or violation). A control
+        // added later without a probe will trip this test.
+        use crate::control::CONTROL_POINTS;
+        for cp in CONTROL_POINTS {
+            assert!(
+                probe_for(cp.id, evidence(), window()).is_some(),
+                "control {} has no probe",
+                cp.id
+            );
+        }
     }
 
     #[test]
@@ -189,16 +209,18 @@ mod tests {
     }
 
     #[test]
-    fn probe_for_unmapped_control_is_none() {
-        // qms-capa is count-based (open CAPAs) — no automated probe yet.
-        assert!(probe_for("qms-capa", evidence(), window()).is_none());
+    fn probe_for_non_catalog_control_is_none() {
+        // An id that isn't a real control point has no probe.
+        assert!(probe_for("not-a-real-control", evidence(), window()).is_none());
     }
 
     #[test]
-    fn probe_for_currency_control_is_some() {
-        // qms-document-control is now covered by the generic currency probe.
-        assert!(probe_for("qms-document-control", evidence(), window()).is_some());
-        assert!(probe_for("auto-ppap", evidence(), window()).is_some());
+    fn probe_for_currency_and_violation_controls_are_some() {
+        assert!(probe_for("qms-document-control", evidence(), window()).is_some()); // currency
+        assert!(probe_for("auto-ppap", evidence(), window()).is_some()); // currency
+        assert!(probe_for("qms-non-conformance", evidence(), window()).is_some()); // violation
+        assert!(probe_for("dp-encryption-pii", evidence(), window()).is_some());
+        // violation
     }
 
     #[test]

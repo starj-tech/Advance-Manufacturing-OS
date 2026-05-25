@@ -35,6 +35,7 @@ pub mod runner;
 pub mod signature_binding_probe;
 pub mod standard;
 pub mod suite;
+pub mod violation_count_probe;
 pub mod writer;
 
 pub use artifact_currency_probe::{currency_interval, ArtifactCurrencyProbe, CURRENCY_CONTROLS};
@@ -58,4 +59,5 @@ pub use runner::ProbeRunner;
 pub use signature_binding_probe::SignatureBindingProbe;
 pub use standard::{ComplianceStandard, StandardKind};
 pub use suite::{build_suite, is_known_standard, probe_for, run_standard, ReportWindow};
+pub use violation_count_probe::{is_violation_control, ViolationCountProbe, VIOLATION_CONTROLS};
 pub use writer::EvidenceWriter;

@@ -168,4 +168,15 @@ impl EvidenceSource for DbEvidenceSource {
                 .map_err(q)?;
         Ok(n as u64)
     }
+
+    async fn open_violations(&self, control_id: &str) -> Result<u64, EvidenceError> {
+        let n: i64 = sqlx::query_scalar(
+            "SELECT COUNT(*) FROM control_violations WHERE control_id = ? AND resolved_at IS NULL",
+        )
+        .bind(control_id)
+        .fetch_one(self.pool.handle())
+        .await
+        .map_err(q)?;
+        Ok(n as u64)
+    }
 }

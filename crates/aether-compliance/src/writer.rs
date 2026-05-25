@@ -185,6 +185,44 @@ impl EvidenceWriter {
         Ok(())
     }
 
+    /// Open a violation against a control point (a non-conformance, an
+    /// open CAPA, an uncorrected out-of-spec event, …).
+    pub async fn open_violation(
+        &self,
+        id: &str,
+        control_id: &str,
+        opened_at: DateTime<Utc>,
+        detail: Option<&str>,
+    ) -> Result<(), EvidenceError> {
+        sqlx::query(
+            "INSERT INTO control_violations (id, control_id, opened_at, detail) \
+             VALUES (?, ?, ?, ?)",
+        )
+        .bind(id)
+        .bind(control_id)
+        .bind(opened_at.to_rfc3339())
+        .bind(detail)
+        .execute(self.pool.handle())
+        .await
+        .map_err(q)?;
+        Ok(())
+    }
+
+    /// Resolve a previously-opened control violation.
+    pub async fn resolve_violation(
+        &self,
+        id: &str,
+        resolved_at: DateTime<Utc>,
+    ) -> Result<(), EvidenceError> {
+        sqlx::query("UPDATE control_violations SET resolved_at = ? WHERE id = ?")
+            .bind(resolved_at.to_rfc3339())
+            .bind(id)
+            .execute(self.pool.handle())
+            .await
+            .map_err(q)?;
+        Ok(())
+    }
+
     /// Record an electronic signature. `bound` is whether it is
     /// cryptographically tied to its record.
     pub async fn record_signature(
@@ -346,5 +384,27 @@ mod tests {
             .await
             .unwrap();
         assert_eq!(src.unbound_signatures().await.unwrap(), 1);
+    }
+
+    #[tokio::test]
+    async fn violation_open_then_resolve() {
+        let p = pool().await;
+        let w = EvidenceWriter::new(p.clone());
+        let src = DbEvidenceSource::new(p);
+
+        w.open_violation(
+            "nc-1",
+            "qms-non-conformance",
+            Utc::now(),
+            Some("scrap rate"),
+        )
+        .await
+        .unwrap();
+        assert_eq!(src.open_violations("qms-non-conformance").await.unwrap(), 1);
+        // A different control is unaffected.
+        assert_eq!(src.open_violations("qms-capa").await.unwrap(), 0);
+
+        w.resolve_violation("nc-1", Utc::now()).await.unwrap();
+        assert_eq!(src.open_violations("qms-non-conformance").await.unwrap(), 0);
     }
 }

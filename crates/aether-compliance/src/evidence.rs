@@ -115,6 +115,12 @@ pub trait EvidenceSource: Send + Sync {
     /// different record). Zero means every signature is bound. Backs the
     /// FDA 21 CFR 11.70 signature-binding probe.
     async fn unbound_signatures(&self) -> Result<u64, EvidenceError>;
+
+    /// Count of unresolved violations recorded against a control point
+    /// (non-conformances, open CAPAs, uncorrected out-of-spec events,
+    /// etc.). Zero means the control is currently satisfied. Backs the
+    /// generic violation-count probe.
+    async fn open_violations(&self, control_id: &str) -> Result<u64, EvidenceError>;
 }
 
 /// In-memory `EvidenceSource` for tests and dry-run preview UI. Each
@@ -130,6 +136,7 @@ pub struct MockEvidenceSource {
     breaches_overdue: Mutex<u64>,
     dsars_overdue: Mutex<u64>,
     unbound_sigs: Mutex<u64>,
+    violations: Mutex<BTreeMap<String, u64>>,
     /// Map of method name → most recent `since` argument the probe
     /// passed. Exposed for tests; production never reads it.
     calls: Mutex<BTreeMap<&'static str, DateTime<Utc>>>,
@@ -151,6 +158,7 @@ impl MockEvidenceSource {
             breaches_overdue: Mutex::new(0),
             dsars_overdue: Mutex::new(0),
             unbound_sigs: Mutex::new(0),
+            violations: Mutex::new(BTreeMap::new()),
             calls: Mutex::new(BTreeMap::new()),
             fail_with: Mutex::new(None),
         }
@@ -192,6 +200,11 @@ impl MockEvidenceSource {
 
     pub fn set_unbound_signatures(&self, n: u64) {
         *self.unbound_sigs.lock().unwrap() = n;
+    }
+
+    /// Set the unresolved-violation count for a control id.
+    pub fn set_open_violations(&self, control_id: impl Into<String>, n: u64) {
+        self.violations.lock().unwrap().insert(control_id.into(), n);
     }
 
     pub fn fail_next(&self, msg: impl Into<String>) {
@@ -311,6 +324,21 @@ impl EvidenceSource for MockEvidenceSource {
             .insert("unbound_signatures", Utc::now());
         self.try_fail()?;
         Ok(*self.unbound_sigs.lock().unwrap())
+    }
+
+    async fn open_violations(&self, control_id: &str) -> Result<u64, EvidenceError> {
+        self.calls
+            .lock()
+            .unwrap()
+            .insert("open_violations", Utc::now());
+        self.try_fail()?;
+        Ok(self
+            .violations
+            .lock()
+            .unwrap()
+            .get(control_id)
+            .copied()
+            .unwrap_or(0))
     }
 }
 
