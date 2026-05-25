@@ -30,7 +30,9 @@
 //! ## Hash recipe
 //! For each entry i:
 //!
-//!     hash[i] = SHA-256( hash[i-1] || source || canonical_payload[i] )
+//! ```text
+//! hash[i] = SHA-256( hash[i-1] || source || canonical_payload[i] )
+//! ```
 //!
 //! with hash[-1] = `GENESIS_HASH` (all zeros). `canonical_
 //! payload` is the JSON serialization with sorted object keys
