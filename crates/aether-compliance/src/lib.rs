@@ -18,6 +18,7 @@
 
 pub mod audit_immutable_probe;
 pub mod catalog;
+pub mod cold_chain_probe;
 pub mod control;
 pub mod encryption_probe;
 pub mod evidence;
@@ -30,6 +31,7 @@ pub mod standard;
 
 pub use audit_immutable_probe::AuditTrailImmutableProbe;
 pub use catalog::CATALOG;
+pub use cold_chain_probe::ColdChainProbe;
 pub use control::{ControlPoint, Probe, ProbeError, Verdict};
 pub use encryption_probe::EncryptionAtRestProbe;
 pub use evidence::{EvidenceError, EvidenceSource, MockEvidenceSource, OpenIncident};

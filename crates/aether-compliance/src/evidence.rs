@@ -82,6 +82,13 @@ pub trait EvidenceSource: Send + Sync {
     /// cutoff: "most recent" is already a point answer, and the probe
     /// supplies the reference instant so the verdict stays reproducible.
     async fn latest_key_rotation(&self) -> Result<Option<DateTime<Utc>>, EvidenceError>;
+
+    /// Count of cold-chain temperature excursions (a logged reading
+    /// outside the product's allowed band) since `since`. Zero means
+    /// the cold chain held for the whole window. Used by the food-safety
+    /// cold-chain probe.
+    async fn cold_chain_excursions_since(&self, since: DateTime<Utc>)
+        -> Result<u64, EvidenceError>;
 }
 
 /// In-memory `EvidenceSource` for tests and dry-run preview UI. Each
@@ -92,6 +99,7 @@ pub struct MockEvidenceSource {
     encrypted_writes: Mutex<u64>,
     incidents: Mutex<Vec<OpenIncident>>,
     latest_rotation: Mutex<Option<DateTime<Utc>>>,
+    cold_chain_excursions: Mutex<u64>,
     /// Map of method name → most recent `since` argument the probe
     /// passed. Exposed for tests; production never reads it.
     calls: Mutex<BTreeMap<&'static str, DateTime<Utc>>>,
@@ -108,6 +116,7 @@ impl MockEvidenceSource {
             encrypted_writes: Mutex::new(0),
             incidents: Mutex::new(Vec::new()),
             latest_rotation: Mutex::new(None),
+            cold_chain_excursions: Mutex::new(0),
             calls: Mutex::new(BTreeMap::new()),
             fail_with: Mutex::new(None),
         }
@@ -127,6 +136,10 @@ impl MockEvidenceSource {
 
     pub fn set_latest_key_rotation(&self, at: Option<DateTime<Utc>>) {
         *self.latest_rotation.lock().unwrap() = at;
+    }
+
+    pub fn set_cold_chain_excursions(&self, n: u64) {
+        *self.cold_chain_excursions.lock().unwrap() = n;
     }
 
     pub fn fail_next(&self, msg: impl Into<String>) {
@@ -195,6 +208,18 @@ impl EvidenceSource for MockEvidenceSource {
             .insert("latest_key_rotation", Utc::now());
         self.try_fail()?;
         Ok(*self.latest_rotation.lock().unwrap())
+    }
+
+    async fn cold_chain_excursions_since(
+        &self,
+        since: DateTime<Utc>,
+    ) -> Result<u64, EvidenceError> {
+        self.calls
+            .lock()
+            .unwrap()
+            .insert("cold_chain_excursions_since", since);
+        self.try_fail()?;
+        Ok(*self.cold_chain_excursions.lock().unwrap())
     }
 }
 
