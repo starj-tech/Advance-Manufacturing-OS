@@ -16,6 +16,7 @@
 //! probe trait. Real probes (and the LLM-assisted "explain why this
 //! failed" surface) ship in PR #6.
 
+pub mod artifact_currency_probe;
 pub mod audit_immutable_probe;
 pub mod breach_notification_probe;
 pub mod catalog;
@@ -36,6 +37,7 @@ pub mod standard;
 pub mod suite;
 pub mod writer;
 
+pub use artifact_currency_probe::{currency_interval, ArtifactCurrencyProbe, CURRENCY_CONTROLS};
 pub use audit_immutable_probe::AuditTrailImmutableProbe;
 pub use breach_notification_probe::BreachNotificationProbe;
 pub use catalog::CATALOG;

@@ -26,9 +26,9 @@ use crate::evidence::EvidenceSource;
 use crate::report::ComplianceReport;
 use crate::runner::ProbeRunner;
 use crate::{
-    AuditTrailImmutableProbe, BreachNotificationProbe, ColdChainProbe, DsarPipelineProbe,
-    EncryptionAtRestProbe, IncidentLogProbe, KeyRotationProbe, PeriodicReviewProbe, ReviewKind,
-    SignatureBindingProbe,
+    ArtifactCurrencyProbe, AuditTrailImmutableProbe, BreachNotificationProbe, ColdChainProbe,
+    DsarPipelineProbe, EncryptionAtRestProbe, IncidentLogProbe, KeyRotationProbe,
+    PeriodicReviewProbe, ReviewKind, SignatureBindingProbe, CURRENCY_CONTROLS,
 };
 use chrono::{DateTime, Duration, Utc};
 use std::sync::Arc;
@@ -92,7 +92,21 @@ pub fn probe_for(
         "dp-breach-notification" => Arc::new(BreachNotificationProbe::new(evidence)),
         "dp-dsar-pipeline" => Arc::new(DsarPipelineProbe::new(evidence)),
         "er-signature-binding" => Arc::new(SignatureBindingProbe::new(evidence)),
-        _ => return None,
+        // Large "artifact on file & current" family — one generic probe
+        // per registry entry (see CURRENCY_CONTROLS).
+        _ => {
+            return CURRENCY_CONTROLS
+                .iter()
+                .find(|(c, _)| *c == control_id)
+                .map(move |(cid, max_age)| {
+                    Arc::new(ArtifactCurrencyProbe::new(
+                        evidence,
+                        cid,
+                        *max_age,
+                        window.as_of,
+                    )) as Arc<dyn Probe>
+                });
+        }
     };
     Some(probe)
 }
@@ -160,11 +174,12 @@ mod tests {
 
     #[test]
     fn suite_skips_controls_without_a_probe() {
-        // iso-9001 lists 5 controls; only qms-mgmt-review and
-        // qms-internal-audit are probe-backed (via PeriodicReviewProbe).
-        // The other three are still manual and must be skipped.
+        // iso-9001 lists 5 controls: qms-document-control (currency),
+        // qms-mgmt-review + qms-internal-audit (periodic review) are
+        // probe-backed; qms-non-conformance and qms-capa are still manual
+        // (count-based) and must be skipped.
         let suite = build_suite("iso-9001", evidence(), window());
-        assert_eq!(suite.len(), 2);
+        assert_eq!(suite.len(), 3);
     }
 
     #[test]
@@ -175,7 +190,15 @@ mod tests {
 
     #[test]
     fn probe_for_unmapped_control_is_none() {
-        assert!(probe_for("qms-document-control", evidence(), window()).is_none());
+        // qms-capa is count-based (open CAPAs) — no automated probe yet.
+        assert!(probe_for("qms-capa", evidence(), window()).is_none());
+    }
+
+    #[test]
+    fn probe_for_currency_control_is_some() {
+        // qms-document-control is now covered by the generic currency probe.
+        assert!(probe_for("qms-document-control", evidence(), window()).is_some());
+        assert!(probe_for("auto-ppap", evidence(), window()).is_some());
     }
 
     #[test]
