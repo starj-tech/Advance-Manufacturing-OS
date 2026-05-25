@@ -103,7 +103,6 @@ const enUS: Messages = {
   'nav.manager.support': 'AI support',
 
   // Shared skeleton-page note (Placeholder default body)
-  'common.skeletonNote': 'Skeleton page — the real implementation lands in a follow-up PR.',
 
   // Skeleton page titles / descriptions
   'page.audit.title': 'Audit log',
@@ -463,8 +462,6 @@ const nlNL: Messages = {
   'nav.manager.certifications': 'Certificeringen',
   'nav.manager.support': 'AI-ondersteuning',
 
-  'common.skeletonNote': 'Skeletpagina — de echte implementatie volgt in een latere PR.',
-
   'page.audit.title': 'Auditlogboek',
   'page.audit.desc':
     'Append-only logboek van elke bevoorrechte actie. Gestreamd via Supabase Realtime.',
@@ -803,8 +800,6 @@ const deDE: Messages = {
   'nav.manager.roster': 'Dienstplan',
   'nav.manager.certifications': 'Zertifizierungen',
   'nav.manager.support': 'KI-Support',
-
-  'common.skeletonNote': 'Gerüstseite — die echte Implementierung folgt in einem späteren PR.',
 
   'page.audit.title': 'Audit-Protokoll',
   'page.audit.desc':
@@ -1146,8 +1141,6 @@ const idID: Messages = {
   'nav.manager.certifications': 'Sertifikasi',
   'nav.manager.support': 'Dukungan AI',
 
-  'common.skeletonNote': 'Halaman kerangka — implementasi sebenarnya menyusul di PR berikutnya.',
-
   'page.audit.title': 'Log audit',
   'page.audit.desc':
     'Catatan hanya-tambah untuk setiap tindakan berhak istimewa. Dialirkan via Supabase Realtime.',
@@ -1483,8 +1476,6 @@ const jaJP: Messages = {
   'nav.manager.certifications': '認定',
   'nav.manager.support': 'AIサポート',
 
-  'common.skeletonNote': 'スケルトンページ — 実装は今後のPRで対応します。',
-
   'page.audit.title': '監査ログ',
   'page.audit.desc': 'すべての特権操作の追記専用台帳。Supabase Realtimeでストリーミングされます。',
   'page.modules.title': 'モジュールレジストリ',
@@ -1815,8 +1806,6 @@ const zhCN: Messages = {
   'nav.manager.roster': '排班',
   'nav.manager.certifications': '认证',
   'nav.manager.support': 'AI 支持',
-
-  'common.skeletonNote': '骨架页面 — 真实实现将在后续 PR 中完成。',
 
   'page.audit.title': '审计日志',
   'page.audit.desc': '每个特权操作的仅追加账本。通过 Supabase Realtime 流式传输。',
