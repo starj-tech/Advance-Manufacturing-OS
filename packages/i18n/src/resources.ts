@@ -295,6 +295,23 @@ const enUS: Messages = {
   'page.supply.action.wait': 'wait',
   'page.supply.action.hold': 'hold',
   'page.supply.save': '· save {savings}',
+
+  // Developer · audit log (live viewer)
+  'page.audit.searchPlaceholder': 'Search actor, action, or target…',
+  'page.audit.filterAll': 'All',
+  'page.audit.filterAllowed': 'Allowed',
+  'page.audit.filterDenied': 'Denied',
+  'page.audit.col.time': 'Time',
+  'page.audit.col.actor': 'Actor',
+  'page.audit.col.action': 'Action',
+  'page.audit.col.target': 'Target',
+  'page.audit.col.result': 'Result',
+  'page.audit.result.allowed': 'allowed',
+  'page.audit.result.denied': 'denied',
+  'page.audit.empty': 'No matching events.',
+  'page.audit.count': '{shown} of {total} events',
+  'page.audit.realtimeNote':
+    'Append-only · hash-chained. Live Supabase Realtime stream wires up in PR #2.',
 };
 
 // en-GB shares the US base; only spellings / tax-ish phrasing
@@ -549,6 +566,22 @@ const nlNL: Messages = {
   'page.supply.action.wait': 'wachten',
   'page.supply.action.hold': 'aanhouden',
   'page.supply.save': '· bespaar {savings}',
+
+  'page.audit.searchPlaceholder': 'Zoek op actor, actie of doel…',
+  'page.audit.filterAll': 'Alle',
+  'page.audit.filterAllowed': 'Toegestaan',
+  'page.audit.filterDenied': 'Geweigerd',
+  'page.audit.col.time': 'Tijd',
+  'page.audit.col.actor': 'Actor',
+  'page.audit.col.action': 'Actie',
+  'page.audit.col.target': 'Doel',
+  'page.audit.col.result': 'Resultaat',
+  'page.audit.result.allowed': 'toegestaan',
+  'page.audit.result.denied': 'geweigerd',
+  'page.audit.empty': 'Geen overeenkomende gebeurtenissen.',
+  'page.audit.count': '{shown} van {total} gebeurtenissen',
+  'page.audit.realtimeNote':
+    'Append-only · hash-geketend. Live Supabase Realtime-stream wordt gekoppeld in PR #2.',
 };
 
 const deDE: Messages = {
@@ -800,6 +833,22 @@ const deDE: Messages = {
   'page.supply.action.wait': 'warten',
   'page.supply.action.hold': 'halten',
   'page.supply.save': '· spare {savings}',
+
+  'page.audit.searchPlaceholder': 'Nach Akteur, Aktion oder Ziel suchen…',
+  'page.audit.filterAll': 'Alle',
+  'page.audit.filterAllowed': 'Erlaubt',
+  'page.audit.filterDenied': 'Abgelehnt',
+  'page.audit.col.time': 'Zeit',
+  'page.audit.col.actor': 'Akteur',
+  'page.audit.col.action': 'Aktion',
+  'page.audit.col.target': 'Ziel',
+  'page.audit.col.result': 'Ergebnis',
+  'page.audit.result.allowed': 'erlaubt',
+  'page.audit.result.denied': 'abgelehnt',
+  'page.audit.empty': 'Keine passenden Ereignisse.',
+  'page.audit.count': '{shown} von {total} Ereignissen',
+  'page.audit.realtimeNote':
+    'Append-only · hash-verkettet. Live-Supabase-Realtime-Stream wird in PR #2 angebunden.',
 };
 
 const idID: Messages = {
@@ -1046,6 +1095,22 @@ const idID: Messages = {
   'page.supply.action.wait': 'tunggu',
   'page.supply.action.hold': 'tahan',
   'page.supply.save': '· hemat {savings}',
+
+  'page.audit.searchPlaceholder': 'Cari actor, aksi, atau target…',
+  'page.audit.filterAll': 'Semua',
+  'page.audit.filterAllowed': 'Diizinkan',
+  'page.audit.filterDenied': 'Ditolak',
+  'page.audit.col.time': 'Waktu',
+  'page.audit.col.actor': 'Actor',
+  'page.audit.col.action': 'Aksi',
+  'page.audit.col.target': 'Target',
+  'page.audit.col.result': 'Hasil',
+  'page.audit.result.allowed': 'diizinkan',
+  'page.audit.result.denied': 'ditolak',
+  'page.audit.empty': 'Tidak ada peristiwa yang cocok.',
+  'page.audit.count': '{shown} dari {total} peristiwa',
+  'page.audit.realtimeNote':
+    'Hanya-tambah · ber-hash-chain. Stream Supabase Realtime langsung dihubungkan di PR #2.',
 };
 
 const jaJP: Messages = {
@@ -1289,6 +1354,22 @@ const jaJP: Messages = {
   'page.supply.action.wait': '待機',
   'page.supply.action.hold': '保留',
   'page.supply.save': '· {savings} 節約',
+
+  'page.audit.searchPlaceholder': 'アクター、アクション、対象を検索…',
+  'page.audit.filterAll': 'すべて',
+  'page.audit.filterAllowed': '許可',
+  'page.audit.filterDenied': '拒否',
+  'page.audit.col.time': '時刻',
+  'page.audit.col.actor': 'アクター',
+  'page.audit.col.action': 'アクション',
+  'page.audit.col.target': '対象',
+  'page.audit.col.result': '結果',
+  'page.audit.result.allowed': '許可',
+  'page.audit.result.denied': '拒否',
+  'page.audit.empty': '一致するイベントはありません。',
+  'page.audit.count': '{total} 件中 {shown} 件',
+  'page.audit.realtimeNote':
+    '追記専用 · ハッシュチェーン。ライブのSupabase RealtimeストリームはPR #2で接続されます。',
 };
 
 const zhCN: Messages = {
@@ -1527,6 +1608,21 @@ const zhCN: Messages = {
   'page.supply.action.wait': '等待',
   'page.supply.action.hold': '持有',
   'page.supply.save': '· 节省 {savings}',
+
+  'page.audit.searchPlaceholder': '搜索操作者、操作或对象…',
+  'page.audit.filterAll': '全部',
+  'page.audit.filterAllowed': '已允许',
+  'page.audit.filterDenied': '已拒绝',
+  'page.audit.col.time': '时间',
+  'page.audit.col.actor': '操作者',
+  'page.audit.col.action': '操作',
+  'page.audit.col.target': '对象',
+  'page.audit.col.result': '结果',
+  'page.audit.result.allowed': '已允许',
+  'page.audit.result.denied': '已拒绝',
+  'page.audit.empty': '没有匹配的事件。',
+  'page.audit.count': '{total} 个事件中的 {shown} 个',
+  'page.audit.realtimeNote': '仅追加 · 哈希链。实时 Supabase Realtime 流将在 PR #2 接入。',
 };
 
 /// Master registry keyed by BCP-47 tag. `useTranslation`
