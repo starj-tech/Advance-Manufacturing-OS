@@ -33,6 +33,7 @@ pub mod report;
 pub mod runner;
 pub mod signature_binding_probe;
 pub mod standard;
+pub mod suite;
 
 pub use audit_immutable_probe::AuditTrailImmutableProbe;
 pub use breach_notification_probe::BreachNotificationProbe;
@@ -53,3 +54,4 @@ pub use report::{ChainError, ChainedVerdict, ComplianceReport, ControlVerdict, O
 pub use runner::ProbeRunner;
 pub use signature_binding_probe::SignatureBindingProbe;
 pub use standard::{ComplianceStandard, StandardKind};
+pub use suite::{build_suite, is_known_standard, probe_for, run_standard, ReportWindow};
