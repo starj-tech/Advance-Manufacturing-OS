@@ -103,6 +103,18 @@ pub trait EvidenceSource: Send + Sync {
     /// no notification logged. Zero means every breach was notified in
     /// time. Backs the GDPR Art. 33 breach-notification probe.
     async fn breaches_unnotified_within(&self, deadline_hours: u32) -> Result<u64, EvidenceError>;
+
+    /// Count of data-subject access requests (DSARs) whose fulfilment
+    /// deadline (request + `deadline_days`) has passed while still open.
+    /// Zero means the pipeline is meeting its SLA. Backs the GDPR
+    /// Art. 12(3) DSAR probe.
+    async fn dsars_past_deadline(&self, deadline_days: u32) -> Result<u64, EvidenceError>;
+
+    /// Count of electronic signatures not cryptographically bound to the
+    /// record they signed (a detached signature could be moved onto a
+    /// different record). Zero means every signature is bound. Backs the
+    /// FDA 21 CFR 11.70 signature-binding probe.
+    async fn unbound_signatures(&self) -> Result<u64, EvidenceError>;
 }
 
 /// In-memory `EvidenceSource` for tests and dry-run preview UI. Each
@@ -116,6 +128,8 @@ pub struct MockEvidenceSource {
     cold_chain_excursions: Mutex<u64>,
     reviews: Mutex<BTreeMap<String, DateTime<Utc>>>,
     breaches_overdue: Mutex<u64>,
+    dsars_overdue: Mutex<u64>,
+    unbound_sigs: Mutex<u64>,
     /// Map of method name → most recent `since` argument the probe
     /// passed. Exposed for tests; production never reads it.
     calls: Mutex<BTreeMap<&'static str, DateTime<Utc>>>,
@@ -135,6 +149,8 @@ impl MockEvidenceSource {
             cold_chain_excursions: Mutex::new(0),
             reviews: Mutex::new(BTreeMap::new()),
             breaches_overdue: Mutex::new(0),
+            dsars_overdue: Mutex::new(0),
+            unbound_sigs: Mutex::new(0),
             calls: Mutex::new(BTreeMap::new()),
             fail_with: Mutex::new(None),
         }
@@ -168,6 +184,14 @@ impl MockEvidenceSource {
 
     pub fn set_breaches_overdue(&self, n: u64) {
         *self.breaches_overdue.lock().unwrap() = n;
+    }
+
+    pub fn set_dsars_overdue(&self, n: u64) {
+        *self.dsars_overdue.lock().unwrap() = n;
+    }
+
+    pub fn set_unbound_signatures(&self, n: u64) {
+        *self.unbound_sigs.lock().unwrap() = n;
     }
 
     pub fn fail_next(&self, msg: impl Into<String>) {
@@ -269,6 +293,24 @@ impl EvidenceSource for MockEvidenceSource {
             .insert("breaches_unnotified_within", Utc::now());
         self.try_fail()?;
         Ok(*self.breaches_overdue.lock().unwrap())
+    }
+
+    async fn dsars_past_deadline(&self, _deadline_days: u32) -> Result<u64, EvidenceError> {
+        self.calls
+            .lock()
+            .unwrap()
+            .insert("dsars_past_deadline", Utc::now());
+        self.try_fail()?;
+        Ok(*self.dsars_overdue.lock().unwrap())
+    }
+
+    async fn unbound_signatures(&self) -> Result<u64, EvidenceError> {
+        self.calls
+            .lock()
+            .unwrap()
+            .insert("unbound_signatures", Utc::now());
+        self.try_fail()?;
+        Ok(*self.unbound_sigs.lock().unwrap())
     }
 }
 
