@@ -1,5 +1,6 @@
 import { Card, CardBody, CardHeader, Stack, StatusPill } from '@aether/ui-kit';
 import { useCapability, useIndustry } from '@aether/shell-runtime';
+import { useTranslation } from '@aether/i18n';
 
 interface BaseRow {
   sku: string;
@@ -23,16 +24,83 @@ interface AutomotiveRow extends BaseRow {
 }
 
 const FOOD_ROWS: FoodRow[] = [
-  { sku: 'MILK-3L',  name: 'Whole milk 3L',     uom: 'btl', qtyOnHand: 4280, qtyReserved: 320, lot: 'L-26045-A', expiresAt: '2026-05-21', storageTempC: 2.6, storageTargetC: 4.0 },
-  { sku: 'CHKN-WB',  name: 'Boneless chicken',  uom: 'kg',  qtyOnHand: 612,  qtyReserved: 80,  lot: 'L-26049-B', expiresAt: '2026-05-12', storageTempC: -0.5, storageTargetC: 0.0 },
-  { sku: 'BUN-WHT',  name: 'White bun pack 12', uom: 'pkg', qtyOnHand: 980,  qtyReserved: 0,   lot: 'L-26050-A', expiresAt: '2026-05-15', storageTempC: 21.0, storageTargetC: 22.0 },
-  { sku: 'YGT-BLU',  name: 'Yoghurt blueberry', uom: 'cup', qtyOnHand: 320,  qtyReserved: 0,   lot: 'L-26041-D', expiresAt: '2026-05-09', storageTempC: 5.4, storageTargetC: 4.0 },
+  {
+    sku: 'MILK-3L',
+    name: 'Whole milk 3L',
+    uom: 'btl',
+    qtyOnHand: 4280,
+    qtyReserved: 320,
+    lot: 'L-26045-A',
+    expiresAt: '2026-05-21',
+    storageTempC: 2.6,
+    storageTargetC: 4.0,
+  },
+  {
+    sku: 'CHKN-WB',
+    name: 'Boneless chicken',
+    uom: 'kg',
+    qtyOnHand: 612,
+    qtyReserved: 80,
+    lot: 'L-26049-B',
+    expiresAt: '2026-05-12',
+    storageTempC: -0.5,
+    storageTargetC: 0.0,
+  },
+  {
+    sku: 'BUN-WHT',
+    name: 'White bun pack 12',
+    uom: 'pkg',
+    qtyOnHand: 980,
+    qtyReserved: 0,
+    lot: 'L-26050-A',
+    expiresAt: '2026-05-15',
+    storageTempC: 21.0,
+    storageTargetC: 22.0,
+  },
+  {
+    sku: 'YGT-BLU',
+    name: 'Yoghurt blueberry',
+    uom: 'cup',
+    qtyOnHand: 320,
+    qtyReserved: 0,
+    lot: 'L-26041-D',
+    expiresAt: '2026-05-09',
+    storageTempC: 5.4,
+    storageTargetC: 4.0,
+  },
 ];
 
 const AUTO_ROWS: AutomotiveRow[] = [
-  { sku: 'STC-3KW',  name: 'Stator core 3kW',   uom: 'pcs', qtyOnHand: 320, qtyReserved: 50, partSerial: 'AS-2026-04-091823', vinLink: 'WBADX-2026-…',  lastCalibrated: '2026-05-04' },
-  { sku: 'RTR-12MM', name: 'Rotor shaft 12mm',  uom: 'pcs', qtyOnHand: 580, qtyReserved: 0,  partSerial: 'AS-2026-04-091824', vinLink: 'WBADX-2026-…',  lastCalibrated: '2026-04-22' },
-  { sku: 'BRK-PD-F', name: 'Front brake pads',  uom: 'set', qtyOnHand: 410, qtyReserved: 0,  partSerial: 'AS-2026-04-091825', vinLink: '—',           lastCalibrated: '2026-04-30' },
+  {
+    sku: 'STC-3KW',
+    name: 'Stator core 3kW',
+    uom: 'pcs',
+    qtyOnHand: 320,
+    qtyReserved: 50,
+    partSerial: 'AS-2026-04-091823',
+    vinLink: 'WBADX-2026-…',
+    lastCalibrated: '2026-05-04',
+  },
+  {
+    sku: 'RTR-12MM',
+    name: 'Rotor shaft 12mm',
+    uom: 'pcs',
+    qtyOnHand: 580,
+    qtyReserved: 0,
+    partSerial: 'AS-2026-04-091824',
+    vinLink: 'WBADX-2026-…',
+    lastCalibrated: '2026-04-22',
+  },
+  {
+    sku: 'BRK-PD-F',
+    name: 'Front brake pads',
+    uom: 'set',
+    qtyOnHand: 410,
+    qtyReserved: 0,
+    partSerial: 'AS-2026-04-091825',
+    vinLink: '—',
+    lastCalibrated: '2026-04-30',
+  },
 ];
 
 function expiryUrgency(iso: string): 'success' | 'warning' | 'danger' {
@@ -50,6 +118,7 @@ function tempUrgency(actual: number, target: number): 'success' | 'warning' | 'd
 }
 
 export function InventoryPage() {
+  const { t } = useTranslation();
   const industry = useIndustry();
   const showExpiry = useCapability('expired-date-tracking');
   const showTemperature = useCapability('temperature-sensor-integration');
@@ -62,31 +131,28 @@ export function InventoryPage() {
   return (
     <Stack gap={16}>
       <header>
-        <h1 style={{ margin: 0, fontSize: 24 }}>Inventory</h1>
+        <h1 style={{ margin: 0, fontSize: 24 }}>{t('page.inventory.title')}</h1>
         <p style={{ margin: '4px 0 0', color: 'var(--aether-fg-muted)', fontSize: 13 }}>
-          Live qty_on_hand. Adjustments flow through server RPC{' '}
-          <code>inventory_adjust(delta)</code> to keep stock ≥ 0 atomic. Columns adapt to your{' '}
-          <strong>industry profile</strong>{industry ? ` (${industry})` : ''} — Universal Module
-          in action.
+          {t('page.inventory.intro', { suffix: industry ? ` (${industry})` : '' })}
         </p>
       </header>
 
       {usingFoodView ? (
         <Card padded={false}>
           <CardHeader
-            title="Lots & cold chain"
-            subtitle="Food & Beverage view — FEFO ordering, temperature alarms"
+            title={t('page.inventory.foodTitle')}
+            subtitle={t('page.inventory.foodSubtitle')}
           />
           <CardBody>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr style={{ textAlign: 'left', color: 'var(--aether-fg-muted)' }}>
-                  <th style={th}>SKU</th>
-                  <th style={th}>Name</th>
-                  <th style={th}>Lot</th>
-                  {showExpiry ? <th style={th}>Expires</th> : null}
-                  {showTemperature ? <th style={th}>Temp (°C)</th> : null}
-                  <th style={th}>On hand</th>
+                  <th style={th}>{t('page.inventory.col.sku')}</th>
+                  <th style={th}>{t('page.inventory.col.name')}</th>
+                  <th style={th}>{t('page.inventory.col.lot')}</th>
+                  {showExpiry ? <th style={th}>{t('page.inventory.col.expires')}</th> : null}
+                  {showTemperature ? <th style={th}>{t('page.inventory.col.temp')}</th> : null}
+                  <th style={th}>{t('page.inventory.col.onHand')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -107,12 +173,19 @@ export function InventoryPage() {
                     {showTemperature ? (
                       <td style={td}>
                         <StatusPill kind={tempUrgency(r.storageTempC, r.storageTargetC)}>
-                          {r.storageTempC.toFixed(1)} / target {r.storageTargetC.toFixed(1)}
+                          {t('page.inventory.tempCell', {
+                            actual: r.storageTempC.toFixed(1),
+                            target: r.storageTargetC.toFixed(1),
+                          })}
                         </StatusPill>
                       </td>
                     ) : null}
                     <td style={td}>
-                      {r.qtyOnHand} {r.uom} ({r.qtyReserved} reserved)
+                      {t('page.inventory.onHandCell', {
+                        qty: r.qtyOnHand,
+                        uom: r.uom,
+                        reserved: r.qtyReserved,
+                      })}
                     </td>
                   </tr>
                 ))}
@@ -125,19 +198,19 @@ export function InventoryPage() {
       {usingAutoView ? (
         <Card padded={false}>
           <CardHeader
-            title="Parts & calibration"
-            subtitle="Automotive view — VIN linkage, calibration cadence"
+            title={t('page.inventory.autoTitle')}
+            subtitle={t('page.inventory.autoSubtitle')}
           />
           <CardBody>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr style={{ textAlign: 'left', color: 'var(--aether-fg-muted)' }}>
-                  <th style={th}>SKU</th>
-                  <th style={th}>Name</th>
-                  {showSerial ? <th style={th}>Serial</th> : null}
-                  {showSerial ? <th style={th}>VIN</th> : null}
-                  {showCalibration ? <th style={th}>Last cal.</th> : null}
-                  <th style={th}>On hand</th>
+                  <th style={th}>{t('page.inventory.col.sku')}</th>
+                  <th style={th}>{t('page.inventory.col.name')}</th>
+                  {showSerial ? <th style={th}>{t('page.inventory.col.serial')}</th> : null}
+                  {showSerial ? <th style={th}>{t('page.inventory.col.vin')}</th> : null}
+                  {showCalibration ? <th style={th}>{t('page.inventory.col.lastCal')}</th> : null}
+                  <th style={th}>{t('page.inventory.col.onHand')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -155,7 +228,11 @@ export function InventoryPage() {
                     {showSerial ? <td style={td}>{r.vinLink}</td> : null}
                     {showCalibration ? <td style={td}>{r.lastCalibrated}</td> : null}
                     <td style={td}>
-                      {r.qtyOnHand} {r.uom} ({r.qtyReserved} reserved)
+                      {t('page.inventory.onHandCell', {
+                        qty: r.qtyOnHand,
+                        uom: r.uom,
+                        reserved: r.qtyReserved,
+                      })}
                     </td>
                   </tr>
                 ))}
@@ -169,9 +246,7 @@ export function InventoryPage() {
         <Card>
           <CardBody>
             <p style={{ margin: 0, color: 'var(--aether-fg-muted)', fontSize: 13 }}>
-              Generic inventory view. Set an Industry profile in Developer → Industry profile to
-              see expiry tracking, cold-chain temperature, parts serialization, or calibration
-              columns appear automatically.
+              {t('page.inventory.genericNote')}
             </p>
           </CardBody>
         </Card>
