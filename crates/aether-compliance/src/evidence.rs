@@ -74,6 +74,14 @@ pub trait EvidenceSource: Send + Sync {
         &self,
         sla_hours: u32,
     ) -> Result<Vec<OpenIncident>, EvidenceError>;
+
+    /// Timestamp of the most recent data-encryption-key (DEK) rotation,
+    /// or `None` if no rotation has ever been recorded. The key-rotation
+    /// probe compares this against its `as_of` reference to decide
+    /// whether the rotation interval policy is being honored. No `since`
+    /// cutoff: "most recent" is already a point answer, and the probe
+    /// supplies the reference instant so the verdict stays reproducible.
+    async fn latest_key_rotation(&self) -> Result<Option<DateTime<Utc>>, EvidenceError>;
 }
 
 /// In-memory `EvidenceSource` for tests and dry-run preview UI. Each
@@ -83,6 +91,7 @@ pub struct MockEvidenceSource {
     tampered: Mutex<bool>,
     encrypted_writes: Mutex<u64>,
     incidents: Mutex<Vec<OpenIncident>>,
+    latest_rotation: Mutex<Option<DateTime<Utc>>>,
     /// Map of method name → most recent `since` argument the probe
     /// passed. Exposed for tests; production never reads it.
     calls: Mutex<BTreeMap<&'static str, DateTime<Utc>>>,
@@ -98,6 +107,7 @@ impl MockEvidenceSource {
             tampered: Mutex::new(false),
             encrypted_writes: Mutex::new(0),
             incidents: Mutex::new(Vec::new()),
+            latest_rotation: Mutex::new(None),
             calls: Mutex::new(BTreeMap::new()),
             fail_with: Mutex::new(None),
         }
@@ -113,6 +123,10 @@ impl MockEvidenceSource {
 
     pub fn set_open_incidents(&self, items: Vec<OpenIncident>) {
         *self.incidents.lock().unwrap() = items;
+    }
+
+    pub fn set_latest_key_rotation(&self, at: Option<DateTime<Utc>>) {
+        *self.latest_rotation.lock().unwrap() = at;
     }
 
     pub fn fail_next(&self, msg: impl Into<String>) {
@@ -172,6 +186,15 @@ impl EvidenceSource for MockEvidenceSource {
             .insert("open_incidents_past_sla", Utc::now());
         self.try_fail()?;
         Ok(self.incidents.lock().unwrap().clone())
+    }
+
+    async fn latest_key_rotation(&self) -> Result<Option<DateTime<Utc>>, EvidenceError> {
+        self.calls
+            .lock()
+            .unwrap()
+            .insert("latest_key_rotation", Utc::now());
+        self.try_fail()?;
+        Ok(*self.latest_rotation.lock().unwrap())
     }
 }
 
