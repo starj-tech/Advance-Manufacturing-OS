@@ -348,6 +348,24 @@ const enUS: Messages = {
   'page.maintenance.scheduled': 'Work order scheduled',
   'page.maintenance.note':
     'RUL forecasts via ONNX model (PR #7); live vibration/thermal tags via PR #3.',
+
+  // Manager · roster (live)
+  'page.roster.onShiftOnly': 'On shift only',
+  'page.roster.col.operator': 'Operator',
+  'page.roster.col.station': 'Station',
+  'page.roster.col.shift': 'Shift',
+  'page.roster.col.presence': 'Presence',
+  'page.roster.col.certs': 'Certifications',
+  'page.roster.presence.onsite': 'on-site',
+  'page.roster.presence.offsite': 'off-site',
+  'page.roster.presence.break': 'on break',
+  'page.roster.shift.day': 'Day',
+  'page.roster.shift.night': 'Night',
+  'page.roster.shift.swing': 'Swing',
+  'page.roster.certsValid': '{valid}/{total} valid',
+  'page.roster.empty': 'No operators match the filter.',
+  'page.roster.note':
+    'Presence is mDNS-driven (PR #5); shift assignments come from the HR module (later).',
 };
 
 // en-GB shares the US base; only spellings / tax-ish phrasing
@@ -652,6 +670,23 @@ const nlNL: Messages = {
   'page.maintenance.scheduled': 'Werkorder ingepland',
   'page.maintenance.note':
     'RUL-prognoses via ONNX-model (PR #7); live trillings-/thermische tags via PR #3.',
+
+  'page.roster.onShiftOnly': 'Alleen in dienst',
+  'page.roster.col.operator': 'Operator',
+  'page.roster.col.station': 'Werkplek',
+  'page.roster.col.shift': 'Dienst',
+  'page.roster.col.presence': 'Aanwezigheid',
+  'page.roster.col.certs': 'Certificeringen',
+  'page.roster.presence.onsite': 'op locatie',
+  'page.roster.presence.offsite': 'afwezig',
+  'page.roster.presence.break': 'pauze',
+  'page.roster.shift.day': 'Dag',
+  'page.roster.shift.night': 'Nacht',
+  'page.roster.shift.swing': 'Tussendienst',
+  'page.roster.certsValid': '{valid}/{total} geldig',
+  'page.roster.empty': 'Geen operators komen overeen met het filter.',
+  'page.roster.note':
+    'Aanwezigheid is mDNS-gestuurd (PR #5); dienstindelingen komen uit de HR-module (later).',
 };
 
 const deDE: Messages = {
@@ -953,6 +988,23 @@ const deDE: Messages = {
   'page.maintenance.scheduled': 'Arbeitsauftrag geplant',
   'page.maintenance.note':
     'RUL-Prognosen über ONNX-Modell (PR #7); Live-Vibrations-/Thermaltags über PR #3.',
+
+  'page.roster.onShiftOnly': 'Nur im Dienst',
+  'page.roster.col.operator': 'Operator',
+  'page.roster.col.station': 'Arbeitsplatz',
+  'page.roster.col.shift': 'Schicht',
+  'page.roster.col.presence': 'Anwesenheit',
+  'page.roster.col.certs': 'Zertifizierungen',
+  'page.roster.presence.onsite': 'vor Ort',
+  'page.roster.presence.offsite': 'abwesend',
+  'page.roster.presence.break': 'Pause',
+  'page.roster.shift.day': 'Tag',
+  'page.roster.shift.night': 'Nacht',
+  'page.roster.shift.swing': 'Zwischenschicht',
+  'page.roster.certsValid': '{valid}/{total} gültig',
+  'page.roster.empty': 'Keine Operatoren entsprechen dem Filter.',
+  'page.roster.note':
+    'Anwesenheit ist mDNS-gesteuert (PR #5); Schichtzuweisungen stammen aus dem HR-Modul (später).',
 };
 
 const idID: Messages = {
@@ -1249,6 +1301,23 @@ const idID: Messages = {
   'page.maintenance.scheduled': 'Perintah kerja dijadwalkan',
   'page.maintenance.note':
     'Prakiraan RUL via model ONNX (PR #7); tag getaran/termal langsung via PR #3.',
+
+  'page.roster.onShiftOnly': 'Hanya yang bertugas',
+  'page.roster.col.operator': 'Operator',
+  'page.roster.col.station': 'Stasiun',
+  'page.roster.col.shift': 'Shift',
+  'page.roster.col.presence': 'Kehadiran',
+  'page.roster.col.certs': 'Sertifikasi',
+  'page.roster.presence.onsite': 'di lokasi',
+  'page.roster.presence.offsite': 'di luar',
+  'page.roster.presence.break': 'istirahat',
+  'page.roster.shift.day': 'Siang',
+  'page.roster.shift.night': 'Malam',
+  'page.roster.shift.swing': 'Antara',
+  'page.roster.certsValid': '{valid}/{total} valid',
+  'page.roster.empty': 'Tidak ada operator yang cocok dengan filter.',
+  'page.roster.note':
+    'Kehadiran berbasis mDNS (PR #5); penugasan shift berasal dari modul HR (nanti).',
 };
 
 const jaJP: Messages = {
@@ -1541,6 +1610,23 @@ const jaJP: Messages = {
   'page.maintenance.createWO': '作業指示を作成',
   'page.maintenance.scheduled': '作業指示を計画済み',
   'page.maintenance.note': 'RUL予測はONNXモデル経由（PR #7）、ライブの振動・温度タグはPR #3経由。',
+
+  'page.roster.onShiftOnly': '勤務中のみ',
+  'page.roster.col.operator': 'オペレーター',
+  'page.roster.col.station': '持ち場',
+  'page.roster.col.shift': 'シフト',
+  'page.roster.col.presence': '在席',
+  'page.roster.col.certs': '認定',
+  'page.roster.presence.onsite': '在場',
+  'page.roster.presence.offsite': '不在',
+  'page.roster.presence.break': '休憩',
+  'page.roster.shift.day': '日勤',
+  'page.roster.shift.night': '夜勤',
+  'page.roster.shift.swing': '中勤',
+  'page.roster.certsValid': '{valid}/{total} 有効',
+  'page.roster.empty': 'フィルターに一致するオペレーターはいません。',
+  'page.roster.note':
+    '在席はmDNSベース（PR #5）、シフト割り当てはHRモジュール（後日）から取得します。',
 };
 
 const zhCN: Messages = {
@@ -1827,6 +1913,22 @@ const zhCN: Messages = {
   'page.maintenance.createWO': '创建工单',
   'page.maintenance.scheduled': '工单已安排',
   'page.maintenance.note': 'RUL 预测经 ONNX 模型（PR #7）；实时振动/热标签经 PR #3。',
+
+  'page.roster.onShiftOnly': '仅在岗',
+  'page.roster.col.operator': '操作员',
+  'page.roster.col.station': '工位',
+  'page.roster.col.shift': '班次',
+  'page.roster.col.presence': '在场',
+  'page.roster.col.certs': '认证',
+  'page.roster.presence.onsite': '在现场',
+  'page.roster.presence.offsite': '不在场',
+  'page.roster.presence.break': '休息中',
+  'page.roster.shift.day': '白班',
+  'page.roster.shift.night': '夜班',
+  'page.roster.shift.swing': '中班',
+  'page.roster.certsValid': '{valid}/{total} 有效',
+  'page.roster.empty': '没有符合筛选条件的操作员。',
+  'page.roster.note': '在场基于 mDNS（PR #5）；班次分配来自 HR 模块（稍后）。',
 };
 
 /// Master registry keyed by BCP-47 tag. `useTranslation`
