@@ -331,6 +331,23 @@ const enUS: Messages = {
   'page.modules.emptyAvailable': 'Every registry module is installed.',
   'page.modules.note':
     'Bundles are ed25519-signed and capability-gated. Live registry fetch + kill-switch wire up in PR #4.',
+
+  // Manager · predictive maintenance (live)
+  'page.maintenance.health': 'Health',
+  'page.maintenance.rul': 'Remaining useful life',
+  'page.maintenance.rulDays': '{days} days',
+  'page.maintenance.vibration': 'Vibration',
+  'page.maintenance.thermal': 'Thermal',
+  'page.maintenance.signal.normal': 'normal',
+  'page.maintenance.signal.elevated': 'elevated',
+  'page.maintenance.signal.critical': 'critical',
+  'page.maintenance.rec.scheduleNow': 'Schedule now',
+  'page.maintenance.rec.planSoon': 'Plan soon',
+  'page.maintenance.rec.monitor': 'Monitor',
+  'page.maintenance.createWO': 'Create work order',
+  'page.maintenance.scheduled': 'Work order scheduled',
+  'page.maintenance.note':
+    'RUL forecasts via ONNX model (PR #7); live vibration/thermal tags via PR #3.',
 };
 
 // en-GB shares the US base; only spellings / tax-ish phrasing
@@ -619,6 +636,22 @@ const nlNL: Messages = {
   'page.modules.emptyAvailable': 'Elke registermodule is geïnstalleerd.',
   'page.modules.note':
     'Bundels zijn ed25519-ondertekend en capability-gated. Live registerophaling + kill-switch worden gekoppeld in PR #4.',
+
+  'page.maintenance.health': 'Conditie',
+  'page.maintenance.rul': 'Resterende levensduur',
+  'page.maintenance.rulDays': '{days} dagen',
+  'page.maintenance.vibration': 'Trilling',
+  'page.maintenance.thermal': 'Thermisch',
+  'page.maintenance.signal.normal': 'normaal',
+  'page.maintenance.signal.elevated': 'verhoogd',
+  'page.maintenance.signal.critical': 'kritiek',
+  'page.maintenance.rec.scheduleNow': 'Nu inplannen',
+  'page.maintenance.rec.planSoon': 'Binnenkort plannen',
+  'page.maintenance.rec.monitor': 'Bewaken',
+  'page.maintenance.createWO': 'Werkorder aanmaken',
+  'page.maintenance.scheduled': 'Werkorder ingepland',
+  'page.maintenance.note':
+    'RUL-prognoses via ONNX-model (PR #7); live trillings-/thermische tags via PR #3.',
 };
 
 const deDE: Messages = {
@@ -904,6 +937,22 @@ const deDE: Messages = {
   'page.modules.emptyAvailable': 'Jedes Registermodul ist installiert.',
   'page.modules.note':
     'Bundles sind ed25519-signiert und capability-gated. Live-Registerabruf + Kill-Switch werden in PR #4 angebunden.',
+
+  'page.maintenance.health': 'Zustand',
+  'page.maintenance.rul': 'Verbleibende Nutzungsdauer',
+  'page.maintenance.rulDays': '{days} Tage',
+  'page.maintenance.vibration': 'Vibration',
+  'page.maintenance.thermal': 'Thermisch',
+  'page.maintenance.signal.normal': 'normal',
+  'page.maintenance.signal.elevated': 'erhöht',
+  'page.maintenance.signal.critical': 'kritisch',
+  'page.maintenance.rec.scheduleNow': 'Jetzt planen',
+  'page.maintenance.rec.planSoon': 'Bald planen',
+  'page.maintenance.rec.monitor': 'Überwachen',
+  'page.maintenance.createWO': 'Arbeitsauftrag erstellen',
+  'page.maintenance.scheduled': 'Arbeitsauftrag geplant',
+  'page.maintenance.note':
+    'RUL-Prognosen über ONNX-Modell (PR #7); Live-Vibrations-/Thermaltags über PR #3.',
 };
 
 const idID: Messages = {
@@ -1184,6 +1233,22 @@ const idID: Messages = {
   'page.modules.emptyAvailable': 'Semua modul registri sudah terpasang.',
   'page.modules.note':
     'Bundel ditandatangani ed25519 dan dibatasi kapabilitas. Pengambilan registri langsung + kill-switch dihubungkan di PR #4.',
+
+  'page.maintenance.health': 'Kesehatan',
+  'page.maintenance.rul': 'Sisa umur pakai',
+  'page.maintenance.rulDays': '{days} hari',
+  'page.maintenance.vibration': 'Getaran',
+  'page.maintenance.thermal': 'Termal',
+  'page.maintenance.signal.normal': 'normal',
+  'page.maintenance.signal.elevated': 'meningkat',
+  'page.maintenance.signal.critical': 'kritis',
+  'page.maintenance.rec.scheduleNow': 'Jadwalkan sekarang',
+  'page.maintenance.rec.planSoon': 'Rencanakan segera',
+  'page.maintenance.rec.monitor': 'Pantau',
+  'page.maintenance.createWO': 'Buat perintah kerja',
+  'page.maintenance.scheduled': 'Perintah kerja dijadwalkan',
+  'page.maintenance.note':
+    'Prakiraan RUL via model ONNX (PR #7); tag getaran/termal langsung via PR #3.',
 };
 
 const jaJP: Messages = {
@@ -1461,6 +1526,21 @@ const jaJP: Messages = {
   'page.modules.emptyAvailable': 'すべてのレジストリモジュールがインストール済みです。',
   'page.modules.note':
     'バンドルはed25519署名され、機能ゲートされています。ライブのレジストリ取得 + キルスイッチはPR #4で接続されます。',
+
+  'page.maintenance.health': '状態',
+  'page.maintenance.rul': '残存有効寿命',
+  'page.maintenance.rulDays': '{days} 日',
+  'page.maintenance.vibration': '振動',
+  'page.maintenance.thermal': '温度',
+  'page.maintenance.signal.normal': '正常',
+  'page.maintenance.signal.elevated': '上昇',
+  'page.maintenance.signal.critical': '危機的',
+  'page.maintenance.rec.scheduleNow': '今すぐ計画',
+  'page.maintenance.rec.planSoon': '近日中に計画',
+  'page.maintenance.rec.monitor': '監視',
+  'page.maintenance.createWO': '作業指示を作成',
+  'page.maintenance.scheduled': '作業指示を計画済み',
+  'page.maintenance.note': 'RUL予測はONNXモデル経由（PR #7）、ライブの振動・温度タグはPR #3経由。',
 };
 
 const zhCN: Messages = {
@@ -1732,6 +1812,21 @@ const zhCN: Messages = {
   'page.modules.emptyAvailable': '注册表中的每个模块都已安装。',
   'page.modules.note':
     '捆绑包经 ed25519 签名并受能力门控。实时注册表获取 + 终止开关将在 PR #4 接入。',
+
+  'page.maintenance.health': '健康度',
+  'page.maintenance.rul': '剩余使用寿命',
+  'page.maintenance.rulDays': '{days} 天',
+  'page.maintenance.vibration': '振动',
+  'page.maintenance.thermal': '热',
+  'page.maintenance.signal.normal': '正常',
+  'page.maintenance.signal.elevated': '偏高',
+  'page.maintenance.signal.critical': '严重',
+  'page.maintenance.rec.scheduleNow': '立即安排',
+  'page.maintenance.rec.planSoon': '尽快计划',
+  'page.maintenance.rec.monitor': '监控',
+  'page.maintenance.createWO': '创建工单',
+  'page.maintenance.scheduled': '工单已安排',
+  'page.maintenance.note': 'RUL 预测经 ONNX 模型（PR #7）；实时振动/热标签经 PR #3。',
 };
 
 /// Master registry keyed by BCP-47 tag. `useTranslation`
