@@ -97,6 +97,12 @@ pub trait EvidenceSource: Send + Sync {
     /// the interval policy and supplies its own reference instant.
     async fn latest_review(&self, control_id: &str)
         -> Result<Option<DateTime<Utc>>, EvidenceError>;
+
+    /// Count of recorded personal-data breaches whose notification
+    /// deadline (breach detection + `deadline_hours`) has elapsed with
+    /// no notification logged. Zero means every breach was notified in
+    /// time. Backs the GDPR Art. 33 breach-notification probe.
+    async fn breaches_unnotified_within(&self, deadline_hours: u32) -> Result<u64, EvidenceError>;
 }
 
 /// In-memory `EvidenceSource` for tests and dry-run preview UI. Each
@@ -109,6 +115,7 @@ pub struct MockEvidenceSource {
     latest_rotation: Mutex<Option<DateTime<Utc>>>,
     cold_chain_excursions: Mutex<u64>,
     reviews: Mutex<BTreeMap<String, DateTime<Utc>>>,
+    breaches_overdue: Mutex<u64>,
     /// Map of method name → most recent `since` argument the probe
     /// passed. Exposed for tests; production never reads it.
     calls: Mutex<BTreeMap<&'static str, DateTime<Utc>>>,
@@ -127,6 +134,7 @@ impl MockEvidenceSource {
             latest_rotation: Mutex::new(None),
             cold_chain_excursions: Mutex::new(0),
             reviews: Mutex::new(BTreeMap::new()),
+            breaches_overdue: Mutex::new(0),
             calls: Mutex::new(BTreeMap::new()),
             fail_with: Mutex::new(None),
         }
@@ -156,6 +164,10 @@ impl MockEvidenceSource {
     /// unset means "never reviewed" (the trait method returns `None`).
     pub fn set_latest_review(&self, control_id: impl Into<String>, at: DateTime<Utc>) {
         self.reviews.lock().unwrap().insert(control_id.into(), at);
+    }
+
+    pub fn set_breaches_overdue(&self, n: u64) {
+        *self.breaches_overdue.lock().unwrap() = n;
     }
 
     pub fn fail_next(&self, msg: impl Into<String>) {
@@ -248,6 +260,15 @@ impl EvidenceSource for MockEvidenceSource {
             .insert("latest_review", Utc::now());
         self.try_fail()?;
         Ok(self.reviews.lock().unwrap().get(control_id).copied())
+    }
+
+    async fn breaches_unnotified_within(&self, _deadline_hours: u32) -> Result<u64, EvidenceError> {
+        self.calls
+            .lock()
+            .unwrap()
+            .insert("breaches_unnotified_within", Utc::now());
+        self.try_fail()?;
+        Ok(*self.breaches_overdue.lock().unwrap())
     }
 }
 

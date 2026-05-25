@@ -17,6 +17,7 @@
 //! failed" surface) ship in PR #6.
 
 pub mod audit_immutable_probe;
+pub mod breach_notification_probe;
 pub mod catalog;
 pub mod cold_chain_probe;
 pub mod control;
@@ -31,6 +32,7 @@ pub mod runner;
 pub mod standard;
 
 pub use audit_immutable_probe::AuditTrailImmutableProbe;
+pub use breach_notification_probe::BreachNotificationProbe;
 pub use catalog::CATALOG;
 pub use cold_chain_probe::ColdChainProbe;
 pub use control::{ControlPoint, Probe, ProbeError, Verdict};
