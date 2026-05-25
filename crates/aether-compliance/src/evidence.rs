@@ -89,6 +89,14 @@ pub trait EvidenceSource: Send + Sync {
     /// cold-chain probe.
     async fn cold_chain_excursions_since(&self, since: DateTime<Utc>)
         -> Result<u64, EvidenceError>;
+
+    /// Timestamp of the most recent completed periodic review of the
+    /// given kind (keyed by its control-point id, e.g. `is-access-review`,
+    /// `qms-internal-audit`), or `None` if no such review is on record.
+    /// One primitive backs every cadence-style control; the probe owns
+    /// the interval policy and supplies its own reference instant.
+    async fn latest_review(&self, control_id: &str)
+        -> Result<Option<DateTime<Utc>>, EvidenceError>;
 }
 
 /// In-memory `EvidenceSource` for tests and dry-run preview UI. Each
@@ -100,6 +108,7 @@ pub struct MockEvidenceSource {
     incidents: Mutex<Vec<OpenIncident>>,
     latest_rotation: Mutex<Option<DateTime<Utc>>>,
     cold_chain_excursions: Mutex<u64>,
+    reviews: Mutex<BTreeMap<String, DateTime<Utc>>>,
     /// Map of method name → most recent `since` argument the probe
     /// passed. Exposed for tests; production never reads it.
     calls: Mutex<BTreeMap<&'static str, DateTime<Utc>>>,
@@ -117,6 +126,7 @@ impl MockEvidenceSource {
             incidents: Mutex::new(Vec::new()),
             latest_rotation: Mutex::new(None),
             cold_chain_excursions: Mutex::new(0),
+            reviews: Mutex::new(BTreeMap::new()),
             calls: Mutex::new(BTreeMap::new()),
             fail_with: Mutex::new(None),
         }
@@ -140,6 +150,12 @@ impl MockEvidenceSource {
 
     pub fn set_cold_chain_excursions(&self, n: u64) {
         *self.cold_chain_excursions.lock().unwrap() = n;
+    }
+
+    /// Record the most recent review for a control id. Leaving a control
+    /// unset means "never reviewed" (the trait method returns `None`).
+    pub fn set_latest_review(&self, control_id: impl Into<String>, at: DateTime<Utc>) {
+        self.reviews.lock().unwrap().insert(control_id.into(), at);
     }
 
     pub fn fail_next(&self, msg: impl Into<String>) {
@@ -220,6 +236,18 @@ impl EvidenceSource for MockEvidenceSource {
             .insert("cold_chain_excursions_since", since);
         self.try_fail()?;
         Ok(*self.cold_chain_excursions.lock().unwrap())
+    }
+
+    async fn latest_review(
+        &self,
+        control_id: &str,
+    ) -> Result<Option<DateTime<Utc>>, EvidenceError> {
+        self.calls
+            .lock()
+            .unwrap()
+            .insert("latest_review", Utc::now());
+        self.try_fail()?;
+        Ok(self.reviews.lock().unwrap().get(control_id).copied())
     }
 }
 

@@ -25,6 +25,7 @@ pub mod evidence;
 pub mod hashchain;
 pub mod incident_log_probe;
 pub mod key_rotation_probe;
+pub mod periodic_review_probe;
 pub mod report;
 pub mod runner;
 pub mod standard;
@@ -40,6 +41,7 @@ pub use hashchain::{
 };
 pub use incident_log_probe::IncidentLogProbe;
 pub use key_rotation_probe::{KeyRotationProbe, DEFAULT_MAX_AGE_DAYS as KEY_ROTATION_MAX_AGE_DAYS};
+pub use periodic_review_probe::{PeriodicReviewProbe, ReviewKind};
 pub use report::{ChainError, ChainedVerdict, ComplianceReport, ControlVerdict, OverallStatus};
 pub use runner::ProbeRunner;
 pub use standard::{ComplianceStandard, StandardKind};
