@@ -44,7 +44,7 @@ pub fn init_tracing() {
     let filter = EnvFilter::try_from_env("AETHER_LOG")
         .or_else(|_| EnvFilter::try_from_default_env())
         .unwrap_or_else(|_| {
-            EnvFilter::new("warn,aether_core=info,aether_db=info,aether_sync=info,aether_protocols=info,aether_modules=info,aether_safety=info,aether_desktop_lib=info")
+            EnvFilter::new("warn,aether_core=info,aether_db=info,aether_sync=info,aether_protocols=info,aether_modules=info,aether_safety=info")
         });
 
     let layer = fmt::layer().with_target(true).with_level(true);

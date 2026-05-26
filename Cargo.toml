@@ -1,7 +1,6 @@
 [workspace]
 resolver = "2"
 members = [
-    "apps/desktop/src-tauri",
     "crates/aether-core",
     "crates/aether-db",
     "crates/aether-sync",
@@ -119,15 +118,6 @@ reqwest = { version = "0.12", default-features = false, features = [
 # assert wire-level contracts (request method, path, headers, body)
 # without standing up a real Supabase project.
 wiremock = "0.6"
-
-# Tauri
-tauri = { version = "2", features = [] }
-tauri-build = { version = "2", features = [] }
-tauri-plugin-shell = "2"
-tauri-plugin-fs = "2"
-tauri-plugin-dialog = "2"
-tauri-plugin-os = "2"
-tauri-plugin-store = "2"
 
 # CLI
 clap = { version = "4", features = ["derive"] }
