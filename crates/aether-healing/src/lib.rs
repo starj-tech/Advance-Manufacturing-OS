@@ -27,7 +27,7 @@ pub mod telemetry_overflow;
 
 pub use bridge_reconnect::BridgeReconnectHealer;
 pub use diagnosis::{Diagnosis, Healer, HealerError, Symptom};
-pub use dispatcher::Dispatcher;
+pub use dispatcher::{Confirmation, Dispatcher};
 pub use ledger::{HealingEvent, HealingLedger, HealingOutcome};
 pub use policy::HealingPolicy;
 pub use sqlite_corruption::SqliteCorruptionHealer;

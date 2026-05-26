@@ -36,6 +36,17 @@ use uuid::Uuid;
 /// remediation.
 const MIN_CONFIDENCE: f32 = 0.1;
 
+/// Cloud-/operator-issued approval to apply a *destructive* remediation
+/// that the dispatcher would otherwise only ever skip. `approved` must
+/// equal the policy the dispatcher diagnoses on this run — a confirmation
+/// for a different (e.g. stale) policy is rejected, so an approval can't
+/// be replayed to apply an unexpected remediation.
+#[derive(Clone, Debug)]
+pub struct Confirmation {
+    pub approved: HealingPolicy,
+    pub confirmed_by: String,
+}
+
 /// Holds a fleet of healers + the shared audit ledger. Cheap to
 /// construct; expensive Healers (e.g. ones holding DB pools) are
 /// shared via `Arc`.
@@ -101,6 +112,25 @@ impl Dispatcher {
     /// outcome so an operator (or, in PR #5, an Edge Function with
     /// elevated trust) can confirm.
     pub async fn handle(&self, symptom: Symptom) -> HealingEvent {
+        self.run(symptom, None).await
+    }
+
+    /// Like [`Self::handle`], but carries a [`Confirmation`]. A
+    /// destructive remediation is applied only when the confirmation
+    /// approves the exact policy the dispatcher diagnoses; a missing or
+    /// mismatched confirmation still skips. Safe policies apply as usual.
+    /// This is the second half of the destructive-policy flow: the client
+    /// surfaces the `Skipped { needs confirmation }` event, the cloud
+    /// approves the specific policy, and the client replays it here.
+    pub async fn handle_confirmed(
+        &self,
+        symptom: Symptom,
+        confirmation: Confirmation,
+    ) -> HealingEvent {
+        self.run(symptom, Some(confirmation)).await
+    }
+
+    async fn run(&self, symptom: Symptom, confirmation: Option<Confirmation>) -> HealingEvent {
         let now = Utc::now();
         let id = Uuid::new_v4();
 
@@ -145,25 +175,41 @@ impl Dispatcher {
             return event;
         };
 
-        // Destructive policy → never auto-apply on the client.
+        // Destructive policy → never auto-apply on the client. Apply only
+        // when a confirmation approves this exact diagnosed policy.
         if diagnosis.recommended.is_destructive() {
-            let event = HealingEvent {
-                id,
-                at: now,
-                symptom,
-                policy: diagnosis.recommended,
-                outcome: HealingOutcome::Skipped {
-                    reason: "destructive: needs cloud confirmation".into(),
-                },
-            };
-            self.ledger.record(event.clone());
-            return event;
+            let confirmed = matches!(&confirmation, Some(c) if c.approved == diagnosis.recommended);
+            if !confirmed {
+                let reason = match &confirmation {
+                    Some(_) => "destructive: confirmation did not match diagnosis",
+                    None => "destructive: needs cloud confirmation",
+                };
+                let event = HealingEvent {
+                    id,
+                    at: now,
+                    symptom,
+                    policy: diagnosis.recommended,
+                    outcome: HealingOutcome::Skipped {
+                        reason: reason.into(),
+                    },
+                };
+                self.ledger.record(event.clone());
+                return event;
+            }
+            // Confirmed → fall through to apply.
         }
 
-        // Safe policy → apply via the winning healer (each healer is
-        // the only one that knows how to execute its own diagnosis).
+        // Safe policy (or a confirmed destructive one) → apply via the
+        // winning healer (each healer is the only one that knows how to
+        // execute its own diagnosis).
         let outcome = match self.healers[winner_idx].apply(&diagnosis.recommended).await {
-            Ok(detail) => HealingOutcome::Applied { detail },
+            Ok(detail) => {
+                let detail = match &confirmation {
+                    Some(c) => format!("{detail} (confirmed by {})", c.confirmed_by),
+                    None => detail,
+                };
+                HealingOutcome::Applied { detail }
+            }
             Err(e) => HealingOutcome::Failed {
                 error: format!("apply: {e}"),
             },
@@ -422,6 +468,66 @@ mod tests {
         // But the policy is recorded so operators see what WOULD have
         // been applied if confirmed.
         assert!(matches!(event.policy, HealingPolicy::TrimTelemetry { .. }));
+    }
+
+    #[tokio::test]
+    async fn confirmed_destructive_policy_is_applied() {
+        // Second half of the flow: a cloud confirmation approving the
+        // exact diagnosed policy lets the destructive remediation run.
+        let ledger = Arc::new(HealingLedger::new());
+        let mut d = Dispatcher::new(ledger.clone());
+        let policy = HealingPolicy::TrimTelemetry {
+            keep_recent_hours: 24,
+        };
+        let (h, applied) = ScriptedHealer::new(Some("telemetry.overflow"), 0.95, policy.clone());
+        d.add(Arc::new(h));
+
+        let event = d
+            .handle_confirmed(
+                symptom("telemetry.overflow"),
+                Confirmation {
+                    approved: policy,
+                    confirmed_by: "edge-fn".into(),
+                },
+            )
+            .await;
+        assert!(
+            matches!(event.outcome, HealingOutcome::Applied { ref detail } if detail.contains("confirmed by edge-fn"))
+        );
+        assert_eq!(applied.load(Ordering::SeqCst), 1);
+    }
+
+    #[tokio::test]
+    async fn mismatched_confirmation_is_rejected() {
+        // A confirmation for a DIFFERENT policy (stale / replayed) must
+        // not apply the diagnosed one.
+        let ledger = Arc::new(HealingLedger::new());
+        let mut d = Dispatcher::new(ledger.clone());
+        let (h, applied) = ScriptedHealer::new(
+            Some("telemetry.overflow"),
+            0.95,
+            HealingPolicy::TrimTelemetry {
+                keep_recent_hours: 24,
+            },
+        );
+        d.add(Arc::new(h));
+
+        let event = d
+            .handle_confirmed(
+                symptom("telemetry.overflow"),
+                Confirmation {
+                    // Approves a different retention window than diagnosed.
+                    approved: HealingPolicy::TrimTelemetry {
+                        keep_recent_hours: 999,
+                    },
+                    confirmed_by: "edge-fn".into(),
+                },
+            )
+            .await;
+        assert!(
+            matches!(event.outcome, HealingOutcome::Skipped { ref reason } if reason.contains("did not match"))
+        );
+        assert_eq!(applied.load(Ordering::SeqCst), 0);
     }
 
     #[tokio::test]
