@@ -34,6 +34,17 @@ ignore = [
     # upgrade available (automerge has not switched to rustc-hash yet).
     # Revisit when automerge bumps.
     "RUSTSEC-2025-0057",
+    # rsa: Marvin timing side-channel. Pulled only by sqlx-mysql (sqlx's
+    # macros graph) — we use the sqlite backend exclusively, so the
+    # vulnerable RSA path is never reached. No fixed upgrade exists.
+    "RUSTSEC-2023-0071",
+    # glib 0.18: VariantStrIter unsoundness. gtk-rs / Tauri GTK3
+    # transitive, same family as the gtk-rs ignores above.
+    "RUSTSEC-2024-0429",
+    # paste: unmaintained proc-macro pulled via nalgebra → simba
+    # (aether-robotics kinematics). No maintained drop-in; revisit on a
+    # nalgebra bump.
+    "RUSTSEC-2024-0436",
 ]
 
 [licenses]
