@@ -8,6 +8,7 @@
 pub mod geofence;
 pub mod interlock;
 pub mod sos;
+pub mod sos_lifecycle;
 
 pub use geofence::{Evidence, GeofenceEvaluator, Verdict as GeofenceVerdict};
 pub use interlock::{
@@ -15,3 +16,4 @@ pub use interlock::{
     UnlockRequest, Verdict as InterlockVerdict,
 };
 pub use sos::{SosBroadcaster, SosError, SosEvent, SosTier};
+pub use sos_lifecycle::{SosLifecycleError, SosStatus, SosTransition};
