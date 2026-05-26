@@ -330,4 +330,19 @@ mod tests {
         r.controls.swap(0, 1);
         assert!(r.verify_chain().is_err());
     }
+
+    // Cross-language golden vector. The compliance-attest Edge Function
+    // (Deno/TS) re-verifies this exact chain construction, so this hex
+    // pins the byte layout both sides must agree on. If this changes, the
+    // Edge Function's verifier (and its own golden test) must change too.
+    #[test]
+    fn golden_chain_hash_is_stable() {
+        let h0 = next_hash(&[0u8; 32], "is-key-rotation", Verdict::Fail, "overdue");
+        let h1 = next_hash(&h0, "fs-cold-chain", Verdict::Pass, "ok");
+        let hex: String = h1.iter().map(|b| format!("{b:02x}")).collect();
+        assert_eq!(
+            hex, "4ff29b8b640277d152545416a3c1a76f80d37ae420eff17b27ad0f3ccc262441",
+            "final chain hash drifted — update the Edge Function golden too"
+        );
+    }
 }
