@@ -10,7 +10,7 @@ interface ManagerHealingCard {
   requiresConfirmation: boolean;
 }
 
-// Demo data; PR #5 wires invoke('healing_manager_summary').
+// Demo data; PR #5 fetches the healing-summary Edge Function over HTTP.
 const CARDS: ManagerHealingCard[] = [
   {
     at: '2026-05-08 04:12',

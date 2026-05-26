@@ -2,8 +2,10 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'node:path';
 
-const TAURI_DEV_HOST = process.env.TAURI_DEV_HOST;
-
+// Web SPA build. AETHER-OS ships as a browser application served as a
+// static bundle from a CDN/host; backend logic lives in Supabase Edge
+// Functions (Deno) reached over HTTP. (Migrated off the Tauri desktop
+// shell — no WebView-specific build target or fixed dev port.)
 export default defineConfig({
   plugins: [react()],
 
@@ -13,26 +15,14 @@ export default defineConfig({
     },
   },
 
-  // Tauri expects a fixed port and disables HMR ping over WebSocket
-  clearScreen: false,
-  server: {
-    port: 1420,
-    strictPort: true,
-    host: TAURI_DEV_HOST ?? false,
-    hmr: TAURI_DEV_HOST
-      ? { protocol: 'ws', host: TAURI_DEV_HOST, port: 1421 }
-      : undefined,
-    watch: {
-      ignored: ['**/src-tauri/**'],
-    },
-  },
-
-  envPrefix: ['VITE_', 'TAURI_ENV_*'],
+  envPrefix: ['VITE_'],
 
   build: {
-    target: process.env.TAURI_ENV_PLATFORM === 'windows' ? 'chrome105' : 'safari13',
-    minify: !process.env.TAURI_ENV_DEBUG ? 'esbuild' : false,
-    sourcemap: !!process.env.TAURI_ENV_DEBUG,
+    // Broad evergreen-browser baseline (Chrome/Edge 80+, Safari 14+,
+    // Firefox 78+). No WebView-specific downleveling.
+    target: 'es2020',
+    minify: 'esbuild',
+    sourcemap: false,
     rollupOptions: {
       output: {
         // Lazy chunks per-shell to keep initial bundle small.

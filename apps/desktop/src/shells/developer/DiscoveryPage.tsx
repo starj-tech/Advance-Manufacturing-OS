@@ -57,7 +57,7 @@ export function DiscoveryPage() {
   const startScan = () => {
     setScanning(true);
     setDevices([]);
-    // PR #3: invoke('discovery_scan', { cidr: '192.168.10.0/24' })
+    // PR #3: POST to the discovery Edge Function ({ cidr: '192.168.10.0/24' }).
     setTimeout(() => {
       setDevices(DEMO);
       setScanning(false);

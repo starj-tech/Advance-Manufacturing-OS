@@ -17,9 +17,7 @@
     "test": "turbo run test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "clean": "turbo run clean && rm -rf node_modules .turbo",
-    "tauri:dev": "pnpm -F @aether/desktop tauri:dev",
-    "tauri:build": "pnpm -F @aether/desktop tauri:build"
+    "clean": "turbo run clean && rm -rf node_modules .turbo"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",

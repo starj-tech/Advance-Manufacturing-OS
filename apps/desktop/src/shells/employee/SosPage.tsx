@@ -33,7 +33,7 @@ export function SosPage() {
 
       <SosButton
         onTrigger={() => {
-          // PR #5 wires this to commands.safety.trigger_sos via @tauri-apps/api/core::invoke.
+          // PR #5 wires this to the safety SOS Edge Function (HTTP POST).
           setStatus('sent');
           setTimeout(() => setStatus('idle'), 4000);
         }}

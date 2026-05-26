@@ -10,10 +10,7 @@
     "lint": "eslint src --max-warnings 0",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
-    "test:watch": "vitest",
-    "tauri": "tauri",
-    "tauri:dev": "tauri dev",
-    "tauri:build": "tauri build"
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@aether/glove-kit": "workspace:*",
@@ -24,12 +21,6 @@
     "@aether/ui-kit": "workspace:*",
     "@supabase/supabase-js": "^2.45.0",
     "@tanstack/react-query": "^5.56.0",
-    "@tauri-apps/api": "^2.0.0",
-    "@tauri-apps/plugin-dialog": "^2.0.0",
-    "@tauri-apps/plugin-fs": "^2.0.0",
-    "@tauri-apps/plugin-os": "^2.0.0",
-    "@tauri-apps/plugin-shell": "^2.0.0",
-    "@tauri-apps/plugin-store": "^2.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.0",
@@ -37,7 +28,6 @@
   },
   "devDependencies": {
     "@aether/eslint-config": "workspace:*",
-    "@tauri-apps/cli": "^2.0.0",
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^16.0.1",
     "@types/react": "^18.3.5",
