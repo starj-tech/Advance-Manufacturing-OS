@@ -83,6 +83,6 @@ manager doesn't need to call IT to understand what just happened:
   human "approve" — but each card is written in plain language so
   approving doesn't require a ticket to support.
 
-The Tauri command `healing_manager_summary` returns these cards as
-`Vec<ManagerHealingCard>`; the Manager Shell renders them in
-`apps/desktop/src/shells/manager/SupportPage.tsx`.
+A `healing-summary` Edge Function returns these cards as JSON; the
+Manager Shell fetches and renders them in
+`apps/web/src/shells/manager/SupportPage.tsx`.

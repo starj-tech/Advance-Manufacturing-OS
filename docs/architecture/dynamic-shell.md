@@ -1,8 +1,8 @@
 # Dynamic Shell
 
-One Tauri 2 binary; four faces. The shell switches based on the user's
-role without reloading the page — keeping IPC channels, Supabase
-Realtime, and in-flight commands alive across role transitions.
+One web bundle; four faces. The shell switches based on the user's
+role without reloading the page — keeping Supabase Realtime
+subscriptions and in-flight requests alive across role transitions.
 
 ## Shells
 
@@ -15,7 +15,7 @@ Realtime, and in-flight commands alive across role transitions.
 
 ## Switching mechanism
 
-`apps/desktop/src/core/shell-switcher.tsx`:
+`apps/web/src/core/shell-switcher.tsx`:
 
 1. Verify the user is allowed to assume the target shell (UX gate; RLS
    is the authoritative gate server-side).
@@ -25,13 +25,13 @@ Realtime, and in-flight commands alive across role transitions.
 4. Navigate to the target shell's `homePath`. React Suspense + lazy
    chunks load the bundle.
 
-`apps/desktop/src/chrome/ChromeLayout.tsx` provides the shared chrome
+`apps/web/src/chrome/ChromeLayout.tsx` provides the shared chrome
 (top bar, notifications, command palette) that stays mounted across
 shell switches.
 
 ## Bundle layout
 
-`apps/desktop/vite.config.ts` declares manualChunks per shell so:
+`apps/web/vite.config.ts` declares manualChunks per shell so:
 
 - `shell-developer.js`, `shell-executive.js`, `shell-manager.js`,
   `shell-employee.js` are loaded only when their shell is active.

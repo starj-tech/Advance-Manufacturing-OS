@@ -12,15 +12,6 @@ out/
 .next/
 .turbo/
 
-# Rust
-target/
-**/*.rs.bk
-Cargo.lock.bak
-
-# Tauri
-apps/desktop/src-tauri/target/
-apps/desktop/src-tauri/gen/
-
 # IDE
 .vscode/*
 !.vscode/extensions.json
@@ -67,4 +58,3 @@ supabase/.env
 # Generated artifacts
 packages/*/dist
 apps/*/dist
-crates/*/target

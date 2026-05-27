@@ -54,11 +54,11 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install
-      - run: pnpm -F @aether/desktop build
+      - run: pnpm -F @aether/web build
       - name: Enforce initial chunk budget (350KB gz)
         shell: bash
         run: |
-          DIST=apps/desktop/dist/assets
+          DIST=apps/web/dist/assets
           if [ ! -d "$DIST" ]; then
             echo "no dist/assets directory; skipping budget check"
             exit 0

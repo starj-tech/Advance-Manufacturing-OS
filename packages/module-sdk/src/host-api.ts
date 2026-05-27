@@ -2,8 +2,8 @@
  * Capability-gated API exposed by the host runtime to a loaded module.
  *
  * Each method maps to a capability declared in the module's manifest.
- * Calls outside the granted set are rejected at the IPC boundary by
- * `apps/desktop/src/modules/runtime.ts`.
+ * Calls outside the granted set are rejected at the worker message
+ * boundary by `apps/web/src/modules/runtime.ts`.
  */
 
 export interface Subscription {

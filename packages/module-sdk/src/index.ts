@@ -2,10 +2,10 @@
  * AETHER-OS Module SDK.
  *
  * Vendors author modules against this SDK. Modules are loaded at runtime
- * inside a Web Worker by `apps/desktop/src/modules/runtime.ts`. The host
+ * inside a Web Worker by `apps/web/src/modules/runtime.ts`. The host
  * exposes a capability-gated API matching the `permissions` declared in
  * the module's manifest (TOML); attempts to call beyond the granted set
- * are rejected at the IPC boundary.
+ * are rejected at the worker message boundary.
  */
 
 export type { Role, ModuleManifest, InstalledModule } from '@aether/rpc-contracts';
