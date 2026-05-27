@@ -6,10 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-env:
-  CARGO_TERM_COLOR: always
-  RUSTFLAGS: "-D warnings"
-
 jobs:
   js-lint-typecheck:
     name: JS · lint + typecheck
@@ -23,8 +19,8 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
-      # `--frozen-lockfile` is enabled once the generated pnpm-lock.yaml
-      # is committed in PR #2; the initial skeleton ships without one.
+      # pnpm enables --frozen-lockfile automatically under CI; the
+      # committed pnpm-lock.yaml is the source of truth.
       - run: pnpm install
       - run: pnpm typecheck
       - run: pnpm lint
@@ -43,27 +39,6 @@ jobs:
           cache: pnpm
       - run: pnpm install
       - run: pnpm test
-
-  rust-fmt-clippy:
-    name: Rust · fmt + clippy
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt, clippy
-      - uses: Swatinem/rust-cache@v2
-      - run: cargo fmt --all -- --check
-      - run: cargo clippy --workspace --all-targets
-
-  rust-test:
-    name: Rust · cargo test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-      - run: cargo test --workspace --no-fail-fast
 
   bundle-budget:
     name: Bundle · size budget

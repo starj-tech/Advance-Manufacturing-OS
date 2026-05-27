@@ -2,17 +2,15 @@
  * Development-time industry assignment.
  *
  * In production, the active industry + capabilities come from the
- * `industry_profile` Tauri command (which calls
- * `aether-industry::profile_for(industry)` against the persisted
- * `tenant_industry` row). PR #6 wires that flow.
+ * tenant's `tenant_industry` row in Supabase (resolved against the
+ * industry-profile catalog server-side).
  *
- * For the skeleton we hard-code Food & Beverage so the Manager Shell
+ * For local dev we hard-code Food & Beverage so the Manager Shell
  * Inventory and Machines pages can demonstrate Industry-Specific Logic
  * Injection (expiry dates, cold-chain pills, etc.) end-to-end.
  *
  * To preview a different industry profile during dev, swap the slug +
- * capability list below. The full catalog lives in
- * `crates/aether-industry/src/profile.rs::profile_for`.
+ * capability list below.
  */
 
 export const DEV_INDUSTRY_SLUG = 'food-and-beverage';
