@@ -22,3 +22,23 @@ export function rowToMachine(r: Record<string, unknown>): Record<string, unknown
     hlc: r.hlc,
   };
 }
+
+export const WO_COLUMNS =
+  'id,tenant_id,code,machine_id,status,qty_planned,qty_done,due_at,created_by,hlc,parent_hlc';
+
+export function rowToWorkOrder(r: Record<string, unknown>): Record<string, unknown> {
+  return {
+    id: r.id,
+    tenantId: r.tenant_id,
+    code: r.code,
+    machineId: r.machine_id ?? null,
+    status: r.status,
+    // NUMERIC(18,4) arrives from PostgREST as a string — coerce or Zod rejects.
+    qtyPlanned: r.qty_planned == null ? 0 : Number(r.qty_planned),
+    qtyDone: r.qty_done == null ? 0 : Number(r.qty_done),
+    dueAt: r.due_at ?? null,
+    createdBy: r.created_by ?? null,
+    hlc: r.hlc,
+    parentHlc: r.parent_hlc ?? null,
+  };
+}
