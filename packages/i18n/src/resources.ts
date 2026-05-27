@@ -29,6 +29,11 @@ export type Messages = Record<string, string>;
 /// app uses MUST appear here. Other locales are allowed to be
 /// partial; missing keys fall back to this bundle.
 const enUS: Messages = {
+  // Common states reused by data-backed pages (loading / error / empty).
+  'common.loading': 'Loading…',
+  'common.error': 'Unable to load. Check your connection and try again.',
+  'common.empty': 'Nothing here yet.',
+  'common.retry': 'Retry',
   // App chrome / login
   'app.tagline': 'Industrial Operating System — Foundation Skeleton',
   'login.devNotice': 'Dev mode — passkey wiring lands in next PR',
@@ -398,6 +403,10 @@ const enUS: Messages = {
 const enGB: Messages = { ...enUS };
 
 const nlNL: Messages = {
+  'common.loading': 'Laden…',
+  'common.error': 'Laden mislukt. Controleer je verbinding en probeer opnieuw.',
+  'common.empty': 'Nog niets hier.',
+  'common.retry': 'Opnieuw',
   'app.tagline': 'Industrieel besturingssysteem — basisskelet',
   'login.devNotice': 'Ontwikkelmodus — passkey-koppeling volgt in volgende PR',
   'role.developer.label': 'Ontwikkelaar',
@@ -737,6 +746,10 @@ const nlNL: Messages = {
 };
 
 const deDE: Messages = {
+  'common.loading': 'Wird geladen…',
+  'common.error': 'Laden fehlgeschlagen. Verbindung prüfen und erneut versuchen.',
+  'common.empty': 'Noch nichts vorhanden.',
+  'common.retry': 'Erneut versuchen',
   'app.tagline': 'Industrielles Betriebssystem — Grundgerüst',
   'login.devNotice': 'Entwicklermodus — Passkey-Anbindung folgt im nächsten PR',
   'role.developer.label': 'Entwickler',
@@ -1077,6 +1090,10 @@ const deDE: Messages = {
 };
 
 const idID: Messages = {
+  'common.loading': 'Memuat…',
+  'common.error': 'Gagal memuat. Periksa koneksi Anda dan coba lagi.',
+  'common.empty': 'Belum ada apa pun di sini.',
+  'common.retry': 'Coba lagi',
   'app.tagline': 'Sistem Operasi Industri — Kerangka Dasar',
   'login.devNotice': 'Mode pengembang — koneksi passkey menyusul di PR berikutnya',
   'role.developer.label': 'Pengembang',
@@ -1412,6 +1429,10 @@ const idID: Messages = {
 };
 
 const jaJP: Messages = {
+  'common.loading': '読み込み中…',
+  'common.error': '読み込めませんでした。接続を確認して再試行してください。',
+  'common.empty': 'まだ何もありません。',
+  'common.retry': '再試行',
   'app.tagline': '産業用オペレーティングシステム — 基盤スケルトン',
   'login.devNotice': '開発モード — パスキー連携は次のPRで対応',
   'role.developer.label': '開発者',
@@ -1743,6 +1764,10 @@ const jaJP: Messages = {
 };
 
 const zhCN: Messages = {
+  'common.loading': '加载中…',
+  'common.error': '无法加载，请检查网络连接后重试。',
+  'common.empty': '暂无内容。',
+  'common.retry': '重试',
   'app.tagline': '工业操作系统 — 基础骨架',
   'login.devNotice': '开发模式 — 通行密钥接入将在下一个 PR 完成',
   'role.developer.label': '开发者',
