@@ -15,28 +15,28 @@ pillars introduced in the top-level README are each documented here.
 
 ## Pillars
 
-| Pillar | Document | Implementation entry point |
-|---|---|---|
-| Web-First SPA | _(see top-level README)_ | `apps/web/` |
-| Cloud-Backed Sync | [sync.md](./sync.md) | `supabase/` (design: sync.md) |
-| Zero-Knowledge Encryption | [crypto.md](./crypto.md) | Web Crypto in SPA (design: crypto.md) |
-| Dynamic Shell | [dynamic-shell.md](./dynamic-shell.md) | `apps/web/src/core/shell-switcher.tsx` |
-| Module Injection | [modules.md](./modules.md) | `packages/module-sdk/`, Edge Function verify |
-| Industrial Protocols | [protocols.md](./protocols.md) | edge/gateway → Supabase (design: protocols.md) |
-| Safety (Employee shell) | [safety.md](./safety.md) | `packages/glove-kit/`, Supabase Realtime + Edge Function |
+| Pillar                    | Document                               | Implementation entry point                               |
+| ------------------------- | -------------------------------------- | -------------------------------------------------------- |
+| Web-First SPA             | _(see top-level README)_               | `apps/web/`                                              |
+| Cloud-Backed Sync         | [sync.md](./sync.md)                   | `supabase/` (design: sync.md)                            |
+| Zero-Knowledge Encryption | [crypto.md](./crypto.md)               | Web Crypto in SPA (design: crypto.md)                    |
+| Dynamic Shell             | [dynamic-shell.md](./dynamic-shell.md) | `apps/web/src/core/shell-switcher.tsx`                   |
+| Module Injection          | [modules.md](./modules.md)             | `packages/module-sdk/`, Edge Function verify             |
+| Industrial Protocols      | [protocols.md](./protocols.md)         | edge/gateway → Supabase (design: protocols.md)           |
+| Safety (Employee shell)   | [safety.md](./safety.md)               | `packages/glove-kit/`, Supabase Realtime + Edge Function |
 
 ## Advanced Moats
 
-| Moat | Document | Implementation entry point |
-|---|---|---|
-| Zero-Config IoT Discovery | [discovery.md](./discovery.md) | gateway service (design: discovery.md) |
-| Neural Auto-Healing | [healing.md](./healing.md) | `supabase/functions/healing-suggest/` |
-| Smart Interlock Safety | [interlock.md](./interlock.md) | Edge Function + `supabase/migrations/` (design: interlock.md) |
-| Global Supply Chain Hedging | [hedging.md](./hedging.md) | `supabase/functions/commodity-feed/` |
-| Multi-Lingual & Multi-Currency | [i18n.md](./i18n.md) | `packages/i18n/` |
-| Universal Module (industry logic injection) | [industry.md](./industry.md) | `supabase/migrations/` + SPA capability provider |
-| Instant Compliance Attestation | [compliance.md](./compliance.md) | `supabase/functions/compliance-attest/`, `supabase/migrations/` |
-| Self-Healing for Managers | [healing.md](./healing.md#manager-facing-surface) | `apps/web/src/shells/manager/SupportPage.tsx`, `healing-summary` Edge Function |
+| Moat                                        | Document                                          | Implementation entry point                                                     |
+| ------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Zero-Config IoT Discovery                   | [discovery.md](./discovery.md)                    | gateway service (design: discovery.md)                                         |
+| Neural Auto-Healing                         | [healing.md](./healing.md)                        | `supabase/functions/healing-suggest/`                                          |
+| Smart Interlock Safety                      | [interlock.md](./interlock.md)                    | Edge Function + `supabase/migrations/` (design: interlock.md)                  |
+| Global Supply Chain Hedging                 | [hedging.md](./hedging.md)                        | `supabase/functions/commodity-feed/`                                           |
+| Multi-Lingual & Multi-Currency              | [i18n.md](./i18n.md)                              | `packages/i18n/`                                                               |
+| Universal Module (industry logic injection) | [industry.md](./industry.md)                      | `supabase/migrations/` + SPA capability provider                               |
+| Instant Compliance Attestation              | [compliance.md](./compliance.md)                  | `supabase/functions/compliance-attest/`, `supabase/migrations/`                |
+| Self-Healing for Managers                   | [healing.md](./healing.md#manager-facing-surface) | `apps/web/src/shells/manager/SupportPage.tsx`, `healing-summary` Edge Function |
 
 ## Reading order
 

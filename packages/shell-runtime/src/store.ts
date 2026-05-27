@@ -20,8 +20,7 @@ export const useShellStore = create<ShellState>((set, get) => ({
   notifications: 0,
   setActiveShell: (shell) => set({ activeShell: shell }),
   setNotifications: (n) => set({ notifications: n }),
-  saveSnapshot: (shell, snapshot) =>
-    set({ snapshots: { ...get().snapshots, [shell]: snapshot } }),
+  saveSnapshot: (shell, snapshot) => set({ snapshots: { ...get().snapshots, [shell]: snapshot } }),
   loadSnapshot: (shell) => get().snapshots[shell],
   reset: () => set({ activeShell: null, snapshots: {}, notifications: 0 }),
 }));

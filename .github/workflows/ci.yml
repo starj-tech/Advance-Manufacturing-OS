@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, "claude/**"]
+    branches: [main, 'claude/**']
   pull_request:
     branches: [main]
 
@@ -24,6 +24,7 @@ jobs:
       - run: pnpm install
       - run: pnpm typecheck
       - run: pnpm lint
+      - run: pnpm format:check
 
   js-test:
     name: JS · vitest

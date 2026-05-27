@@ -39,10 +39,7 @@ const variantStyle = (v: ButtonVariant): CSSProperties => {
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    { variant = 'secondary', size = 'md', fullWidth, style, children, ...rest },
-    ref,
-  ) => {
+  ({ variant = 'secondary', size = 'md', fullWidth, style, children, ...rest }, ref) => {
     const sz = sizeMap[size];
     return (
       <button

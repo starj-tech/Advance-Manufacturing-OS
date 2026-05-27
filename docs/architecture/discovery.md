@@ -12,12 +12,12 @@ factory LAN — with suggested tag bindings ready to accept.
 `crates/aether-discovery/src/probe.rs` defines the `DiscoveryProbe` trait
 and four implementations:
 
-| Probe | Default port | Method |
-|---|---|---|
-| OPC-UA | 4840 | `find_servers` discovery service |
-| MQTT | 1883 | clean CONNECT/DISCONNECT |
-| Modbus | 502 | function code 0x2B/0x0E "Read Device Identification" |
-| EtherNet/IP | 44818 | CIP List Identity (UDP) |
+| Probe       | Default port | Method                                               |
+| ----------- | ------------ | ---------------------------------------------------- |
+| OPC-UA      | 4840         | `find_servers` discovery service                     |
+| MQTT        | 1883         | clean CONNECT/DISCONNECT                             |
+| Modbus      | 502          | function code 0x2B/0x0E "Read Device Identification" |
+| EtherNet/IP | 44818        | CIP List Identity (UDP)                              |
 
 Adding a new protocol is a matter of implementing the trait — the
 scanner picks it up via dependency injection.

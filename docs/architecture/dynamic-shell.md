@@ -6,12 +6,12 @@ subscriptions and in-flight requests alive across role transitions.
 
 ## Shells
 
-| Shell | Persona | Tone | Notes |
-|---|---|---|---|
-| Developer | Platform engineer | Dense, technical | Module registry, audit log, system health |
-| Executive | Leadership | Strategic, visual | Digital twin, KPI cards, AI projections |
-| Manager | Operations supervisor | Operational, action-oriented | Work orders, machines, maintenance, inventory, roster |
-| Employee | Shop-floor operator | Glove-friendly, safety-first | Tasks, SOS, clock in/out — uses `@aether/glove-kit` |
+| Shell     | Persona               | Tone                         | Notes                                                 |
+| --------- | --------------------- | ---------------------------- | ----------------------------------------------------- |
+| Developer | Platform engineer     | Dense, technical             | Module registry, audit log, system health             |
+| Executive | Leadership            | Strategic, visual            | Digital twin, KPI cards, AI projections               |
+| Manager   | Operations supervisor | Operational, action-oriented | Work orders, machines, maintenance, inventory, roster |
+| Employee  | Shop-floor operator   | Glove-friendly, safety-first | Tasks, SOS, clock in/out — uses `@aether/glove-kit`   |
 
 ## Switching mechanism
 

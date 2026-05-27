@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "main": "index.js",
-  "files": ["index.js", "react.js"],
+  "files": [
+    "index.js",
+    "react.js"
+  ],
   "peerDependencies": {
     "eslint": "^9.0.0"
   },

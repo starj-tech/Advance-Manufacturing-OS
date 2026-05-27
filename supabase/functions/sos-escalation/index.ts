@@ -43,8 +43,7 @@ serve(async (req: Request) => {
 
   // PR #5: read tenant escalation_routes, fan-out to Twilio/Slack/email.
 
-  return new Response(
-    JSON.stringify({ ok: true, fanout: 0, shipsIn: 'PR #5' }),
-    { headers: { 'content-type': 'application/json' } },
-  );
+  return new Response(JSON.stringify({ ok: true, fanout: 0, shipsIn: 'PR #5' }), {
+    headers: { 'content-type': 'application/json' },
+  });
 });

@@ -28,11 +28,12 @@ against the platform's public key.
   Probes are pure with respect to time so reports are reproducible.
 - `Verdict` — `Pass | Fail | NotApplicable | NeedsReview`.
 - `ComplianceReport` — `{ id, tenant_id, standard_slug, generated_at,
-  status, controls, attestation_signature }`.
+status, controls, attestation_signature }`.
 
 ## Standards in the launch catalog (22)
 
 International / industry:
+
 - ISO 9001 (QMS), ISO 14001 (env), ISO 27001 (infosec),
   ISO 22000 (food), ISO 45001 (OHS), ISO 13485 (medical devices),
   ISO 50001 (energy), ISO 22716 (cosmetics GMP)
@@ -41,11 +42,13 @@ International / industry:
 - FSC (chain of custody)
 
 Regulations:
+
 - GDPR (EU), HIPAA (US), FDA 21 CFR Part 11 (electronic records),
   FDA 21 CFR Part 820 (US medical devices), CE / EU MDR (medical),
   RoHS (EU), REACH (EU), EU Battery Regulation (2023/1542)
 
 National:
+
 - BPOM (Indonesia), SNI (Indonesia)
 
 ## Schema (`0008_compliance.sql`)

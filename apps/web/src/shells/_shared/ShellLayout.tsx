@@ -28,7 +28,14 @@ export function ShellLayout({ title, subtitle, sidebar, children }: ShellLayoutP
           }}
         >
           <header>
-            <h2 style={{ margin: 0, fontSize: 14, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            <h2
+              style={{
+                margin: 0,
+                fontSize: 14,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+              }}
+            >
               {title}
             </h2>
             {subtitle ? (

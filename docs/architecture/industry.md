@@ -1,7 +1,8 @@
 # Universal Module — Industry-Specific Logic Injection
 
 > Status: skeleton with full 21-industry catalog. Tenant-onboarding hook
-> + per-tenant capability override land in PR #6.
+>
+> - per-tenant capability override land in PR #6.
 
 The promise: a single binary that reshapes itself for the customer's
 industry. Food plants get expiry tracking + cold chain monitoring;
@@ -19,10 +20,10 @@ per-customer fork.
   Oil & Gas, Energy, Medical Devices, Cosmetics, Furniture, Glass &
   Ceramics, Rubber, Printing & Packaging, Battery & Renewables).
 - `IndustryProfile` — `{ industry, capabilities, auto_modules,
-  default_standards }`.
+default_standards }`.
 - `Capability` — `{ id, kind, display, description }` where `kind ∈
-  {Tracking, Quality, Maintenance, Safety, Compliance, Process,
-  Sustainability}`. UI checks via `useCapability("...")`.
+{Tracking, Quality, Maintenance, Safety, Compliance, Process,
+Sustainability}`. UI checks via `useCapability("...")`.
 - `profile_for(industry)` — pure deterministic resolver. Reproducible,
   fully unit-tested.
 

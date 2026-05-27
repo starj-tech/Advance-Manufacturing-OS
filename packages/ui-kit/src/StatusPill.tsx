@@ -34,10 +34,7 @@ export function StatusPill({ kind = 'neutral', children }: StatusPillProps) {
         letterSpacing: '0.04em',
       }}
     >
-      <span
-        style={{ width: 6, height: 6, borderRadius: '50%', background: c.fg }}
-        aria-hidden
-      />
+      <span style={{ width: 6, height: 6, borderRadius: '50%', background: c.fg }} aria-hidden />
       {children}
     </span>
   );

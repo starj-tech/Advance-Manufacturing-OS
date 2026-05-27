@@ -110,10 +110,7 @@ export function useIndustry(): string | null {
  * its capability set. PR #6 wires this to the `industry_set` Tauri
  * command which persists to `tenant_industry`.
  */
-export function useSetIndustry(): (
-  slug: string | null,
-  granted: ReadonlyArray<string>,
-) => void {
+export function useSetIndustry(): (slug: string | null, granted: ReadonlyArray<string>) => void {
   const ctx = useCapabilityContext();
   return (slug, granted) => ctx.setIndustry(slug, new Set(granted));
 }

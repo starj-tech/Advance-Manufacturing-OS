@@ -14,14 +14,14 @@ unreadable to the attacker.
 
 ## Algorithms
 
-| Function | Algorithm | Crate |
-|---|---|---|
-| AEAD | XChaCha20-Poly1305 (24-byte nonce) | `chacha20poly1305` 0.10 |
-| KDF | Argon2id (m=64MB, t=3, p=1) | `argon2` 0.5 |
-| Asymmetric (sealing) | X25519 + XSalsa20-Poly1305 | `crypto_box` 0.9 |
-| Signing | Ed25519 | `ed25519-dalek` 2 |
-| HKDF | HMAC-SHA256 | `hkdf` 0.12 |
-| Blind index | HMAC-SHA256 → 16-byte tag | `hmac` 0.12 |
+| Function             | Algorithm                          | Crate                   |
+| -------------------- | ---------------------------------- | ----------------------- |
+| AEAD                 | XChaCha20-Poly1305 (24-byte nonce) | `chacha20poly1305` 0.10 |
+| KDF                  | Argon2id (m=64MB, t=3, p=1)        | `argon2` 0.5            |
+| Asymmetric (sealing) | X25519 + XSalsa20-Poly1305         | `crypto_box` 0.9        |
+| Signing              | Ed25519                            | `ed25519-dalek` 2       |
+| HKDF                 | HMAC-SHA256                        | `hkdf` 0.12             |
+| Blind index          | HMAC-SHA256 → 16-byte tag          | `hmac` 0.12             |
 
 ## Master key flow
 
@@ -51,13 +51,13 @@ TENANT_MASTER_KEY ──HKDF(salt=tenant_id, info="data")  → DATA_DEK
 
 ## Field-level vs row-level
 
-| Data | Strategy |
-|---|---|
-| `formulas.recipe`, `financial_ledger.amount` | Field-level (ciphertext column + nonce) |
-| `users.email`, PII | Field-level + blind index for login lookup |
-| `work_orders` operational state | Plaintext (RLS-protected) |
-| `telemetry` | Plaintext (server aggregation needed) |
-| BOM document | Single ciphertext blob (Automerge bytes encrypted) |
+| Data                                         | Strategy                                           |
+| -------------------------------------------- | -------------------------------------------------- |
+| `formulas.recipe`, `financial_ledger.amount` | Field-level (ciphertext column + nonce)            |
+| `users.email`, PII                           | Field-level + blind index for login lookup         |
+| `work_orders` operational state              | Plaintext (RLS-protected)                          |
+| `telemetry`                                  | Plaintext (server aggregation needed)              |
+| BOM document                                 | Single ciphertext blob (Automerge bytes encrypted) |
 
 Row-level encryption (whole row → blob) is rejected because it kills
 RLS, indexing, realtime delta, and server-side aggregation.

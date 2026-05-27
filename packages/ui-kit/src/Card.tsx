@@ -49,9 +49,7 @@ export function CardHeader({
     >
       {title ? <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600 }}>{title}</h3> : null}
       {subtitle ? (
-        <p style={{ margin: '4px 0 0', color: tokens.colors.fgMuted, fontSize: 13 }}>
-          {subtitle}
-        </p>
+        <p style={{ margin: '4px 0 0', color: tokens.colors.fgMuted, fontSize: 13 }}>{subtitle}</p>
       ) : null}
       {children}
     </header>

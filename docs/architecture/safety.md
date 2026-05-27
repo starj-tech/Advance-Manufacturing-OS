@@ -60,18 +60,18 @@ escalation, instead of immediate lockout.
 
 `packages/glove-kit` exports tokens enforcing these:
 
-| Aspect | Spec |
-|---|---|
-| Touch target | min 56dp (vs Apple HIG 44dp — gloves reduce precision) |
-| Tap padding | min 12dp around interactive elements |
-| Body type | min 16px |
-| Primary action type | min 20px |
-| Contrast | WCAG AAA (≥ 7:1) |
-| Color | not the only encoder of state (color-blind safe) |
-| Gesture | tap / press-and-hold; no multi-touch swipe |
-| Feedback | visual + haptic + audible (triple-redundant) |
-| Layout | vertical-first, single column, primary buttons at bottom |
-| Irreversible action | explicit confirm ("Are you sure?") |
+| Aspect              | Spec                                                     |
+| ------------------- | -------------------------------------------------------- |
+| Touch target        | min 56dp (vs Apple HIG 44dp — gloves reduce precision)   |
+| Tap padding         | min 12dp around interactive elements                     |
+| Body type           | min 16px                                                 |
+| Primary action type | min 20px                                                 |
+| Contrast            | WCAG AAA (≥ 7:1)                                         |
+| Color               | not the only encoder of state (color-blind safe)         |
+| Gesture             | tap / press-and-hold; no multi-touch swipe               |
+| Feedback            | visual + haptic + audible (triple-redundant)             |
+| Layout              | vertical-first, single column, primary buttons at bottom |
+| Irreversible action | explicit confirm ("Are you sure?")                       |
 
 The `SosButton` component implements the press-and-hold pattern (default
 2s) with a confirmation halo to avoid accidental triggers.

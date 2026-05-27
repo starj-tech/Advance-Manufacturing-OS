@@ -14,19 +14,19 @@ Hybrid:
 - **Outbox + Hybrid Logical Clock (HLC)** for transactional rows.
 - **Automerge CRDT** (encrypted blob) for collaborative documents (BOM, SOP).
 
-CRDT for *everything* is rejected because counter constraints
+CRDT for _everything_ is rejected because counter constraints
 (`qty_on_hand >= 0`) and atomic state transitions
 (`work_orders.status`) are not expressible in commutative merges
 without sacrificing auditability.
 
 ## Conflict policy by domain
 
-| Domain | Policy | Why |
-|---|---|---|
-| `materials.qty_on_hand` | Reject + surface | Inventory integrity beats availability. Writes go via server RPC `inventory_adjust(delta)` which enforces `qty + delta >= 0` atomically. Outbox stores deltas, not target values. |
-| `work_orders.status` | Server transition | RPC `wo_transition(id, from, to)` checks `current_state = from`. |
-| `boms`, `sop_drafts` | Automerge merge | Tree-shaped, frequently co-edited, fits CRDT well. |
-| Default | Last-writer-wins by HLC | Sufficient for non-critical fields. |
+| Domain                  | Policy                  | Why                                                                                                                                                                               |
+| ----------------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `materials.qty_on_hand` | Reject + surface        | Inventory integrity beats availability. Writes go via server RPC `inventory_adjust(delta)` which enforces `qty + delta >= 0` atomically. Outbox stores deltas, not target values. |
+| `work_orders.status`    | Server transition       | RPC `wo_transition(id, from, to)` checks `current_state = from`.                                                                                                                  |
+| `boms`, `sop_drafts`    | Automerge merge         | Tree-shaped, frequently co-edited, fits CRDT well.                                                                                                                                |
+| Default                 | Last-writer-wins by HLC | Sufficient for non-critical fields.                                                                                                                                               |
 
 Codified in `crates/aether-sync/src/reconcile.rs::policy_for`.
 

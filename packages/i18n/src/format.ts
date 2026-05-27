@@ -28,7 +28,11 @@ export function formatDate(localeTag: string, value: Date | string): string {
   }).format(d);
 }
 
-export function formatRelative(localeTag: string, fromMs: number, toMs: number = Date.now()): string {
+export function formatRelative(
+  localeTag: string,
+  fromMs: number,
+  toMs: number = Date.now(),
+): string {
   const diff = (fromMs - toMs) / 1000;
   const abs = Math.abs(diff);
   const fmt = new Intl.RelativeTimeFormat(localeTag, { numeric: 'auto' });

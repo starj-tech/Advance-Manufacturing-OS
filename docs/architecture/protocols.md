@@ -23,7 +23,7 @@ async fn snapshot(&self) -> Result<Vec<TagSample>>;
 Implementations:
 
 - `aether-opcua` — `opcua` crate (locka99). Pure Rust, async, certificate
-  + user-token auth.
+  - user-token auth.
 - `aether-mqtt` — `rumqttc`. Pure Rust, MQTT 5.
 
 A future `aether-modbus` would slot in identically.
