@@ -20,8 +20,12 @@ export type UserId = z.infer<typeof UserId>;
 export const EntityId = z.string().min(1).max(64);
 export type EntityId = z.infer<typeof EntityId>;
 
-/** Roles for the Dynamic Shell. */
-export const Role = z.enum(['developer', 'executive', 'manager', 'employee']);
+/**
+ * Top-level user roles. The first four drive the Main/Demo Dynamic Shell;
+ * `it` is the client IT-team role (its own app, not a shell). Vendor staff
+ * are a separate realm (platform_admins), not part of this enum.
+ */
+export const Role = z.enum(['developer', 'executive', 'manager', 'employee', 'it']);
 export type Role = z.infer<typeof Role>;
 
 /** Permission scope, dotted form: `resource:action`. */

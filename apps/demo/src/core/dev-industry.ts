@@ -1,26 +1,17 @@
 /**
- * Development-time industry assignment.
+ * Development-time industry assignment for the Demo app.
  *
- * In production, the active industry + capabilities come from the
- * tenant's `tenant_industry` row in Supabase (resolved against the
- * industry-profile catalog server-side).
+ * In the Main app, the active industry + capabilities come from the tenant's
+ * `tenant_industry` row in Supabase, resolved against @aether/industry-catalog.
+ * The Demo hard-codes Food & Beverage so the Manager Shell Inventory/Machines
+ * pages can demonstrate Industry-Specific Logic Injection (expiry dates,
+ * cold-chain pills, etc.) end-to-end with zero backend.
  *
- * For local dev we hard-code Food & Beverage so the Manager Shell
- * Inventory and Machines pages can demonstrate Industry-Specific Logic
- * Injection (expiry dates, cold-chain pills, etc.) end-to-end.
- *
- * To preview a different industry profile during dev, swap the slug +
- * capability list below.
+ * Swap the slug to preview another vertical; capabilities come from the
+ * shared catalog so the Demo never drifts from the real profile data.
  */
+import { capabilitiesFor } from '@aether/industry-catalog';
 
 export const DEV_INDUSTRY_SLUG = 'food-and-beverage';
 
-export const DEV_INDUSTRY_CAPABILITIES: ReadonlyArray<string> = [
-  // Food & Beverage profile (mirror of profile_for(FoodAndBeverage)).
-  'expired-date-tracking',
-  'cold-chain-monitor',
-  'temperature-sensor-integration',
-  'haccp-checks',
-  'allergen-control',
-  'recall-readiness',
-];
+export const DEV_INDUSTRY_CAPABILITIES: ReadonlyArray<string> = capabilitiesFor(DEV_INDUSTRY_SLUG);

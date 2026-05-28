@@ -9,7 +9,8 @@ INSERT INTO roles (tenant_id, role_name, description) VALUES
     ('00000000-0000-0000-0000-000000000001', 'developer',  'Infrastructure & module ops'),
     ('00000000-0000-0000-0000-000000000001', 'executive',  'Leadership & finance visibility'),
     ('00000000-0000-0000-0000-000000000001', 'manager',    'Operations management'),
-    ('00000000-0000-0000-0000-000000000001', 'employee',   'Shop floor operator')
+    ('00000000-0000-0000-0000-000000000001', 'employee',   'Shop floor operator'),
+    ('00000000-0000-0000-0000-000000000001', 'it',         'IT administration & account/device management')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO permissions (tenant_id, role_name, scope, granted) VALUES
@@ -24,7 +25,12 @@ INSERT INTO permissions (tenant_id, role_name, scope, granted) VALUES
     ('00000000-0000-0000-0000-000000000001', 'employee',  'tasks:read', TRUE),
     ('00000000-0000-0000-0000-000000000001', 'employee',  'tasks:complete', TRUE),
     ('00000000-0000-0000-0000-000000000001', 'employee',  'sos:trigger', TRUE),
-    ('00000000-0000-0000-0000-000000000001', 'employee',  'clock:write', TRUE)
+    ('00000000-0000-0000-0000-000000000001', 'employee',  'clock:write', TRUE),
+    ('00000000-0000-0000-0000-000000000001', 'it',        'users:*', TRUE),
+    ('00000000-0000-0000-0000-000000000001', 'it',        'devices:*', TRUE),
+    ('00000000-0000-0000-0000-000000000001', 'it',        'modules:*', TRUE),
+    ('00000000-0000-0000-0000-000000000001', 'it',        'audit:read', TRUE),
+    ('00000000-0000-0000-0000-000000000001', 'it',        'security:*', TRUE)
 ON CONFLICT DO NOTHING;
 
 -- A few demo machines (operational data is plaintext — encrypted columns

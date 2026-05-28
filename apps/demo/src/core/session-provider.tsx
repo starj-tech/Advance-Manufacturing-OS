@@ -35,11 +35,12 @@ const DEV_PERMISSIONS: Record<Role, string[]> = {
     'maintenance:read',
   ],
   employee: ['tasks:read', 'tasks:complete', 'sos:trigger', 'clock:write'],
+  it: ['users:*', 'devices:*', 'modules:*', 'audit:read', 'security:*'],
 };
 
 const DEV_TENANT_ID = '00000000-0000-0000-0000-000000000001';
 
-const VALID_ROLES: ReadonlyArray<Role> = ['developer', 'executive', 'manager', 'employee'];
+const VALID_ROLES: ReadonlyArray<Role> = ['developer', 'executive', 'manager', 'employee', 'it'];
 
 /**
  * Maps a Supabase auth session to our Session shape. Role, tenant, and

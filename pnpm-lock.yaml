@@ -72,6 +72,9 @@ importers:
       '@aether/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
+      '@aether/industry-catalog':
+        specifier: workspace:*
+        version: link:../../packages/industry-catalog
       '@aether/module-sdk':
         specifier: workspace:*
         version: link:../../packages/module-sdk
@@ -281,6 +284,15 @@ importers:
       vitest:
         specifier: ^2.1.0
         version: 2.1.9(@types/node@20.19.40)(happy-dom@15.11.7)
+
+  packages/industry-catalog:
+    devDependencies:
+      '@aether/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      typescript:
+        specifier: ^5.5.4
+        version: 5.9.3
 
   packages/module-sdk:
     dependencies:
