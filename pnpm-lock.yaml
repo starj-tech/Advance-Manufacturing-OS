@@ -142,9 +142,18 @@ importers:
 
   apps/it:
     dependencies:
+      '@aether/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@aether/data':
+        specifier: workspace:*
+        version: link:../../packages/data
       '@aether/ui-kit':
         specifier: workspace:*
         version: link:../../packages/ui-kit
+      '@tanstack/react-query':
+        specifier: ^5.56.0
+        version: 5.100.9(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
