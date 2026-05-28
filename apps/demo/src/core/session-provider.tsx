@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Role } from '@aether/shell-runtime';
 import type { Session as SupabaseAuthSession } from '@supabase/supabase-js';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { supabase, isSupabaseConfigured } from '@aether/supabase';
 
 export interface Session {
   userId: string;

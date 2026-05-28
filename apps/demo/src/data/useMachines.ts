@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Machine } from '@aether/rpc-contracts';
-import { supabase } from '../lib/supabase';
+import { supabase } from '@aether/supabase';
 import { useSession } from '../core/session-provider';
 import { keys } from './query-keys';
 import { MACHINE_COLUMNS, rowToMachine } from './mappers';

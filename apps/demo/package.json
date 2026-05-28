@@ -18,6 +18,7 @@
     "@aether/module-sdk": "workspace:*",
     "@aether/rpc-contracts": "workspace:*",
     "@aether/shell-runtime": "workspace:*",
+    "@aether/supabase": "workspace:*",
     "@aether/ui-kit": "workspace:*",
     "@supabase/supabase-js": "^2.45.0",
     "@tanstack/react-query": "^5.56.0",

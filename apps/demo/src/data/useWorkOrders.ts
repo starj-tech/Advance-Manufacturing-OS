@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { WorkOrder } from '@aether/rpc-contracts';
-import { supabase } from '../lib/supabase';
+import { supabase } from '@aether/supabase';
 import { useSession } from '../core/session-provider';
 import { keys } from './query-keys';
 import { WO_COLUMNS, rowToWorkOrder } from './mappers';
