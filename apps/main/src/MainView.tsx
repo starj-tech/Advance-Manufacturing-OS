@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react';
 import { Button, Card, CardBody, CardHeader, Stack, StatusPill } from '@aether/ui-kit';
 import { LoginForm, changePassword, useSession } from '@aether/auth';
 import { OnboardingWizard } from './onboarding/OnboardingWizard';
+import { ProductShell } from './product/ProductShell';
 
 const page: CSSProperties = {
   minHeight: '100vh',
@@ -61,28 +62,19 @@ function ChangePasswordCard() {
   );
 }
 
-function AuthedHome() {
+function FirstLoginReset() {
   const { session, signOut } = useSession();
   if (!session) return null;
-  const sub = [session.companyId, session.primaryRole, session.subRole].filter(Boolean).join(' · ');
   return (
-    <div style={{ width: '100%', maxWidth: 560 }}>
+    <div style={{ width: '100%', maxWidth: 420 }}>
       <Card>
-        <CardHeader title={`Halo, ${session.displayName}`} subtitle={sub} />
+        <CardHeader title={`Halo, ${session.displayName}`} subtitle="Login pertama" />
         <CardBody>
           <Stack gap={12}>
-            <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6 }}>
-              Produk multi-peran (shell <strong>{session.primaryRole}</strong>) akan dimuat di sini
-              dan disesuaikan per industri — Phase E.
-            </p>
-            {session.mustChangePassword ? (
-              <Stack gap={8}>
-                <StatusPill kind="warning">Wajib ganti kata sandi (login pertama)</StatusPill>
-                <ChangePasswordCard />
-              </Stack>
-            ) : null}
+            <StatusPill kind="warning">Wajib ganti kata sandi sebelum lanjut</StatusPill>
+            <ChangePasswordCard />
             <div>
-              <Button variant="ghost" size="md" onClick={signOut}>
+              <Button variant="ghost" size="sm" onClick={signOut}>
                 Keluar
               </Button>
             </div>
@@ -106,11 +98,14 @@ export function MainView() {
   }
 
   if (session) {
-    return (
-      <div style={page}>
-        <AuthedHome />
-      </div>
-    );
+    if (session.mustChangePassword) {
+      return (
+        <div style={page}>
+          <FirstLoginReset />
+        </div>
+      );
+    }
+    return <ProductShell />;
   }
 
   return (
