@@ -13,6 +13,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@aether/auth": "workspace:*",
     "@aether/industry-catalog": "workspace:*",
     "@aether/ui-kit": "workspace:*",
     "react": "^18.3.1",

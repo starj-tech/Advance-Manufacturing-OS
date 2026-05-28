@@ -182,6 +182,9 @@ importers:
 
   apps/main:
     dependencies:
+      '@aether/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@aether/industry-catalog':
         specifier: workspace:*
         version: link:../../packages/industry-catalog
