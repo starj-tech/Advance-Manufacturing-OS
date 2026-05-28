@@ -4,6 +4,19 @@
 
 AETHER-OS adalah Industrial OS **berbasis web sepenuhnya** yang dirancang menjadi sistem saraf pusat bagi pabrik manufaktur — dari workshop kecil hingga gigafactory. Tidak ada yang perlu diunduh atau di-install: buka di browser, login, dan shell yang sesuai dengan role Anda (Developer, Executive, Manager, Employee) langsung termuat. Backend berjalan di Supabase (Postgres + Deno Edge Functions).
 
+## Empat Aplikasi (monorepo)
+
+Repositori ini berisi empat aplikasi web yang dapat di-deploy terpisah namun berbagi satu ekosistem & paket bersama (`packages/*`):
+
+| App         | Paket (dir)                        | Untuk             | Fungsi                                                                                                         |
+| ----------- | ---------------------------------- | ----------------- | -------------------------------------------------------------------------------------------------------------- |
+| **Demo**    | `@aether/demo` (`apps/demo`)       | Publik            | Demo + Product Tour. Data demo, tanpa backend/login. **Aplikasi yang dibangun sejauh ini.**                    |
+| **Utama**   | `@aether/main` (`apps/main`)       | Perusahaan client | Onboarding + checkout (Stripe) lalu produk multi-peran (Executive/Manager/Employee/Developer/IT) per industri. |
+| **IT**      | `@aether/it` (`apps/it`)           | Tim IT client     | Kelola akun/peran (impor CSV, reset sandi), binding perangkat/protokol, modul, audit keamanan.                 |
+| **Console** | `@aether/console` (`apps/console`) | Vendor (pemilik)  | Kontrol lintas-tenant: tenant, langganan, penerbitan modul, kill-switch, kesehatan platform.                   |
+
+Deploy tiap app sebagai proyek Vercel terpisah dengan **Root Directory = `apps/<app>`**; tiap app punya `vercel.json` sendiri (SPA rewrite), dan Vercel menjalankan `pnpm install` dari root workspace. Saat ini hanya Demo yang terisi; tiga lainnya masih scaffold ("Sedang dibangun") dan akan diisi mengikuti roadmap empat-aplikasi.
+
 ## Tujuh Pilar Arsitektur
 
 1. **Web-First SPA** — satu bundel React + Vite + TypeScript yang berjalan di browser modern mana pun. Tanpa unduhan, tanpa installer, tanpa native runtime. Lazy chunk per shell menjaga initial load tetap kecil (< 350KB gz, di-enforce CI).
@@ -32,7 +45,7 @@ pnpm install
 supabase start
 supabase db reset
 
-# Jalankan web app dalam mode dev
+# Jalankan salah satu app dalam mode dev (demo / main / it / console)
 pnpm -F @aether/demo dev
 ```
 
@@ -59,11 +72,16 @@ pnpm test
 
 ```
 .
-├── apps/demo/                 # Web SPA utama (React + Vite + TypeScript)
-├── packages/                 # JS/TS shared packages
+├── apps/
+│   ├── demo/                 # @aether/demo — Demo + Product Tour (terisi)
+│   ├── main/                 # @aether/main — Aplikasi Utama (scaffold)
+│   ├── it/                   # @aether/it — Aplikasi Tim IT (scaffold)
+│   └── console/              # @aether/console — Konsol Vendor (scaffold)
+├── packages/                 # JS/TS shared packages (dipakai semua app)
 │   ├── ui-kit/               # Design system standar
 │   ├── glove-kit/            # Touch-first variant utk Employee Shell
-│   ├── shell-runtime/        # Dynamic Shell engine
+│   ├── shell-runtime/        # Dynamic Shell engine + permission/capability
+│   ├── i18n/                 # Locale + format (7 bahasa)
 │   ├── module-sdk/           # SDK utk vendor modul
 │   ├── rpc-contracts/        # Shared Zod schemas + TS types (kontrak HTTP)
 │   └── eslint-config/        # Shared lint config

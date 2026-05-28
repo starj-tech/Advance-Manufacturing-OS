@@ -37,8 +37,8 @@ jobs:
       - run: pnpm install
       - run: pnpm test
 
-  bundle-budget:
-    name: Bundle · size budget
+  build-apps:
+    name: Build · all apps + bundle budget
     needs: js-lint-typecheck
     runs-on: ubuntu-latest
     steps:
@@ -49,8 +49,9 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install
-      - run: pnpm -F @aether/demo build
-      - name: Enforce initial chunk budget (350KB gz)
+      # Build every app (demo/main/it/console) so a broken app fails CI.
+      - run: pnpm build
+      - name: Enforce initial chunk budget (350KB gz) for the demo app
         shell: bash
         run: |
           DIST=apps/demo/dist/assets
