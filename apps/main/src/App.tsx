@@ -1,25 +1,16 @@
-import { Card, CardBody, CardHeader, Stack, StatusPill } from '@aether/ui-kit';
+import { OnboardingWizard } from './onboarding/OnboardingWizard';
 
 export function App() {
   return (
-    <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: 24 }}>
-      <div style={{ width: '100%', maxWidth: 560 }}>
-        <Card>
-          <CardHeader
-            title="AETHER-OS · Aplikasi Utama"
-            subtitle="Platform produksi untuk perusahaan manufaktur"
-          />
-          <CardBody>
-            <Stack gap={12}>
-              <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6 }}>
-                Tempat perusahaan mendaftar, memilih industri & paket langganan (Standard Node /
-                Advanced Automata / Global Enterprise), lalu mengakses shell multi-peran (Executive,
-                Manager, Employee, Developer) yang disesuaikan per industri.
-              </p>
-              <StatusPill kind="info">Sedang dibangun</StatusPill>
-            </Stack>
-          </CardBody>
-        </Card>
+    <div style={{ minHeight: '100vh', padding: 24, display: 'flex', justifyContent: 'center' }}>
+      <div style={{ width: '100%', maxWidth: 760 }}>
+        <header style={{ marginBottom: 16 }}>
+          <h1 style={{ margin: 0, fontSize: 24 }}>AETHER-OS</h1>
+          <p style={{ margin: '4px 0 0', color: 'var(--aether-fg-muted)', fontSize: 13 }}>
+            Aplikasi Utama — daftarkan perusahaan, pilih industri & paket, lalu akses platform.
+          </p>
+        </header>
+        <OnboardingWizard />
       </div>
     </div>
   );
