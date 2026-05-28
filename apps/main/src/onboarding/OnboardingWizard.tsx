@@ -4,6 +4,7 @@ import { Button, Card, CardBody, CardHeader, Stack, StatusPill } from '@aether/u
 import { INDUSTRY_CATALOG, industrySlugs } from '@aether/industry-catalog';
 import { TIERS, priceLabel, type BillingCycle, type TierSlug } from './tiers';
 import { parseRosterCsv } from './roster';
+import { startCheckout } from './checkout';
 
 const STEPS = ['Perusahaan', 'Industri', 'Karyawan', 'Paket', 'Tinjau'] as const;
 
@@ -42,6 +43,23 @@ export function OnboardingWizard() {
     const file = e.target.files?.[0];
     if (!file) return;
     setRosterText(await file.text());
+  };
+
+  const submit = async () => {
+    const result = await startCheckout({
+      companyName,
+      billingEmail,
+      region,
+      industrySlug: industry,
+      tier,
+      billingCycle: cycle,
+      roster,
+    }).catch(() => null);
+    if (result?.checkoutUrl) {
+      window.location.href = result.checkoutUrl;
+      return;
+    }
+    setSubmitted(true);
   };
 
   const stepValid = (() => {
@@ -271,7 +289,7 @@ export function OnboardingWizard() {
                 Lanjut
               </Button>
             ) : (
-              <Button variant="primary" size="md" onClick={() => setSubmitted(true)}>
+              <Button variant="primary" size="md" onClick={() => void submit()}>
                 Lanjut ke Pembayaran (Stripe)
               </Button>
             )}
