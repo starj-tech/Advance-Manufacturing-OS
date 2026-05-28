@@ -26,6 +26,12 @@ importers:
 
   apps/console:
     dependencies:
+      '@aether/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@aether/supabase':
+        specifier: workspace:*
+        version: link:../../packages/supabase
       '@aether/ui-kit':
         specifier: workspace:*
         version: link:../../packages/ui-kit

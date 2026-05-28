@@ -1,6 +1,7 @@
 export { SessionProvider, useSession, type Session } from './session';
 export {
   signInWithCompanyId,
+  signInWithEmail,
   changePassword,
   syntheticEmail,
   type CompanyCredentials,

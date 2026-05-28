@@ -24,6 +24,15 @@ export async function signInWithCompanyId(creds: CompanyCredentials) {
   });
 }
 
+/**
+ * Plain email + password sign-in (used by the vendor Console, where staff are
+ * platform_admins rather than tenant users). Throws in demo mode.
+ */
+export async function signInWithEmail(email: string, password: string) {
+  if (!supabase) throw new Error('backend not configured');
+  return supabase.auth.signInWithPassword({ email, password });
+}
+
 /** Set a new password for the signed-in user (first-login reset). */
 export async function changePassword(newPassword: string) {
   if (!supabase) throw new Error('backend not configured');
