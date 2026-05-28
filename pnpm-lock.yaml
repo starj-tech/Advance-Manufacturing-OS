@@ -24,7 +24,7 @@ importers:
         specifier: ^5.5.4
         version: 5.9.3
 
-  apps/web:
+  apps/demo:
     dependencies:
       '@aether/glove-kit':
         specifier: workspace:*

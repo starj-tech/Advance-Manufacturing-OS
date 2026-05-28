@@ -3,7 +3,7 @@
  *
  * Each method maps to a capability declared in the module's manifest.
  * Calls outside the granted set are rejected at the worker message
- * boundary by `apps/web/src/modules/runtime.ts`.
+ * boundary by `apps/demo/src/modules/runtime.ts`.
  */
 
 export interface Subscription {

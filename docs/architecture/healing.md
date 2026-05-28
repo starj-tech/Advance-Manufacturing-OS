@@ -85,4 +85,4 @@ manager doesn't need to call IT to understand what just happened:
 
 A `healing-summary` Edge Function returns these cards as JSON; the
 Manager Shell fetches and renders them in
-`apps/web/src/shells/manager/SupportPage.tsx`.
+`apps/demo/src/shells/manager/SupportPage.tsx`.

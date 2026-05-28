@@ -15,7 +15,7 @@ subscriptions and in-flight requests alive across role transitions.
 
 ## Switching mechanism
 
-`apps/web/src/core/shell-switcher.tsx`:
+`apps/demo/src/core/shell-switcher.tsx`:
 
 1. Verify the user is allowed to assume the target shell (UX gate; RLS
    is the authoritative gate server-side).
@@ -25,13 +25,13 @@ subscriptions and in-flight requests alive across role transitions.
 4. Navigate to the target shell's `homePath`. React Suspense + lazy
    chunks load the bundle.
 
-`apps/web/src/chrome/ChromeLayout.tsx` provides the shared chrome
+`apps/demo/src/chrome/ChromeLayout.tsx` provides the shared chrome
 (top bar, notifications, command palette) that stays mounted across
 shell switches.
 
 ## Bundle layout
 
-`apps/web/vite.config.ts` declares manualChunks per shell so:
+`apps/demo/vite.config.ts` declares manualChunks per shell so:
 
 - `shell-developer.js`, `shell-executive.js`, `shell-manager.js`,
   `shell-employee.js` are loaded only when their shell is active.

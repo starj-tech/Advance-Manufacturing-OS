@@ -33,7 +33,7 @@ supabase start
 supabase db reset
 
 # Jalankan web app dalam mode dev
-pnpm -F @aether/web dev
+pnpm -F @aether/demo dev
 ```
 
 Buka URL yang ditampilkan Vite (default `http://localhost:5173`).
@@ -41,11 +41,11 @@ Buka URL yang ditampilkan Vite (default `http://localhost:5173`).
 ### Build produksi
 
 ```bash
-pnpm -F @aether/web build      # menghasilkan SPA statis di apps/web/dist
-pnpm -F @aether/web preview    # serve hasil build secara lokal
+pnpm -F @aether/demo build      # menghasilkan SPA statis di apps/demo/dist
+pnpm -F @aether/demo preview    # serve hasil build secara lokal
 ```
 
-Output `apps/web/dist` adalah situs statis yang bisa di-deploy ke host static mana pun (Cloudflare Pages, Netlify, Vercel, S3+CDN, dll).
+Output `apps/demo/dist` adalah situs statis yang bisa di-deploy ke host static mana pun (Cloudflare Pages, Netlify, Vercel, S3+CDN, dll).
 
 ### Lint & Test
 
@@ -59,7 +59,7 @@ pnpm test
 
 ```
 .
-├── apps/web/                 # Web SPA utama (React + Vite + TypeScript)
+├── apps/demo/                 # Web SPA utama (React + Vite + TypeScript)
 ├── packages/                 # JS/TS shared packages
 │   ├── ui-kit/               # Design system standar
 │   ├── glove-kit/            # Touch-first variant utk Employee Shell
