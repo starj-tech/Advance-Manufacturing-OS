@@ -1,0 +1,30 @@
+{
+  "name": "@aether/auth",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint src --max-warnings 0",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@aether/rpc-contracts": "workspace:*",
+    "@aether/supabase": "workspace:*",
+    "@aether/ui-kit": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@aether/eslint-config": "workspace:*",
+    "@supabase/supabase-js": "^2.45.0",
+    "@types/react": "^18.3.5",
+    "react": "^18.3.1",
+    "typescript": "^5.5.4"
+  }
+}

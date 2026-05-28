@@ -1,7 +1,11 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-const url = import.meta.env.VITE_SUPABASE_URL;
-const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Self-contained access to Vite's build-time env so consuming packages don't
+// need vite/client's ambient ImportMetaEnv to typecheck. Each app injects its
+// own VITE_SUPABASE_* at build time.
+const env = (import.meta as unknown as { env?: Record<string, string | undefined> }).env ?? {};
+const url = env.VITE_SUPABASE_URL;
+const anonKey = env.VITE_SUPABASE_ANON_KEY;
 
 /**
  * True when both Supabase connection vars are present at build time. When

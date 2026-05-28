@@ -61,7 +61,7 @@ export function companyId(name: string, suffix: string): string {
 
 /** Synthetic email mapping Company-ID + Username onto Supabase Auth. */
 export function syntheticEmail(username: string, cid: string): string {
-  return `${username}@${cid.toLowerCase()}.tenant.aether-os.internal`;
+  return `${username.toLowerCase()}@${cid.toLowerCase()}.tenant.aether-os.internal`;
 }
 
 function usernameBase(entry: RosterEntry): string {
@@ -245,9 +245,11 @@ export async function handler(req: Request): Promise<Response> {
         email_confirm: true,
         app_metadata: {
           tenant_id: tenant.id,
+          company_id: cid,
           primary_role: acct.role,
           sub_role: acct.subRole,
           permissions,
+          must_change_password: true,
         },
         user_metadata: { full_name: acct.name },
       }),
