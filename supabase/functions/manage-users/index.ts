@@ -69,20 +69,23 @@ export function usernameFor(entry: RosterEntry): string {
 interface Caller {
   role: string;
   tenantId: string;
+  userId: string | null;
 }
 
-/** Extract role + tenant from a Supabase JWT's app_metadata (no verify here;
- *  Supabase's gateway verifies the JWT before the function runs). */
+/** Extract role + tenant + user id from a Supabase JWT's app_metadata + sub
+ *  claim. The function gateway already verified the JWT signature before this
+ *  handler runs, so we just decode it. */
 export function callerFromJwt(token: string): Caller | null {
   const parts = token.split('.');
   if (parts.length !== 3) return null;
   try {
     const payload = JSON.parse(atob(parts[1]!.replace(/-/g, '+').replace(/_/g, '/'))) as {
+      sub?: string;
       app_metadata?: { primary_role?: string; tenant_id?: string };
     };
     const meta = payload.app_metadata ?? {};
     if (!meta.primary_role || !meta.tenant_id) return null;
-    return { role: meta.primary_role, tenantId: meta.tenant_id };
+    return { role: meta.primary_role, tenantId: meta.tenant_id, userId: payload.sub ?? null };
   } catch {
     return null;
   }
@@ -124,12 +127,42 @@ export async function handler(req: Request): Promise<Response> {
   if (action === 'reset-password') {
     const userId = String(body.userId ?? '');
     if (!userId) return json({ error: 'userId required' }, 400);
+
+    // Ensure target user belongs to the caller's tenant — IT can't reach across
+    // tenants. (RLS would also block if we used the caller's JWT, but we're on
+    // the service role here, so do it explicitly.)
+    const own = await sb(
+      url,
+      key,
+      `/rest/v1/tenant_users?tenant_id=eq.${caller!.tenantId}&user_id=eq.${userId}&select=user_id&limit=1`,
+      { method: 'GET' },
+    );
+    const ownRows = (await own.json()) as unknown[];
+    if (!Array.isArray(ownRows) || ownRows.length === 0) {
+      return json({ error: 'target user not in caller tenant' }, 403);
+    }
+
     const password = generatePassword();
     const res = await sb(url, key, `/auth/v1/admin/users/${userId}`, {
       method: 'PUT',
       body: JSON.stringify({ password, app_metadata: { must_change_password: true } }),
     });
     if (!res.ok) return json({ error: 'reset failed' }, 502);
+
+    // Audit so the developer's Audit Log shell sees the reset event.
+    await sb(url, key, '/rest/v1/audit_log', {
+      method: 'POST',
+      body: JSON.stringify({
+        tenant_id: caller!.tenantId,
+        actor_id: caller!.userId ?? null,
+        action: 'password_reset',
+        resource: 'users',
+        resource_id: userId,
+        metadata: { by_role: caller!.role },
+        hlc: (Date.now() / 1000).toString() + '.0.fn',
+      }),
+    });
+
     // The new password is returned once to the IT admin to hand off securely.
     return json({ ok: true, password });
   }

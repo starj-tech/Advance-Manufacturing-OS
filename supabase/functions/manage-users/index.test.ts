@@ -8,9 +8,10 @@ import {
   usernameFor,
 } from './index.ts';
 
-function jwt(appMetadata: Record<string, unknown>): string {
+function jwt(appMetadata: Record<string, unknown>, sub?: string): string {
   const b64 = (o: unknown) => btoa(JSON.stringify(o)).replace(/\+/g, '-').replace(/\//g, '_');
-  return `${b64({ alg: 'HS256' })}.${b64({ app_metadata: appMetadata })}.sig`;
+  const payload = sub ? { sub, app_metadata: appMetadata } : { app_metadata: appMetadata };
+  return `${b64({ alg: 'HS256' })}.${b64(payload)}.sig`;
 }
 
 Deno.test('parseRosterCsv parses + skips header, normalizes role', () => {
@@ -40,10 +41,16 @@ Deno.test('generatePassword length + charset', () => {
 });
 
 Deno.test('callerFromJwt + authorizeIt gate on the it role', () => {
-  const itCaller = callerFromJwt(jwt({ primary_role: 'it', tenant_id: 't1' }));
+  const itCaller = callerFromJwt(jwt({ primary_role: 'it', tenant_id: 't1' }, 'user-1'));
   assertEquals(itCaller?.role, 'it');
+  assertEquals(itCaller?.userId, 'user-1');
   assert(authorizeIt(itCaller));
   assert(!authorizeIt(callerFromJwt(jwt({ primary_role: 'manager', tenant_id: 't1' }))));
   assert(!authorizeIt(callerFromJwt('garbage')));
   assert(!authorizeIt(callerFromJwt(jwt({ tenant_id: 't1' })))); // missing role
+});
+
+Deno.test('callerFromJwt tolerates missing sub claim', () => {
+  const c = callerFromJwt(jwt({ primary_role: 'it', tenant_id: 't1' }));
+  assertEquals(c?.userId, null);
 });
