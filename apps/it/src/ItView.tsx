@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react';
 import { Button, Card, CardBody, Stack } from '@aether/ui-kit';
 import { ChangePasswordForm, LoginForm, useSession } from '@aether/auth';
 import { UsersPage } from './UsersPage';
+import { SecurityAuditPage } from './SecurityAuditPage';
 
 const sidebar: CSSProperties = {
   width: 220,
@@ -95,7 +96,7 @@ export function ItView() {
     ) : active === 'modules' ? (
       <Placeholder title="Modul" note="Pemasangan & kill-switch modul tenant — segera." />
     ) : (
-      <Placeholder title="Audit Keamanan" note="Ledger audit append-only — segera." />
+      <SecurityAuditPage />
     );
 
   return (
