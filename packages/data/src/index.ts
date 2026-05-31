@@ -5,3 +5,8 @@ export { useMachines, useWorkOrders, useTenantCapabilities } from './hooks';
 export { useTenantUsers, type TenantUser } from './tenant-users';
 export { useMaterials, useInventoryAdjust } from './materials';
 export { useAuditLog, type AuditEvent } from './audit-log';
+export {
+  useWorkOrderAdvance,
+  type WorkOrderAdvanceInput,
+  type WorkOrderAdvanceResult,
+} from './work-orders';

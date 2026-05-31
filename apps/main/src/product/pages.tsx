@@ -7,6 +7,7 @@ import {
   useInventoryAdjust,
   useMachines,
   useMaterials,
+  useWorkOrderAdvance,
   useWorkOrders,
 } from '@aether/data';
 
@@ -66,8 +67,39 @@ export function MachinesPage() {
   );
 }
 
+const WO_NEXT: Record<WorkOrderStatus, ReadonlyArray<{ label: string; to: WorkOrderStatus }>> = {
+  draft: [
+    { label: 'Rilis', to: 'released' },
+    { label: 'Batal', to: 'canceled' },
+  ],
+  released: [
+    { label: 'Mulai', to: 'running' },
+    { label: 'Batal', to: 'canceled' },
+  ],
+  running: [
+    { label: 'Jeda', to: 'paused' },
+    { label: 'Selesai', to: 'completed' },
+  ],
+  paused: [
+    { label: 'Lanjut', to: 'running' },
+    { label: 'Batal', to: 'canceled' },
+  ],
+  completed: [],
+  canceled: [],
+};
+
 export function WorkOrdersPage() {
   const { data: orders = [], isLoading, isError } = useWorkOrders();
+  const advance = useWorkOrderAdvance();
+
+  const onAdvance = async (id: string, to: WorkOrderStatus, expectedHlc: string) => {
+    try {
+      await advance.mutateAsync({ id, to, expectedHlc });
+    } catch (e) {
+      window.alert((e as Error).message);
+    }
+  };
+
   return (
     <Stack gap={16}>
       <h2 style={{ margin: 0, fontSize: 20 }}>Work Order</h2>
@@ -81,6 +113,7 @@ export function WorkOrdersPage() {
                 <th style={th}>Kode</th>
                 <th style={th}>Jumlah</th>
                 <th style={th}>Status</th>
+                <th style={th}></th>
               </tr>
             </thead>
             <tbody>
@@ -93,12 +126,31 @@ export function WorkOrdersPage() {
                   <td style={td}>
                     <StatusPill kind={WO_KIND[o.status]}>{o.status}</StatusPill>
                   </td>
+                  <td style={{ ...td, textAlign: 'right' }}>
+                    <span style={{ display: 'inline-flex', gap: 6 }}>
+                      {WO_NEXT[o.status].map((n) => (
+                        <Button
+                          key={n.to}
+                          size="sm"
+                          variant="ghost"
+                          disabled={advance.isPending}
+                          onClick={() => void onAdvance(o.id, n.to, o.hlc)}
+                        >
+                          {n.label}
+                        </Button>
+                      ))}
+                    </span>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </CardBody>
       </Card>
+      <p style={muted}>
+        Transisi melewati RPC <code>work_order_advance</code> — state machine atomik, gerbang{' '}
+        <code>work_orders:update</code>, dan ter-audit.
+      </p>
     </Stack>
   );
 }

@@ -36,6 +36,7 @@ const ROLE_PERMS: Record<string, string[]> = {
     'work_orders:approve',
     'machines:read',
     'inventory:read',
+    'inventory:adjust',
     'maintenance:read',
     'tenant:configure',
   ],
@@ -223,6 +224,22 @@ export async function handler(req: Request): Promise<Response> {
       status: wo.status,
       qty_planned: wo.qty_planned,
       qty_done: wo.qty_done,
+      hlc: '0.0.seed',
+    });
+  }
+
+  // 6) Materials so the manager's Inventory page has real rows on first login.
+  const materials = [
+    { sku: 'STR-CORE-3K', uom: 'pcs', qty_on_hand: 320, qty_reserved: 80 },
+    { sku: 'RTR-SHAFT-12', uom: 'pcs', qty_on_hand: 540, qty_reserved: 200 },
+  ];
+  for (const mat of materials) {
+    await rest(ctx, '/rest/v1/materials', 'POST', {
+      tenant_id: tenantId,
+      sku: mat.sku,
+      uom: mat.uom,
+      qty_on_hand: mat.qty_on_hand,
+      qty_reserved: mat.qty_reserved,
       hlc: '0.0.seed',
     });
   }
