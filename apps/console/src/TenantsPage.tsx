@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react';
-import { Card, CardBody, Stack, StatusPill } from '@aether/ui-kit';
+import { Button, Card, CardBody, Stack, StatusPill } from '@aether/ui-kit';
 import type { StatusKind } from '@aether/ui-kit';
-import { useConsoleTenants } from './console-data';
+import { useConsoleTenants, useSetTenantStatus } from './console-data';
 
 const muted: CSSProperties = { margin: 0, color: 'var(--aether-fg-muted)', fontSize: 13 };
 const th: CSSProperties = {
@@ -24,7 +24,19 @@ const SUB_KIND: Record<string, StatusKind> = {
 };
 
 export function TenantsPage() {
-  const { data: tenants, loading, error, demo } = useConsoleTenants();
+  const { data: tenants, loading, error, demo, refresh } = useConsoleTenants();
+  const { setStatus, pending } = useSetTenantStatus();
+
+  const onToggle = async (id: string, current: string, name: string) => {
+    const next = current === 'suspended' ? 'active' : 'suspended';
+    const verb = next === 'suspended' ? 'menonaktifkan' : 'mengaktifkan kembali';
+    if (!window.confirm(`Yakin ${verb} ${name}?`)) return;
+    const reason =
+      next === 'suspended' ? (window.prompt('Alasan (opsional):') ?? undefined) : undefined;
+    const r = await setStatus(id, next, reason);
+    if (!r.ok) window.alert(`Gagal: ${r.error ?? 'tidak diketahui'}`);
+    else refresh();
+  };
 
   return (
     <Stack gap={16}>
@@ -46,6 +58,7 @@ export function TenantsPage() {
                 <th style={th}>Paket</th>
                 <th style={th}>Langganan</th>
                 <th style={th}>Status</th>
+                <th style={th}></th>
               </tr>
             </thead>
             <tbody>
@@ -64,6 +77,16 @@ export function TenantsPage() {
                     </StatusPill>
                   </td>
                   <td style={td}>{t.status}</td>
+                  <td style={{ ...td, textAlign: 'right' }}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      disabled={pending || demo}
+                      onClick={() => void onToggle(t.id, t.status, t.name)}
+                    >
+                      {t.status === 'suspended' ? 'Aktifkan' : 'Nonaktifkan'}
+                    </Button>
+                  </td>
                 </tr>
               ))}
             </tbody>
