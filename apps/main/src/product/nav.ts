@@ -34,6 +34,7 @@ export const ROLE_NAV: Record<Role, ProductNavItem[]> = {
   developer: [
     { id: 'machines', label: 'Mesin' },
     { id: 'work-orders', label: 'Work Order' },
+    { id: 'audit-log', label: 'Audit Log' },
   ],
   it: [
     { id: 'machines', label: 'Mesin' },

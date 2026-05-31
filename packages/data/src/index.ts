@@ -4,3 +4,4 @@ export { DEMO_MACHINES, DEMO_WORK_ORDERS } from './demo';
 export { useMachines, useWorkOrders, useTenantCapabilities } from './hooks';
 export { useTenantUsers, type TenantUser } from './tenant-users';
 export { useMaterials, useInventoryAdjust } from './materials';
+export { useAuditLog, type AuditEvent } from './audit-log';

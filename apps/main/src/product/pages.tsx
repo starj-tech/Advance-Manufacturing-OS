@@ -2,7 +2,13 @@ import type { CSSProperties } from 'react';
 import { Button, Card, CardBody, CardHeader, Stack, StatusPill } from '@aether/ui-kit';
 import type { StatusKind } from '@aether/ui-kit';
 import type { MachineStatus, WorkOrderStatus } from '@aether/rpc-contracts';
-import { useInventoryAdjust, useMachines, useMaterials, useWorkOrders } from '@aether/data';
+import {
+  useAuditLog,
+  useInventoryAdjust,
+  useMachines,
+  useMaterials,
+  useWorkOrders,
+} from '@aether/data';
 
 const muted: CSSProperties = { margin: 0, color: 'var(--aether-fg-muted)', fontSize: 13 };
 const th: CSSProperties = {
@@ -170,6 +176,54 @@ export function MaterialsPage() {
   );
 }
 
+export function AuditLogPage() {
+  const { data: events = [], isLoading, isError } = useAuditLog(50);
+  return (
+    <Stack gap={16}>
+      <h2 style={{ margin: 0, fontSize: 20 }}>Audit Log</h2>
+      <p style={muted}>
+        Ledger append-only per-tenant; auto-refresh tiap 10 detik. Setiap{' '}
+        <code>inventory_adjust</code> dari halaman Inventory akan muncul di sini.
+      </p>
+      {isLoading ? <p style={muted}>Memuat…</p> : null}
+      {isError ? <p style={muted}>Gagal memuat.</p> : null}
+      <Card padded={false}>
+        <CardBody>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+            <thead>
+              <tr>
+                <th style={th}>Waktu</th>
+                <th style={th}>Aksi</th>
+                <th style={th}>Resource</th>
+                <th style={th}>Detail</th>
+              </tr>
+            </thead>
+            <tbody>
+              {events.map((e) => (
+                <tr key={e.id} style={{ borderTop: '1px solid var(--aether-border)' }}>
+                  <td style={td}>{new Date(e.createdAt).toLocaleString()}</td>
+                  <td style={td}>
+                    <code>{e.action}</code>
+                  </td>
+                  <td style={td}>
+                    {e.resource ?? '—'}
+                    {e.resourceId ? ` · ${e.resourceId}` : ''}
+                  </td>
+                  <td style={td}>
+                    <code style={{ fontSize: 11 }}>
+                      {e.metadata ? JSON.stringify(e.metadata) : '—'}
+                    </code>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </CardBody>
+      </Card>
+    </Stack>
+  );
+}
+
 function Placeholder({ title, note }: { title: string; note: string }) {
   return (
     <Stack gap={16}>
@@ -209,6 +263,7 @@ export const PAGE_COMPONENTS: Record<string, () => JSX.Element> = {
   'work-orders': WorkOrdersPage,
   machines: MachinesPage,
   materials: MaterialsPage,
+  'audit-log': AuditLogPage,
   tasks: TasksPage,
   'cold-chain': ColdChainPage,
   traceability: TraceabilityPage,
