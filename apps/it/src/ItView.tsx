@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
 import { Button, Card, CardBody, Stack } from '@aether/ui-kit';
-import { LoginForm, useSession } from '@aether/auth';
+import { ChangePasswordForm, LoginForm, useSession } from '@aether/auth';
 import { UsersPage } from './UsersPage';
 
 const sidebar: CSSProperties = {
@@ -65,6 +65,23 @@ export function ItView() {
       <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: 24 }}>
         <div style={{ width: '100%', maxWidth: 420 }}>
           <LoginForm appName="Aplikasi IT" />
+        </div>
+      </div>
+    );
+  }
+
+  if (session.mustChangePassword) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: 24 }}>
+        <div style={{ width: '100%', maxWidth: 420 }}>
+          <Stack gap={12}>
+            <ChangePasswordForm />
+            <div>
+              <Button variant="ghost" size="sm" onClick={signOut}>
+                Keluar
+              </Button>
+            </div>
+          </Stack>
         </div>
       </div>
     );

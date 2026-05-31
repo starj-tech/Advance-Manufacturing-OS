@@ -38,3 +38,36 @@ export async function changePassword(newPassword: string) {
   if (!supabase) throw new Error('backend not configured');
   return supabase.auth.updateUser({ password: newPassword });
 }
+
+/**
+ * Forced first-login flow: calls the complete-password-change Edge Function
+ * which atomically sets the new password AND clears must_change_password in
+ * app_metadata (which a normal user JWT cannot do). After success, callers
+ * MUST refresh the session so the new claims take effect.
+ */
+export async function completePasswordChange(
+  newPassword: string,
+): Promise<{ ok: boolean; error?: string }> {
+  if (!supabase) return { ok: true };
+  const { data } = await supabase.auth.getSession();
+  const token = data.session?.access_token;
+  if (!token) return { ok: false, error: 'not signed in' };
+  const url = (import.meta as unknown as { env?: { VITE_SUPABASE_URL?: string } }).env
+    ?.VITE_SUPABASE_URL;
+  if (!url) return { ok: false, error: 'supabase url missing' };
+  const res = await fetch(`${url}/functions/v1/complete-password-change`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ newPassword }),
+  });
+  if (!res.ok) {
+    const e = (await res.json().catch(() => ({}))) as { error?: string };
+    return { ok: false, error: e.error ?? `http ${res.status}` };
+  }
+  // Refresh so the new app_metadata (must_change_password: false) propagates.
+  await supabase.auth.refreshSession();
+  return { ok: true };
+}

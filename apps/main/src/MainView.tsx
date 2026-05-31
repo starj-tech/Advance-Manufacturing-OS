@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
-import { Button, Card, CardBody, CardHeader, Stack, StatusPill } from '@aether/ui-kit';
-import { LoginForm, changePassword, useSession } from '@aether/auth';
+import { Button, Stack } from '@aether/ui-kit';
+import { ChangePasswordForm, LoginForm, useSession } from '@aether/auth';
 import { OnboardingWizard } from './onboarding/OnboardingWizard';
 import { ProductShell } from './product/ProductShell';
 
@@ -11,76 +11,19 @@ const page: CSSProperties = {
   display: 'flex',
   justifyContent: 'center',
 };
-const field: CSSProperties = {
-  width: '100%',
-  padding: '10px 12px',
-  fontSize: 14,
-  background: 'var(--aether-bg)',
-  color: 'var(--aether-fg)',
-  border: '1px solid var(--aether-border)',
-  borderRadius: 8,
-  outline: 'none',
-};
-
-function ChangePasswordCard() {
-  const [pw, setPw] = useState('');
-  const [done, setDone] = useState(false);
-  const [busy, setBusy] = useState(false);
-
-  const submit = async () => {
-    setBusy(true);
-    try {
-      const { error } = await changePassword(pw);
-      if (!error) setDone(true);
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  if (done) return <StatusPill kind="success">Kata sandi diperbarui</StatusPill>;
-  return (
-    <Stack gap={8}>
-      <input
-        style={field}
-        type="password"
-        value={pw}
-        onChange={(e) => setPw(e.target.value)}
-        placeholder="Kata sandi baru"
-        autoComplete="new-password"
-      />
-      <div>
-        <Button
-          variant="primary"
-          size="sm"
-          disabled={pw.length < 8 || busy}
-          onClick={() => void submit()}
-        >
-          {busy ? 'Menyimpan…' : 'Simpan kata sandi'}
-        </Button>
-      </div>
-    </Stack>
-  );
-}
 
 function FirstLoginReset() {
-  const { session, signOut } = useSession();
-  if (!session) return null;
+  const { signOut } = useSession();
   return (
     <div style={{ width: '100%', maxWidth: 420 }}>
-      <Card>
-        <CardHeader title={`Halo, ${session.displayName}`} subtitle="Login pertama" />
-        <CardBody>
-          <Stack gap={12}>
-            <StatusPill kind="warning">Wajib ganti kata sandi sebelum lanjut</StatusPill>
-            <ChangePasswordCard />
-            <div>
-              <Button variant="ghost" size="sm" onClick={signOut}>
-                Keluar
-              </Button>
-            </div>
-          </Stack>
-        </CardBody>
-      </Card>
+      <Stack gap={12}>
+        <ChangePasswordForm />
+        <div>
+          <Button variant="ghost" size="sm" onClick={signOut}>
+            Keluar
+          </Button>
+        </div>
+      </Stack>
     </div>
   );
 }
