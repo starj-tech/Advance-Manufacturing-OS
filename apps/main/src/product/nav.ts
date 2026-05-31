@@ -23,6 +23,7 @@ export const ROLE_NAV: Record<Role, ProductNavItem[]> = {
   manager: [
     { id: 'work-orders', label: 'Work Order', permission: 'work_orders:read' },
     { id: 'machines', label: 'Mesin', permission: 'machines:read' },
+    { id: 'materials', label: 'Inventory', permission: 'inventory:read' },
     { id: 'cold-chain', label: 'Rantai Dingin', capability: 'cold-chain-monitor' },
     { id: 'traceability', label: 'Telusur Lot', capability: 'lot-genealogy' },
   ],

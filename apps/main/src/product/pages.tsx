@@ -1,8 +1,8 @@
 import type { CSSProperties } from 'react';
-import { Card, CardBody, CardHeader, Stack, StatusPill } from '@aether/ui-kit';
+import { Button, Card, CardBody, CardHeader, Stack, StatusPill } from '@aether/ui-kit';
 import type { StatusKind } from '@aether/ui-kit';
 import type { MachineStatus, WorkOrderStatus } from '@aether/rpc-contracts';
-import { useMachines, useWorkOrders } from '@aether/data';
+import { useInventoryAdjust, useMachines, useMaterials, useWorkOrders } from '@aether/data';
 
 const muted: CSSProperties = { margin: 0, color: 'var(--aether-fg-muted)', fontSize: 13 };
 const th: CSSProperties = {
@@ -97,6 +97,79 @@ export function WorkOrdersPage() {
   );
 }
 
+export function MaterialsPage() {
+  const { data: materials = [], isLoading, isError } = useMaterials();
+  const adjust = useInventoryAdjust();
+
+  const onAdjust = async (id: string, sku: string) => {
+    const d = window.prompt(`Delta untuk ${sku} (mis. -10 atau 25):`);
+    if (d === null) return;
+    const delta = Number(d);
+    if (!Number.isFinite(delta) || delta === 0) return;
+    const reason = window.prompt('Alasan (opsional):') ?? '';
+    try {
+      const newQty = await adjust.mutateAsync({
+        materialId: id,
+        delta,
+        reason,
+        workOrderId: null,
+      });
+      if (newQty !== null) window.alert(`${sku} → ${newQty}`);
+    } catch (e) {
+      window.alert((e as Error).message);
+    }
+  };
+
+  return (
+    <Stack gap={16}>
+      <h2 style={{ margin: 0, fontSize: 20 }}>Inventory</h2>
+      {isLoading ? <p style={muted}>Memuat…</p> : null}
+      {isError ? <p style={muted}>Gagal memuat.</p> : null}
+      <Card padded={false}>
+        <CardBody>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <thead>
+              <tr>
+                <th style={th}>SKU</th>
+                <th style={th}>UOM</th>
+                <th style={th}>Stok</th>
+                <th style={th}>Tercadang</th>
+                <th style={th}></th>
+              </tr>
+            </thead>
+            <tbody>
+              {materials.map((m) => (
+                <tr key={m.id} style={{ borderTop: '1px solid var(--aether-border)' }}>
+                  <td style={td}>
+                    <code>{m.sku}</code>
+                  </td>
+                  <td style={td}>{m.uom}</td>
+                  <td style={td}>{m.qtyOnHand}</td>
+                  <td style={td}>{m.qtyReserved}</td>
+                  <td style={{ ...td, textAlign: 'right' }}>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={adjust.isPending}
+                      onClick={() => void onAdjust(m.id, m.sku)}
+                    >
+                      Sesuaikan
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </CardBody>
+      </Card>
+      <p style={muted}>
+        Penyesuaian melewati RPC <code>inventory_adjust</code> — atomik, gerbang
+        <code> inventory:adjust</code>, dan ter-audit.
+      </p>
+    </Stack>
+  );
+}
+
 function Placeholder({ title, note }: { title: string; note: string }) {
   return (
     <Stack gap={16}>
@@ -135,6 +208,7 @@ export const PAGE_COMPONENTS: Record<string, () => JSX.Element> = {
   compliance: CompliancePage,
   'work-orders': WorkOrdersPage,
   machines: MachinesPage,
+  materials: MaterialsPage,
   tasks: TasksPage,
   'cold-chain': ColdChainPage,
   traceability: TraceabilityPage,
