@@ -105,6 +105,95 @@ export function useConsoleTenants(): State & { refresh: () => void } {
  * set-tenant-status Edge Function (which gates on platform_admins and audits
  * to the target tenant's audit_log).
  */
+export interface ModuleStat {
+  id: string;
+  currentVersion: string;
+  status: string;
+  installs: number;
+  enabledInstalls: number;
+}
+
+interface ModulesState {
+  data: ModuleStat[];
+  loading: boolean;
+  error: boolean;
+  demo: boolean;
+}
+
+const DEMO_MODULES: ModuleStat[] = [
+  {
+    id: 'co.aether.cold-chain-monitor',
+    currentVersion: '1.4.0',
+    status: 'published',
+    installs: 12,
+    enabledInstalls: 11,
+  },
+  {
+    id: 'co.aether.lot-genealogy',
+    currentVersion: '0.9.2',
+    status: 'published',
+    installs: 9,
+    enabledInstalls: 9,
+  },
+  {
+    id: 'co.aether.predictive-maint',
+    currentVersion: '2.1.0',
+    status: 'published',
+    installs: 4,
+    enabledInstalls: 2,
+  },
+  {
+    id: 'co.aether.bom-importer',
+    currentVersion: '0.3.1',
+    status: 'deprecated',
+    installs: 1,
+    enabledInstalls: 0,
+  },
+];
+
+/**
+ * Cross-tenant module registry stats for the Console (publisher view). Calls
+ * the list-modules-stats Edge Function (gated on platform_admins) and falls
+ * back to a demo set when no backend is configured.
+ */
+export function useConsoleModules(): ModulesState {
+  const [state, setState] = useState<ModulesState>({
+    data: [],
+    loading: true,
+    error: false,
+    demo: false,
+  });
+
+  useEffect(() => {
+    if (!supabase) {
+      setState({ data: DEMO_MODULES, loading: false, error: false, demo: true });
+      return;
+    }
+    let active = true;
+    void (async () => {
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData.session?.access_token;
+        const url = (import.meta as unknown as { env: { VITE_SUPABASE_URL?: string } }).env
+          .VITE_SUPABASE_URL;
+        const res = await fetch(`${url}/functions/v1/list-modules-stats`, {
+          headers: { authorization: `Bearer ${token ?? ''}` },
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        const body = (await res.json()) as { modules: ModuleStat[] };
+        if (active) setState({ data: body.modules, loading: false, error: false, demo: false });
+      } catch {
+        if (active) setState({ data: [], loading: false, error: true, demo: false });
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  return state;
+}
+
 export function useSetTenantStatus(): {
   setStatus: (
     tenantId: string,

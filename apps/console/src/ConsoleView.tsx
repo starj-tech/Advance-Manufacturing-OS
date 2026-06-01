@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
-import { Button, Card, CardBody, Stack } from '@aether/ui-kit';
+import { Button } from '@aether/ui-kit';
 import { useSession } from '@aether/auth';
 import { ConsoleLogin } from './ConsoleLogin';
 import { TenantsPage } from './TenantsPage';
+import { ModulesPage } from './ModulesPage';
+import { HealthPage } from './HealthPage';
 
 const sidebar: CSSProperties = {
   width: 220,
@@ -35,19 +37,6 @@ const NAV = [
   { id: 'health', label: 'Kesehatan Platform' },
 ];
 
-function Placeholder({ title, note }: { title: string; note: string }) {
-  return (
-    <Stack gap={16}>
-      <h2 style={{ margin: 0, fontSize: 20 }}>{title}</h2>
-      <Card>
-        <CardBody>
-          <p style={muted}>{note}</p>
-        </CardBody>
-      </Card>
-    </Stack>
-  );
-}
-
 export function ConsoleView() {
   const { session, loading, signOut, backend } = useSession();
   const [active, setActive] = useState('tenants');
@@ -76,12 +65,9 @@ export function ConsoleView() {
     active === 'tenants' ? (
       <TenantsPage />
     ) : active === 'modules' ? (
-      <Placeholder
-        title="Modul & Publikasi"
-        note="Penerbitan + penandatanganan ed25519 modul — segera."
-      />
+      <ModulesPage />
     ) : (
-      <Placeholder title="Kesehatan Platform" note="Metrik lintas-tenant + kill-switch — segera." />
+      <HealthPage />
     );
 
   return (
