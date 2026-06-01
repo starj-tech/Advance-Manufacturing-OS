@@ -5,6 +5,7 @@ import type { MachineStatus, WorkOrderStatus } from '@aether/rpc-contracts';
 import {
   useAuditLog,
   useColdChainReadings,
+  useComplianceReports,
   useInventoryAdjust,
   useLots,
   useMachines,
@@ -12,7 +13,7 @@ import {
   useWorkOrderAdvance,
   useWorkOrders,
 } from '@aether/data';
-import type { Lot, TemperatureReading } from '@aether/data';
+import type { ComplianceStatus, Lot, TemperatureReading } from '@aether/data';
 
 const muted: CSSProperties = { margin: 0, color: 'var(--aether-fg-muted)', fontSize: 13 };
 const th: CSSProperties = {
@@ -412,8 +413,63 @@ export function OverviewPage() {
     </Stack>
   );
 }
+const COMPLIANCE_KIND: Record<ComplianceStatus, StatusKind> = {
+  compliant: 'success',
+  'needs-review': 'warning',
+  'non-compliant': 'danger',
+};
+
 export function CompliancePage() {
-  return <Placeholder title="Kepatuhan" note="Laporan kepatuhan bertanda tangan — segera." />;
+  const { data: reports = [], isLoading, isError } = useComplianceReports(20);
+
+  return (
+    <Stack gap={16}>
+      <h2 style={{ margin: 0, fontSize: 20 }}>Kepatuhan</h2>
+      <p style={muted}>
+        Laporan kepatuhan bertanda tangan Edge Function. Setiap baris adalah snapshot probe kontrol
+        terhadap standar yang terdaftar (HACCP, ISO-22000, BPOM). Bukti dirangkum di{' '}
+        <code>compliance_evidence</code> via hash chain.
+      </p>
+      {isLoading ? <p style={muted}>Memuat…</p> : null}
+      {isError ? <p style={muted}>Gagal memuat.</p> : null}
+      <Card padded={false}>
+        <CardBody>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <thead>
+              <tr>
+                <th style={th}>Standar</th>
+                <th style={th}>Status</th>
+                <th style={th}>Kontrol</th>
+                <th style={th}>Dibuat</th>
+                <th style={th}>Tanda tangan</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reports.map((r) => (
+                <tr key={r.id} style={{ borderTop: '1px solid var(--aether-border)' }}>
+                  <td style={td}>
+                    <code>{r.standardSlug}</code>
+                  </td>
+                  <td style={td}>
+                    <StatusPill kind={COMPLIANCE_KIND[r.status]}>{r.status}</StatusPill>
+                  </td>
+                  <td style={td}>
+                    {r.controlsPassed}/{r.controlsTotal} lulus
+                    {r.controlsFailed > 0 ? ` · ${r.controlsFailed} gagal` : ''}
+                    {r.controlsNeedsReview > 0 ? ` · ${r.controlsNeedsReview} review` : ''}
+                  </td>
+                  <td style={td}>{new Date(r.generatedAt).toLocaleString()}</td>
+                  <td style={td}>
+                    <code style={{ fontSize: 11 }}>{r.attestationKeyId ?? '—'}</code>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </CardBody>
+      </Card>
+    </Stack>
+  );
 }
 export function TasksPage() {
   return <Placeholder title="Tugas" note="Kartu tugas shop-floor — segera." />;
