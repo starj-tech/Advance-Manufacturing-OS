@@ -6,12 +6,13 @@ import {
   useAuditLog,
   useColdChainReadings,
   useInventoryAdjust,
+  useLots,
   useMachines,
   useMaterials,
   useWorkOrderAdvance,
   useWorkOrders,
 } from '@aether/data';
-import type { TemperatureReading } from '@aether/data';
+import type { Lot, TemperatureReading } from '@aether/data';
 
 const muted: CSSProperties = { margin: 0, color: 'var(--aether-fg-muted)', fontSize: 13 };
 const th: CSSProperties = {
@@ -419,9 +420,105 @@ export function ColdChainPage() {
     </Stack>
   );
 }
-export function TraceabilityPage() {
+interface LotNode extends Lot {
+  children: LotNode[];
+}
+
+function buildForest(lots: readonly Lot[]): LotNode[] {
+  const byId = new Map<string, LotNode>();
+  for (const l of lots) byId.set(l.id, { ...l, children: [] });
+  const roots: LotNode[] = [];
+  for (const node of byId.values()) {
+    if (node.parentLotId && byId.has(node.parentLotId)) {
+      byId.get(node.parentLotId)!.children.push(node);
+    } else {
+      roots.push(node);
+    }
+  }
+  for (const node of byId.values()) {
+    node.children.sort((a, b) => a.lotCode.localeCompare(b.lotCode));
+  }
+  roots.sort((a, b) => b.madeAt.localeCompare(a.madeAt));
+  return roots;
+}
+
+function LotRow({ node, depth }: { node: LotNode; depth: number }) {
+  const expires = node.expiresAt ? new Date(node.expiresAt) : null;
+  const expiringSoon =
+    expires != null &&
+    expires.getTime() - Date.now() < 3 * 86_400_000 &&
+    expires.getTime() > Date.now();
+  const expired = expires != null && expires.getTime() <= Date.now();
+  const kind: StatusKind = expired ? 'danger' : expiringSoon ? 'warning' : 'success';
   return (
-    <Placeholder title="Telusur Lot" note="Silsilah lot/batch (kapabilitas industri) — segera." />
+    <>
+      <tr style={{ borderTop: '1px solid var(--aether-border)' }}>
+        <td style={td}>
+          <span style={{ paddingLeft: depth * 18 }}>
+            {depth > 0 ? <span style={{ color: 'var(--aether-fg-muted)' }}>↳ </span> : null}
+            <code>{node.lotCode}</code>
+          </span>
+        </td>
+        <td style={td}>{node.materialSku ?? '—'}</td>
+        <td style={td}>
+          {node.qty ?? '—'} {node.uom ?? ''}
+        </td>
+        <td style={td}>{new Date(node.madeAt).toLocaleDateString()}</td>
+        <td style={td}>
+          {expires ? (
+            <StatusPill kind={kind}>
+              {expired ? 'kedaluwarsa' : expiringSoon ? 'segera' : 'aman'} ·{' '}
+              {expires.toLocaleDateString()}
+            </StatusPill>
+          ) : (
+            '—'
+          )}
+        </td>
+        <td style={td}>{node.description ?? '—'}</td>
+      </tr>
+      {node.children.map((child) => (
+        <LotRow key={child.id} node={child} depth={depth + 1} />
+      ))}
+    </>
+  );
+}
+
+export function TraceabilityPage() {
+  const { data: lots = [], isLoading, isError } = useLots(200);
+  const forest = buildForest(lots);
+
+  return (
+    <Stack gap={16}>
+      <h2 style={{ margin: 0, fontSize: 20 }}>Telusur Lot</h2>
+      <p style={muted}>
+        Silsilah lot/batch (kapabilitas industri <code>lot-genealogy</code>). Lot anak (turunan
+        produksi) menjorok ke kanan dengan tanda ↳. Status kadaluwarsa: hijau = aman, kuning =
+        kedaluwarsa &lt;3 hari, merah = sudah kedaluwarsa.
+      </p>
+      {isLoading ? <p style={muted}>Memuat…</p> : null}
+      {isError ? <p style={muted}>Gagal memuat.</p> : null}
+      <Card padded={false}>
+        <CardBody>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <thead>
+              <tr>
+                <th style={th}>Kode lot</th>
+                <th style={th}>SKU</th>
+                <th style={th}>Jumlah</th>
+                <th style={th}>Dibuat</th>
+                <th style={th}>Kedaluwarsa</th>
+                <th style={th}>Keterangan</th>
+              </tr>
+            </thead>
+            <tbody>
+              {forest.map((root) => (
+                <LotRow key={root.id} node={root} depth={0} />
+              ))}
+            </tbody>
+          </table>
+        </CardBody>
+      </Card>
+    </Stack>
   );
 }
 

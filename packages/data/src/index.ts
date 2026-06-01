@@ -17,3 +17,4 @@ export {
   type ImportRosterResult,
 } from './manage-users';
 export { useColdChainReadings, type TemperatureReading } from './cold-chain';
+export { useLots, type Lot } from './lots';
