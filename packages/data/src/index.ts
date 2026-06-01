@@ -26,7 +26,17 @@ export {
   type TaskStatus,
   type TaskPriority,
 } from './tasks';
-export { useDeviceBindings, type DeviceBinding } from './devices';
+export {
+  useDeviceBindings,
+  useUpsertMachine,
+  PROTOCOL_FAMILIES,
+  PROTOCOL_PATH,
+  type DeviceBinding,
+  type ProtocolFamily,
+  type ProtocolPath,
+  type UpsertMachineInput,
+  type MachineStatusLite,
+} from './devices';
 export {
   useTenantModules,
   type TenantModule,
