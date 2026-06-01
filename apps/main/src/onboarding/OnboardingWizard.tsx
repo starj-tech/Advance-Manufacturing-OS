@@ -36,6 +36,7 @@ export function OnboardingWizard() {
   const [tier, setTier] = useState<TierSlug>('advanced-automata');
   const [cycle, setCycle] = useState<BillingCycle>('monthly');
   const [submitted, setSubmitted] = useState(false);
+  const [intentId, setIntentId] = useState<string | null>(null);
 
   const roster = useMemo(() => parseRosterCsv(rosterText), [rosterText]);
 
@@ -59,6 +60,7 @@ export function OnboardingWizard() {
       window.location.href = result.checkoutUrl;
       return;
     }
+    if (result?.intentId) setIntentId(result.intentId);
     setSubmitted(true);
   };
 
@@ -71,21 +73,42 @@ export function OnboardingWizard() {
 
   if (submitted) {
     const t = TIERS.find((x) => x.slug === tier)!;
+    const captured = intentId != null;
     return (
       <Card>
-        <CardHeader title="Pendaftaran disiapkan" subtitle={companyName} />
+        <CardHeader
+          title={captured ? 'Pendaftaran tersimpan' : 'Pendaftaran disiapkan'}
+          subtitle={companyName}
+        />
         <CardBody>
           <Stack gap={12}>
-            <StatusPill kind="success">Siap ke pembayaran</StatusPill>
+            <StatusPill kind={captured ? 'success' : 'info'}>
+              {captured
+                ? 'Lead terdaftar — tim akan menghubungi'
+                : 'Mode demo — tidak ada backend terhubung'}
+            </StatusPill>
             <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6 }}>
               {roster.length} akun akan dibuat untuk industri{' '}
               <strong>{INDUSTRY_CATALOG[industry]?.label ?? industry}</strong> pada paket{' '}
-              <strong>{t.name}</strong> ({priceLabel(t, cycle)}). Langkah pembayaran Stripe +
-              penyediaan akun otomatis + email selamat datang (Resend) terhubung oleh Edge Function
-              <code> create-checkout</code> / <code>stripe-webhook</code> (Phase C backend).
+              <strong>{t.name}</strong> ({priceLabel(t, cycle)}).{' '}
+              {captured
+                ? 'Data perusahaan + roster sudah tersimpan di signup_intents; tim sales akan kirim tautan pembayaran Stripe dalam 1 hari kerja.'
+                : 'Backend belum dikonfigurasi — ini hanya pratinjau alur.'}
             </p>
+            {intentId ? (
+              <p style={muted}>
+                ID rujukan: <code>{intentId}</code>
+              </p>
+            ) : null}
             <div>
-              <Button variant="ghost" size="md" onClick={() => setSubmitted(false)}>
+              <Button
+                variant="ghost"
+                size="md"
+                onClick={() => {
+                  setSubmitted(false);
+                  setIntentId(null);
+                }}
+              >
                 Kembali ubah
               </Button>
             </div>

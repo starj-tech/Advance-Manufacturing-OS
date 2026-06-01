@@ -17,14 +17,24 @@ const anon = import.meta.env.VITE_SUPABASE_ANON_KEY;
 /** True when the create-checkout Edge Function is reachable (backend configured). */
 export const checkoutConfigured = Boolean(url && anon);
 
+export interface CheckoutResult {
+  /** Hosted Stripe Checkout URL — present once billing is wired. */
+  checkoutUrl?: string;
+  /** Database id of the captured signup_intents row. */
+  intentId?: string;
+  /** True when the intent was saved but Stripe isn't wired yet. */
+  pending?: boolean;
+}
+
 /**
- * Start Stripe Checkout via the create-checkout Edge Function. Returns the
- * hosted checkout URL, or `null` in demo mode (no backend) so the wizard can
- * show its review summary instead.
+ * Submit the onboarding intent to the create-checkout Edge Function. Three
+ * outcomes:
+ *  - billing wired: returns `{ checkoutUrl }` — wizard redirects to Stripe.
+ *  - billing not wired yet: returns `{ pending: true, intentId }` — wizard
+ *    shows "lead captured, vendor will follow up".
+ *  - no backend (demo mode): returns `null` — wizard shows its review card.
  */
-export async function startCheckout(
-  payload: CheckoutPayload,
-): Promise<{ checkoutUrl: string } | null> {
+export async function startCheckout(payload: CheckoutPayload): Promise<CheckoutResult | null> {
   if (!url || !anon) return null;
   const res = await fetch(`${url}/functions/v1/create-checkout`, {
     method: 'POST',
@@ -36,5 +46,5 @@ export async function startCheckout(
     body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error(`checkout failed: ${res.status}`);
-  return (await res.json()) as { checkoutUrl: string };
+  return (await res.json()) as CheckoutResult;
 }

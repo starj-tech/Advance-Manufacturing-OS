@@ -128,11 +128,20 @@ export async function handler(req: Request): Promise<Response> {
     return json({ error: (e as Error).message }, 400);
   }
 
+  // ALWAYS persist the intent first so we don't lose the lead, even if Stripe
+  // is unreachable or unconfigured yet. The stripe-webhook can still pick it
+  // up later by intentId once billing comes online.
+  const intentId = await insertSignupIntent(parsed);
+
   const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
   const priceId = Deno.env.get(priceEnvVar(parsed.tier, parsed.billingCycle));
-  if (!stripeKey || !priceId) return json({ error: 'billing not configured' }, 500);
+  if (!stripeKey || !priceId) {
+    // Pending mode: lead captured, vendor will follow up out-of-band. The
+    // wizard treats a missing checkoutUrl as "show review card" so this also
+    // doubles as a graceful degrade if Stripe is temporarily down.
+    return json({ pending: true, intentId, mode: 'awaiting-billing' });
+  }
 
-  const intentId = await insertSignupIntent(parsed);
   const form = buildCheckoutForm({
     priceId,
     intentId,
@@ -148,7 +157,7 @@ export async function handler(req: Request): Promise<Response> {
     },
     body: new URLSearchParams(form).toString(),
   });
-  if (!res.ok) return json({ error: 'stripe error' }, 502);
+  if (!res.ok) return json({ error: 'stripe error', intentId }, 502);
   const session = (await res.json()) as { id: string; url: string };
   return json({ checkoutUrl: session.url, intentId });
 }
