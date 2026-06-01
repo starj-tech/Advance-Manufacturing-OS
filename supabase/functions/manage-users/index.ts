@@ -169,7 +169,88 @@ export async function handler(req: Request): Promise<Response> {
 
   if (action === 'import-roster') {
     const entries = parseRosterCsv(String(body.csv ?? ''));
-    return json({ ok: true, parsed: entries.length, usernames: entries.map(usernameFor) });
+    const companyId = String(body.companyId ?? '');
+    if (!companyId) return json({ error: 'companyId required' }, 400);
+
+    const tenantId = caller!.tenantId;
+    const synthDomain = `${companyId.toLowerCase()}.tenant.aether-os.internal`;
+    const created: Array<{ username: string; role: string; password: string }> = [];
+    const skipped: Array<{ username: string; reason: string }> = [];
+
+    for (const entry of entries) {
+      const username = usernameFor(entry);
+      // Skip if user already exists for this tenant.
+      const exists = await sb(
+        url,
+        key,
+        `/rest/v1/tenant_users?tenant_id=eq.${tenantId}&username=eq.${username}&select=user_id&limit=1`,
+        { method: 'GET' },
+      );
+      const existsRows = (await exists.json()) as unknown[];
+      if (Array.isArray(existsRows) && existsRows.length > 0) {
+        skipped.push({ username, reason: 'already exists' });
+        continue;
+      }
+
+      const password = generatePassword();
+      const synthEmail = `${username}@${synthDomain}`;
+      const userRes = await sb(url, key, '/auth/v1/admin/users', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: synthEmail,
+          password,
+          email_confirm: true,
+          app_metadata: {
+            tenant_id: tenantId,
+            company_id: companyId,
+            primary_role: entry.role,
+            sub_role: entry.subRole,
+            must_change_password: true,
+          },
+          user_metadata: { full_name: entry.name },
+        }),
+      });
+      if (!userRes.ok) {
+        skipped.push({ username, reason: `auth ${userRes.status}` });
+        continue;
+      }
+      const user = (await userRes.json()) as { id?: string };
+      if (!user.id) {
+        skipped.push({ username, reason: 'no id returned' });
+        continue;
+      }
+
+      await sb(url, key, '/rest/v1/users', {
+        method: 'POST',
+        body: JSON.stringify({ id: user.id, status: 'active' }),
+      });
+      await sb(url, key, '/rest/v1/tenant_users', {
+        method: 'POST',
+        body: JSON.stringify({
+          tenant_id: tenantId,
+          user_id: user.id,
+          primary_role: entry.role,
+          sub_role: entry.subRole,
+          username,
+          must_change_password: true,
+        }),
+      });
+      await sb(url, key, '/rest/v1/audit_log', {
+        method: 'POST',
+        body: JSON.stringify({
+          tenant_id: tenantId,
+          actor_id: caller!.userId,
+          action: 'user_provisioned',
+          resource: 'users',
+          resource_id: user.id,
+          metadata: { username, role: entry.role, sub_role: entry.subRole, via: 'csv_import' },
+          hlc: (Date.now() / 1000).toString() + '.0.fn',
+        }),
+      });
+      created.push({ username, role: entry.role, password });
+    }
+
+    return json({ ok: true, created, skipped });
   }
 
   return json({ error: 'unknown action' }, 400);

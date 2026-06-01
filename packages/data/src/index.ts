@@ -10,4 +10,9 @@ export {
   type WorkOrderAdvanceInput,
   type WorkOrderAdvanceResult,
 } from './work-orders';
-export { useResetUserPassword, type ResetPasswordResult } from './manage-users';
+export {
+  useResetUserPassword,
+  useImportRoster,
+  type ResetPasswordResult,
+  type ImportRosterResult,
+} from './manage-users';
