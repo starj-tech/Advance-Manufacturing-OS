@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
-import { Button, Card, CardBody, Stack } from '@aether/ui-kit';
+import { Button, Stack } from '@aether/ui-kit';
 import { ChangePasswordForm, LoginForm, useSession } from '@aether/auth';
 import { UsersPage } from './UsersPage';
 import { SecurityAuditPage } from './SecurityAuditPage';
+import { DevicesPage } from './DevicesPage';
+import { ModulesPage } from './ModulesPage';
 
 const sidebar: CSSProperties = {
   width: 220,
@@ -35,19 +37,6 @@ const NAV = [
   { id: 'modules', label: 'Modul' },
   { id: 'audit', label: 'Audit Keamanan' },
 ];
-
-function Placeholder({ title, note }: { title: string; note: string }) {
-  return (
-    <Stack gap={16}>
-      <h2 style={{ margin: 0, fontSize: 20 }}>{title}</h2>
-      <Card>
-        <CardBody>
-          <p style={muted}>{note}</p>
-        </CardBody>
-      </Card>
-    </Stack>
-  );
-}
 
 export function ItView() {
   const { session, loading, signOut } = useSession();
@@ -92,9 +81,9 @@ export function ItView() {
     active === 'users' ? (
       <UsersPage />
     ) : active === 'devices' ? (
-      <Placeholder title="Perangkat & Protokol" note="Binding OPC-UA/MQTT per mesin — segera." />
+      <DevicesPage />
     ) : active === 'modules' ? (
-      <Placeholder title="Modul" note="Pemasangan & kill-switch modul tenant — segera." />
+      <ModulesPage />
     ) : (
       <SecurityAuditPage />
     );

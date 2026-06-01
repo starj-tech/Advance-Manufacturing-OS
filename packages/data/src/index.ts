@@ -26,3 +26,10 @@ export {
   type TaskStatus,
   type TaskPriority,
 } from './tasks';
+export { useDeviceBindings, type DeviceBinding } from './devices';
+export {
+  useTenantModules,
+  type TenantModule,
+  type ModuleStatus,
+  type TenantModulePolicy,
+} from './modules';
