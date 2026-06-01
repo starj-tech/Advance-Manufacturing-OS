@@ -1,11 +1,12 @@
 import type { CSSProperties } from 'react';
 import { Button, Card, CardBody, CardHeader, Stack, StatusPill } from '@aether/ui-kit';
 import type { StatusKind } from '@aether/ui-kit';
-import type { MachineStatus, WorkOrderStatus } from '@aether/rpc-contracts';
+import type { WorkOrderStatus } from '@aether/rpc-contracts';
 import {
   useAuditLog,
   useColdChainReadings,
   useComplianceReports,
+  useDeviceBindings,
   useInventoryAdjust,
   useLots,
   useMachines,
@@ -22,6 +23,7 @@ import type {
   TaskStatus,
   TemperatureReading,
 } from '@aether/data';
+import { MachineLiveCard } from './MachineDrivers';
 
 const muted: CSSProperties = { margin: 0, color: 'var(--aether-fg-muted)', fontSize: 13 };
 const th: CSSProperties = {
@@ -35,14 +37,6 @@ const th: CSSProperties = {
 };
 const td: CSSProperties = { padding: '10px 16px' };
 
-const MACHINE_KIND: Record<MachineStatus, StatusKind> = {
-  running: 'success',
-  idle: 'neutral',
-  paused: 'warning',
-  fault: 'danger',
-  maintenance: 'warning',
-  offline: 'neutral',
-};
 const WO_KIND: Record<WorkOrderStatus, StatusKind> = {
   draft: 'neutral',
   released: 'info',
@@ -53,26 +47,26 @@ const WO_KIND: Record<WorkOrderStatus, StatusKind> = {
 };
 
 export function MachinesPage() {
-  const { data: machines = [], isLoading, isError } = useMachines();
+  const { data: bindings = [], isLoading, isError } = useDeviceBindings();
   return (
     <Stack gap={16}>
       <h2 style={{ margin: 0, fontSize: 20 }}>Mesin</h2>
+      <p style={muted}>
+        Tiap mesin merender UI driver sesuai protokol binding-nya. Browser-direct (Web Serial / Web
+        USB / Web Bluetooth / Web HID / WebSocket) membuka koneksi nyata dari sini saat Anda klik
+        Hubungkan. Protokol gateway (OPC-UA / MQTT / Modbus) menampilkan ringkasan jalur on-prem.
+      </p>
       {isLoading ? <p style={muted}>Memuat…</p> : null}
       {isError ? <p style={muted}>Gagal memuat.</p> : null}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
           gap: 12,
         }}
       >
-        {machines.map((m) => (
-          <Card key={m.id}>
-            <CardHeader title={m.name} subtitle={m.code} />
-            <CardBody>
-              <StatusPill kind={MACHINE_KIND[m.status]}>{m.status}</StatusPill>
-            </CardBody>
-          </Card>
+        {bindings.map((b) => (
+          <MachineLiveCard key={b.machineId} binding={b} />
         ))}
       </div>
     </Stack>
