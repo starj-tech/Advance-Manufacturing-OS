@@ -292,8 +292,125 @@ function Placeholder({ title, note }: { title: string; note: string }) {
   );
 }
 
+function Kpi({
+  label,
+  value,
+  hint,
+  kind,
+}: {
+  label: string;
+  value: string;
+  hint?: string;
+  kind?: StatusKind;
+}) {
+  return (
+    <Card>
+      <CardBody>
+        <Stack gap={6}>
+          <p style={{ ...muted, margin: 0 }}>{label}</p>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+            <span style={{ fontSize: 28, fontWeight: 600 }}>{value}</span>
+            {kind ? <StatusPill kind={kind}>{hint ?? ''}</StatusPill> : null}
+          </div>
+          {!kind && hint ? <p style={{ ...muted, margin: 0 }}>{hint}</p> : null}
+        </Stack>
+      </CardBody>
+    </Card>
+  );
+}
+
 export function OverviewPage() {
-  return <Placeholder title="Ringkasan" note="KPI & digital twin per tenant — segera." />;
+  const { data: machines = [] } = useMachines();
+  const { data: orders = [] } = useWorkOrders();
+  const { data: materials = [] } = useMaterials();
+  const { data: readings = [] } = useColdChainReadings(240);
+  const { data: events = [] } = useAuditLog(20);
+
+  const running = machines.filter((m) => m.status === 'running').length;
+  const fault = machines.filter((m) => m.status === 'fault').length;
+  const openOrders = orders.filter((o) => o.status !== 'completed' && o.status !== 'canceled');
+  const lowStock = materials.filter((m) => m.qtyOnHand <= m.qtyReserved + 10).length;
+
+  const dayAgo = Date.now() - 24 * 3_600_000;
+  const breaches = readings.filter(
+    (r) =>
+      new Date(r.takenAt).getTime() >= dayAgo &&
+      ((r.lowC != null && r.celsius < r.lowC) || (r.highC != null && r.celsius > r.highC)),
+  ).length;
+
+  return (
+    <Stack gap={16}>
+      <h2 style={{ margin: 0, fontSize: 20 }}>Ringkasan</h2>
+      <p style={muted}>
+        KPI per tenant — angka di sini tertarik langsung dari tabel produksi dan jejak audit.
+      </p>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gap: 12,
+        }}
+      >
+        <Kpi
+          label="Mesin aktif"
+          value={`${running} / ${machines.length}`}
+          hint={fault > 0 ? `${fault} fault` : 'no fault'}
+          kind={fault > 0 ? 'danger' : 'success'}
+        />
+        <Kpi
+          label="Work order terbuka"
+          value={String(openOrders.length)}
+          hint={
+            orders.length === 0
+              ? '—'
+              : `${orders.filter((o) => o.status === 'running').length} running · ${orders.filter((o) => o.status === 'paused').length} paused`
+          }
+        />
+        <Kpi
+          label="Material stok rendah"
+          value={String(lowStock)}
+          hint={lowStock === 0 ? 'aman' : 'butuh PO'}
+          kind={lowStock === 0 ? 'success' : 'warning'}
+        />
+        <Kpi
+          label="Pelanggaran rantai dingin (24 jam)"
+          value={String(breaches)}
+          hint={breaches === 0 ? 'normal' : 'investigasi'}
+          kind={breaches === 0 ? 'success' : 'danger'}
+        />
+      </div>
+      <Card>
+        <CardHeader title="Aktivitas terakhir" subtitle="Sumber: audit_log" />
+        <CardBody>
+          {events.length === 0 ? (
+            <p style={muted}>Belum ada aktivitas.</p>
+          ) : (
+            <Stack gap={6}>
+              {events.slice(0, 10).map((e) => (
+                <div
+                  key={e.id}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    fontSize: 13,
+                    color: 'var(--aether-fg)',
+                  }}
+                >
+                  <span>
+                    <code>{e.action}</code>
+                    {e.resource ? ` · ${e.resource}` : ''}
+                  </span>
+                  <span style={{ color: 'var(--aether-fg-muted)', fontSize: 12 }}>
+                    {new Date(e.createdAt).toLocaleString()}
+                  </span>
+                </div>
+              ))}
+            </Stack>
+          )}
+        </CardBody>
+      </Card>
+    </Stack>
+  );
 }
 export function CompliancePage() {
   return <Placeholder title="Kepatuhan" note="Laporan kepatuhan bertanda tangan — segera." />;

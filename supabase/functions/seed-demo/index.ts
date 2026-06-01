@@ -28,7 +28,15 @@ const SYNTH_DOMAIN = COMPANY_ID.toLowerCase() + '.tenant.aether-os.internal';
 
 const ROLE_PERMS: Record<string, string[]> = {
   developer: ['*'],
-  executive: ['kpi:read', 'twin:read', 'finance:read'],
+  executive: [
+    'kpi:read',
+    'twin:read',
+    'finance:read',
+    'machines:read',
+    'work_orders:read',
+    'inventory:read',
+    'audit:read',
+  ],
   manager: [
     'work_orders:read',
     'work_orders:create',
