@@ -10,10 +10,18 @@ import {
   useLots,
   useMachines,
   useMaterials,
+  useShopFloorTasks,
+  useUpdateTaskStatus,
   useWorkOrderAdvance,
   useWorkOrders,
 } from '@aether/data';
-import type { ComplianceStatus, Lot, TemperatureReading } from '@aether/data';
+import type {
+  ComplianceStatus,
+  Lot,
+  TaskPriority,
+  TaskStatus,
+  TemperatureReading,
+} from '@aether/data';
 
 const muted: CSSProperties = { margin: 0, color: 'var(--aether-fg-muted)', fontSize: 13 };
 const th: CSSProperties = {
@@ -280,19 +288,6 @@ export function AuditLogPage() {
   );
 }
 
-function Placeholder({ title, note }: { title: string; note: string }) {
-  return (
-    <Stack gap={16}>
-      <h2 style={{ margin: 0, fontSize: 20 }}>{title}</h2>
-      <Card>
-        <CardBody>
-          <p style={muted}>{note}</p>
-        </CardBody>
-      </Card>
-    </Stack>
-  );
-}
-
 function Kpi({
   label,
   value,
@@ -471,8 +466,125 @@ export function CompliancePage() {
     </Stack>
   );
 }
+const PRIORITY_KIND: Record<TaskPriority, StatusKind> = {
+  low: 'neutral',
+  normal: 'info',
+  high: 'warning',
+  urgent: 'danger',
+};
+const TASK_NEXT: Record<TaskStatus, TaskStatus | null> = {
+  todo: 'doing',
+  doing: 'done',
+  done: null,
+};
+const TASK_LABEL: Record<TaskStatus, string> = {
+  todo: 'Belum',
+  doing: 'Sedang dikerjakan',
+  done: 'Selesai',
+};
+
 export function TasksPage() {
-  return <Placeholder title="Tugas" note="Kartu tugas shop-floor — segera." />;
+  const { data: tasks = [], isLoading, isError } = useShopFloorTasks(50);
+  const update = useUpdateTaskStatus();
+
+  const columns: TaskStatus[] = ['todo', 'doing', 'done'];
+
+  const advance = async (id: string, to: TaskStatus) => {
+    try {
+      await update.mutateAsync({ id, status: to });
+    } catch (e) {
+      window.alert((e as Error).message);
+    }
+  };
+
+  return (
+    <Stack gap={16}>
+      <h2 style={{ margin: 0, fontSize: 20 }}>Tugas</h2>
+      <p style={muted}>
+        Kartu tugas shop-floor. Klik tombol untuk maju ke status berikutnya. RLS gate{' '}
+        <code>tasks:complete</code> + sesuaikan ke <code>assigned_to</code> pengguna.
+      </p>
+      {isLoading ? <p style={muted}>Memuat…</p> : null}
+      {isError ? <p style={muted}>Gagal memuat.</p> : null}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: 12,
+        }}
+      >
+        {columns.map((col) => {
+          const colTasks = tasks.filter((t) => t.status === col);
+          return (
+            <Card key={col}>
+              <CardHeader title={TASK_LABEL[col]} subtitle={`${colTasks.length} kartu`} />
+              <CardBody>
+                <Stack gap={10}>
+                  {colTasks.length === 0 ? (
+                    <p style={muted}>Tidak ada.</p>
+                  ) : (
+                    colTasks.map((t) => {
+                      const next = TASK_NEXT[t.status];
+                      const overdue =
+                        t.dueAt != null &&
+                        new Date(t.dueAt).getTime() < Date.now() &&
+                        t.status !== 'done';
+                      return (
+                        <Card key={t.id}>
+                          <CardBody>
+                            <Stack gap={8}>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  gap: 8,
+                                  alignItems: 'flex-start',
+                                }}
+                              >
+                                <strong style={{ fontSize: 14 }}>{t.title}</strong>
+                                <StatusPill kind={PRIORITY_KIND[t.priority]}>
+                                  {t.priority}
+                                </StatusPill>
+                              </div>
+                              {t.instruction ? (
+                                <p style={{ ...muted, color: 'var(--aether-fg)', fontSize: 13 }}>
+                                  {t.instruction}
+                                </p>
+                              ) : null}
+                              {t.dueAt ? (
+                                <p style={muted}>
+                                  Tenggat: {new Date(t.dueAt).toLocaleString()}{' '}
+                                  {overdue ? (
+                                    <StatusPill kind="danger">terlambat</StatusPill>
+                                  ) : null}
+                                </p>
+                              ) : null}
+                              {next ? (
+                                <div>
+                                  <Button
+                                    size="sm"
+                                    variant="primary"
+                                    disabled={update.isPending}
+                                    onClick={() => void advance(t.id, next)}
+                                  >
+                                    {next === 'doing' ? 'Klaim' : 'Tandai selesai'}
+                                  </Button>
+                                </div>
+                              ) : null}
+                            </Stack>
+                          </CardBody>
+                        </Card>
+                      );
+                    })
+                  )}
+                </Stack>
+              </CardBody>
+            </Card>
+          );
+        })}
+      </div>
+    </Stack>
+  );
 }
 function Sparkline({
   series,

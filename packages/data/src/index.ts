@@ -19,3 +19,10 @@ export {
 export { useColdChainReadings, type TemperatureReading } from './cold-chain';
 export { useLots, type Lot } from './lots';
 export { useComplianceReports, type ComplianceReport, type ComplianceStatus } from './compliance';
+export {
+  useShopFloorTasks,
+  useUpdateTaskStatus,
+  type ShopFloorTask,
+  type TaskStatus,
+  type TaskPriority,
+} from './tasks';
