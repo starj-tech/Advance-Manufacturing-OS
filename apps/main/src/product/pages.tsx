@@ -4,12 +4,14 @@ import type { StatusKind } from '@aether/ui-kit';
 import type { MachineStatus, WorkOrderStatus } from '@aether/rpc-contracts';
 import {
   useAuditLog,
+  useColdChainReadings,
   useInventoryAdjust,
   useMachines,
   useMaterials,
   useWorkOrderAdvance,
   useWorkOrders,
 } from '@aether/data';
+import type { TemperatureReading } from '@aether/data';
 
 const muted: CSSProperties = { margin: 0, color: 'var(--aether-fg-muted)', fontSize: 13 };
 const th: CSSProperties = {
@@ -298,9 +300,123 @@ export function CompliancePage() {
 export function TasksPage() {
   return <Placeholder title="Tugas" note="Kartu tugas shop-floor — segera." />;
 }
-export function ColdChainPage() {
+function Sparkline({
+  series,
+  low,
+  high,
+}: {
+  series: number[];
+  low: number | null;
+  high: number | null;
+}) {
+  const w = 240;
+  const h = 48;
+  if (series.length === 0) return <svg width={w} height={h} />;
+  const min = Math.min(...series, low ?? Math.min(...series));
+  const max = Math.max(...series, high ?? Math.max(...series));
+  const span = max - min || 1;
+  const pad = 4;
+  const inner = h - pad * 2;
+  const stepX = series.length > 1 ? w / (series.length - 1) : 0;
+  const path = series
+    .map((v, i) => {
+      const x = i * stepX;
+      const y = pad + inner - ((v - min) / span) * inner;
+      return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)} ${y.toFixed(1)}`;
+    })
+    .join(' ');
+  const bandY = (v: number) => pad + inner - ((v - min) / span) * inner;
   return (
-    <Placeholder title="Rantai Dingin" note="Pemantauan suhu (kapabilitas industri) — segera." />
+    <svg width={w} height={h} role="img" aria-label="temperature sparkline">
+      {low != null && high != null ? (
+        <rect
+          x={0}
+          y={bandY(high)}
+          width={w}
+          height={Math.max(0, bandY(low) - bandY(high))}
+          fill="var(--aether-accent)"
+          opacity={0.08}
+        />
+      ) : null}
+      <path d={path} stroke="var(--aether-accent)" strokeWidth={1.5} fill="none" />
+    </svg>
+  );
+}
+
+function summarize(readings: TemperatureReading[]) {
+  const bySensor = new Map<string, TemperatureReading[]>();
+  for (const r of readings) {
+    const list = bySensor.get(r.sensorId) ?? [];
+    list.push(r);
+    bySensor.set(r.sensorId, list);
+  }
+  for (const list of bySensor.values()) {
+    list.sort((a, b) => a.takenAt.localeCompare(b.takenAt));
+  }
+  return Array.from(bySensor.entries()).map(([sensorId, list]) => {
+    const latest = list[list.length - 1]!;
+    const series = list.map((r) => r.celsius);
+    const outOfRange = list.filter(
+      (r) => (r.lowC != null && r.celsius < r.lowC) || (r.highC != null && r.celsius > r.highC),
+    ).length;
+    const inRange =
+      latest.lowC == null || latest.highC == null
+        ? true
+        : latest.celsius >= latest.lowC && latest.celsius <= latest.highC;
+    return { sensorId, latest, series, outOfRange, inRange };
+  });
+}
+
+export function ColdChainPage() {
+  const { data: readings = [], isLoading, isError } = useColdChainReadings(240);
+  const sensors = summarize(readings);
+
+  return (
+    <Stack gap={16}>
+      <h2 style={{ margin: 0, fontSize: 20 }}>Rantai Dingin</h2>
+      <p style={muted}>
+        Pemantauan suhu real-time per sensor (kapabilitas industri <code>cold-chain-monitor</code>).
+        Auto-refresh 30 detik. Hijau = di dalam rentang, kuning = pernah keluar rentang dalam 1 jam
+        terakhir, merah = sedang keluar rentang.
+      </p>
+      {isLoading ? <p style={muted}>Memuat…</p> : null}
+      {isError ? <p style={muted}>Gagal memuat.</p> : null}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: 12,
+        }}
+      >
+        {sensors.map((s) => {
+          const kind: StatusKind = !s.inRange ? 'danger' : s.outOfRange > 0 ? 'warning' : 'success';
+          return (
+            <Card key={s.sensorId}>
+              <CardHeader title={s.latest.sensorLabel || s.sensorId} subtitle={s.sensorId} />
+              <CardBody>
+                <Stack gap={8}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+                    <span style={{ fontSize: 24, fontWeight: 600 }}>{s.latest.celsius}°C</span>
+                    <StatusPill kind={kind}>
+                      {!s.inRange
+                        ? 'di luar rentang'
+                        : s.outOfRange > 0
+                          ? 'pernah drift'
+                          : 'normal'}
+                    </StatusPill>
+                  </div>
+                  <Sparkline series={s.series} low={s.latest.lowC} high={s.latest.highC} />
+                  <p style={muted}>
+                    Target {s.latest.lowC ?? '–'}°C…{s.latest.highC ?? '–'}°C · {s.outOfRange}{' '}
+                    sampel di luar rentang · {new Date(s.latest.takenAt).toLocaleTimeString()}
+                  </p>
+                </Stack>
+              </CardBody>
+            </Card>
+          );
+        })}
+      </div>
+    </Stack>
   );
 }
 export function TraceabilityPage() {

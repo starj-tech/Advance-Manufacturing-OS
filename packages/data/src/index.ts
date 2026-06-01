@@ -16,3 +16,4 @@ export {
   type ResetPasswordResult,
   type ImportRosterResult,
 } from './manage-users';
+export { useColdChainReadings, type TemperatureReading } from './cold-chain';
