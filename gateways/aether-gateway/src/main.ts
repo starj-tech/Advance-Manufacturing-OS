@@ -21,6 +21,7 @@ import { tick, heartbeatTick, type Deps } from './loop.ts';
 import { listMachines, pullCommands, ackCommand, pushSample, heartbeat } from './supabase.ts';
 import { driverFor, supportedProtocols } from './drivers/registry.ts';
 import { registerSimulators } from './drivers/simulator.ts';
+import { registerModbusTcp } from './drivers/modbus.ts';
 
 function logInfo(msg: string): void {
   console.log(`${new Date().toISOString()} INFO  ${msg}`);
@@ -42,7 +43,8 @@ async function main(): Promise<void> {
   }
 
   registerSimulators();
-  // Future: registerOpcua(); registerMqtt(); registerModbus();
+  registerModbusTcp();
+  // Future: registerOpcua(); registerMqtt(); registerModbusRtu();
 
   logInfo(`aether-gateway ${cfg.gatewayId} → ${cfg.supabaseUrl} (tenant ${cfg.tenantId})`);
   logInfo(`drivers: ${supportedProtocols().join(', ') || '(none)'}`);
