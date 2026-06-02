@@ -6,6 +6,7 @@ import { UsersPage } from './UsersPage';
 import { SecurityAuditPage } from './SecurityAuditPage';
 import { DevicesPage } from './DevicesPage';
 import { ModulesPage } from './ModulesPage';
+import { TelemetryPage } from './TelemetryPage';
 
 const sidebar: CSSProperties = {
   width: 220,
@@ -34,6 +35,7 @@ const muted: CSSProperties = { margin: 0, color: 'var(--aether-fg-muted)', fontS
 const NAV = [
   { id: 'users', label: 'Akun & Peran' },
   { id: 'devices', label: 'Perangkat & Protokol' },
+  { id: 'telemetry', label: 'Telemetri' },
   { id: 'modules', label: 'Modul' },
   { id: 'audit', label: 'Audit Keamanan' },
 ];
@@ -82,6 +84,8 @@ export function ItView() {
       <UsersPage />
     ) : active === 'devices' ? (
       <DevicesPage />
+    ) : active === 'telemetry' ? (
+      <TelemetryPage />
     ) : active === 'modules' ? (
       <ModulesPage />
     ) : (

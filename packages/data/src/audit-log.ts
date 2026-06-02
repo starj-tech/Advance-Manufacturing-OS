@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@aether/supabase';
 import { useSession } from '@aether/auth';
+import { useRealtimeInvalidate } from './realtime';
 
 export interface AuditEvent {
   id: number;
@@ -63,6 +64,11 @@ function rowToEvent(r: Record<string, unknown>): AuditEvent {
 export function useAuditLog(limit = 50) {
   const { session } = useSession();
   const tenantId = session?.tenantId ?? '';
+  useRealtimeInvalidate({
+    table: 'audit_log',
+    filter: tenantId ? `tenant_id=eq.${tenantId}` : undefined,
+    invalidate: [['audit-log', tenantId, limit]],
+  });
   return useQuery({
     queryKey: ['audit-log', tenantId, limit],
     queryFn: async (): Promise<AuditEvent[]> => {
@@ -76,6 +82,7 @@ export function useAuditLog(limit = 50) {
       return (data ?? []).map(rowToEvent);
     },
     enabled: !supabase || tenantId.length > 0,
-    refetchInterval: 10_000,
+    // Realtime is the fast path; safety-net poll every 2 minutes.
+    refetchInterval: 120_000,
   });
 }

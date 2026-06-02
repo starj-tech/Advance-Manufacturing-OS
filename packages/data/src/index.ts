@@ -43,3 +43,5 @@ export {
   type ModuleStatus,
   type TenantModulePolicy,
 } from './modules';
+export { useGatewaySamples, type GatewaySample } from './gateway-samples';
+export { useRealtimeInvalidate } from './realtime';

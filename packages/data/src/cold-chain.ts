@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@aether/supabase';
 import { useSession } from '@aether/auth';
+import { useRealtimeInvalidate } from './realtime';
 
 export interface TemperatureReading {
   id: number;
@@ -57,6 +58,11 @@ function rowToReading(r: Record<string, unknown>): TemperatureReading {
 export function useColdChainReadings(limit = 240) {
   const { session } = useSession();
   const tenantId = session?.tenantId ?? '';
+  useRealtimeInvalidate({
+    table: 'temperature_readings',
+    filter: tenantId ? `tenant_id=eq.${tenantId}` : undefined,
+    invalidate: [['cold-chain-readings', tenantId, limit]],
+  });
   return useQuery({
     queryKey: ['cold-chain-readings', tenantId, limit],
     queryFn: async (): Promise<TemperatureReading[]> => {
@@ -70,6 +76,7 @@ export function useColdChainReadings(limit = 240) {
       return (data ?? []).map(rowToReading);
     },
     enabled: !supabase || tenantId.length > 0,
-    refetchInterval: 30_000,
+    // Realtime is the fast path; this is just a safety net if the WS drops.
+    refetchInterval: 120_000,
   });
 }
