@@ -1,0 +1,15 @@
+/* Optional global styles for ui-kit consumers. The desktop app already
+   defines variables in src/styles/globals.css; this file mirrors them so
+   ui-kit can be consumed standalone (e.g. by future admin web app). */
+
+:root {
+  --aether-bg: #0a0a0a;
+  --aether-bg-elevated: #141414;
+  --aether-fg: #f5f5f5;
+  --aether-fg-muted: #a0a0a0;
+  --aether-border: #262626;
+  --aether-accent: #3b82f6;
+  --aether-success: #10b981;
+  --aether-warning: #f59e0b;
+  --aether-danger: #ef4444;
+}

@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main, 'claude/**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  js-lint-typecheck:
+    name: JS · lint + typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      # pnpm enables --frozen-lockfile automatically under CI; the
+      # committed pnpm-lock.yaml is the source of truth.
+      - run: pnpm install
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm format:check
+
+  js-test:
+    name: JS · vitest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm test
+
+  build-apps:
+    name: Build · all apps + bundle budget
+    needs: js-lint-typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install
+      # Build every app (demo/main/it/console) so a broken app fails CI.
+      - run: pnpm build
+      - name: Enforce initial chunk budget (350KB gz) for the demo app
+        shell: bash
+        run: |
+          DIST=apps/demo/dist/assets
+          if [ ! -d "$DIST" ]; then
+            echo "no dist/assets directory; skipping budget check"
+            exit 0
+          fi
+          # Initial chunk = main entry. Approximate by gzipping each js bundle
+          # not prefixed with `shell-` and summing.
+          total=0
+          while IFS= read -r f; do
+            size=$(gzip -c "$f" | wc -c)
+            total=$((total + size))
+            echo "  $(basename "$f")  $size bytes gz"
+          done < <(find "$DIST" -name '*.js' ! -name 'shell-*' -type f)
+          echo "initial-chunk gzipped total: $total bytes"
+          budget=358400  # 350 KB
+          if [ "$total" -gt "$budget" ]; then
+            echo "::error::initial chunk $total bytes exceeds budget $budget bytes (350KB)"
+            exit 1
+          fi

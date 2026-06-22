@@ -1,0 +1,16 @@
+{
+  "name": "aether-gateway",
+  "version": "0.1.0",
+  "exports": "./src/main.ts",
+  "tasks": {
+    "dev": "deno run --allow-net --allow-env --allow-read src/main.ts",
+    "test": "deno test --allow-env src/",
+    "build": "deno compile --allow-net --allow-env --allow-read --output dist/aether-gateway src/main.ts",
+    "build-windows": "deno compile --target x86_64-pc-windows-msvc --allow-net --allow-env --allow-read --output dist/aether-gateway.exe src/main.ts",
+    "build-linux-arm": "deno compile --target aarch64-unknown-linux-gnu --allow-net --allow-env --allow-read --output dist/aether-gateway-arm src/main.ts"
+  },
+  "compilerOptions": {
+    "lib": ["deno.window"],
+    "strict": true
+  }
+}
